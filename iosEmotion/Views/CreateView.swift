@@ -137,7 +137,7 @@ struct MoodPickerView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Choose a Mood")
+            Text("Choose  Mood")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
