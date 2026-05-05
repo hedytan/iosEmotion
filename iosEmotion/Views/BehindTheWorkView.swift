@@ -18,7 +18,7 @@ struct BehindTheWorkView: View {
                         PostCardView(post: post)
                     }
                 }
-                .padding(.vertical)
+                .padding()
             }
             .background(Color.white)
             .navigationTitle("")
