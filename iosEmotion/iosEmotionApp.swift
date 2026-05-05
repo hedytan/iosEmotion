@@ -18,14 +18,3 @@ struct iosEmotionApp: App {
         }
     }
 }
-
-
-struct iosThingApp: App{
-    var body: some Scene{
-        WindowGroup{
-            
-            ContentView()
-            
-        }
-    }
-}

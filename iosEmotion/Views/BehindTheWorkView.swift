@@ -118,19 +118,32 @@ struct PostCardView: View {
                 }
 
                 // React
-                HStack(spacing: 4) {
-                    Image(systemName: "sparkles")
-                        .foregroundColor(Color("AppPurple"))
-                    Text("React")
-                        .font(.subheadline)
-                        .foregroundColor(Color("AppPurple"))
+                Menu {
+                    Button("✨ Sparkle") { store.setReaction(for: post.id, reaction: "✨") }
+                    Button("🔥 Fire") { store.setReaction(for: post.id, reaction: "🔥") }
+                    Button("💜 Heart") { store.setReaction(for: post.id, reaction: "💜") }
+                } label: {
+                    HStack(spacing: 4) {
+                        if let reaction = post.reaction {
+                            Text(reaction)
+                        } else {
+                            Image(systemName: "sparkles")
+                        }
+                        Text(post.reaction == nil ? "React" : "Reacted")
+                            .font(.subheadline)
+                    }
+                    .foregroundColor(Color("AppPurple"))
                 }
 
                 Spacer()
 
                 // Bookmark
-                Image(systemName: "bookmark")
-                    .foregroundColor(Color("AppPurple"))
+                Button(action: {
+                    store.toggleSave(for: post.id)
+                }) {
+                    Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
+                        .foregroundColor(Color("AppPurple"))
+                }
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 14)

@@ -7,6 +7,8 @@ struct Post: Identifiable {
     var description: String
     var likes: Int
     var isLiked: Bool = false
+    var isSaved: Bool = false
+    var reaction: String? = nil
     var comments: [String] = []
     
     var likeCountString: String {
