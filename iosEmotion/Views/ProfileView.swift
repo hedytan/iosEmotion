@@ -174,10 +174,19 @@ struct JourneyPostCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottomLeading) {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(height: 220)
-                    .cornerRadius(16)
+                if let data = post.imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 220)
+                        .clipped()
+                        .cornerRadius(16)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 220)
+                        .cornerRadius(16)
+                }
 
                 LinearGradient(
                     colors: [Color.clear, Color.black.opacity(0.8)],

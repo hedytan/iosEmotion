@@ -37,8 +37,8 @@ class PostStore: ObservableObject {
         }
     }
     
-    func addPost(tag: String, title: String, description: String) {
-        let newPost = Post(tag: tag, title: title, description: description, likes: 0)
+    func addPost(tag: String, title: String, description: String, imageData: Data? = nil) {
+        let newPost = Post(tag: tag, title: title, description: description, likes: 0, imageData: imageData)
         posts.insert(newPost, at: 0)
     }
     

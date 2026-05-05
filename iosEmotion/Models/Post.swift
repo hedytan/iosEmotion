@@ -9,6 +9,7 @@ struct Post: Identifiable {
     var isLiked: Bool = false
     var isSaved: Bool = false
     var reaction: String? = nil
+    var imageData: Data? = nil
     var comments: [String] = []
     
     var likeCountString: String {

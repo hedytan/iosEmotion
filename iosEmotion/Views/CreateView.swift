@@ -5,6 +5,7 @@
 //  Created by Hedy on 3/5/2026.
 //
 
+import SwiftUI
 import PhotosUI
 
 struct CreateView: View {
@@ -129,11 +130,13 @@ struct CreateView: View {
                     // Post button
                     Button(action: {
                         if !postText.isEmpty {
-                            store.addPost(tag: selectedMood.uppercased(), title: "New Creation", description: postText)
+                            store.addPost(tag: selectedMood.uppercased(), 
+                                          title: "New Creation", 
+                                          description: postText,
+                                          imageData: selectedImageData)
                             postText = ""
                             selectedImageData = nil
                             selectedAudioURL = nil
-                            // Usually you'd navigate away or show success
                         }
                     }) {
                         Text("Post")

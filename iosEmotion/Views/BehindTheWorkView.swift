@@ -18,7 +18,7 @@ struct BehindTheWorkView: View {
                         PostCardView(post: post)
                     }
                 }
-                .padding()
+                .padding(.vertical)
             }
             .background(Color.white)
             .navigationTitle("")
@@ -51,11 +51,20 @@ struct PostCardView: View {
 
             // Image card
             ZStack(alignment: .bottomLeading) {
-                // Placeholder image (grey for now)
-                Rectangle()
-                    .fill(Color.gray.opacity(0.4))
-                    .frame(height: 380)
-                    .cornerRadius(20)
+                // Image or Placeholder
+                if let data = post.imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 600)
+                        .clipped()
+                        .cornerRadius(24)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(height: 600)
+                        .cornerRadius(24)
+                }
 
                 // Gradient overlay
                 LinearGradient(
@@ -63,8 +72,8 @@ struct PostCardView: View {
                     startPoint: .center,
                     endPoint: .bottom
                 )
-                .frame(height: 380)
-                .cornerRadius(20)
+                .frame(height: 600)
+                .cornerRadius(24)
 
                 // Text overlay
                 VStack(alignment: .leading, spacing: 6) {
