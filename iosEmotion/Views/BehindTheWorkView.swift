@@ -56,13 +56,13 @@ struct PostCardView: View {
                     Image(uiImage: uiImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(height: 600)
+                        .frame(height: 480)
                         .clipped()
                         .cornerRadius(24)
                 } else {
                     Rectangle()
                         .fill(Color.gray.opacity(0.4))
-                        .frame(height: 600)
+                        .frame(height: 480)
                         .cornerRadius(24)
                 }
 
@@ -72,7 +72,7 @@ struct PostCardView: View {
                     startPoint: .center,
                     endPoint: .bottom
                 )
-                .frame(height: 600)
+                .frame(height: 480)
                 .cornerRadius(24)
 
                 // Text overlay
