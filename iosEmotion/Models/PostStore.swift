@@ -37,6 +37,11 @@ class PostStore: ObservableObject {
         }
     }
     
+    func addPost(tag: String, title: String, description: String) {
+        let newPost = Post(tag: tag, title: title, description: description, likes: 0)
+        posts.insert(newPost, at: 0)
+    }
+    
     func addComment(to postID: UUID, text: String) {
         if let index = posts.firstIndex(where: { $0.id == postID }) {
             posts[index].comments.append(text)

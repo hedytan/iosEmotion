@@ -5,10 +5,23 @@
 //  Created by Hedy on 3/5/2026.
 //
 
-import SwiftUI
+import PhotosUI
 
 struct CreateView: View {
+    @EnvironmentObject var store: PostStore
     @State private var postText: String = ""
+    @State private var selectedMood: String = "NEW FRAGMENT"
+    @State private var showMoodPicker = false
+    
+    // Photo selection
+    @State private var selectedItem: PhotosPickerItem?
+    @State private var selectedImageData: Data?
+    
+    // Audio selection
+    @State private var showAudioImporter = false
+    @State private var selectedAudioURL: URL?
+    
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         NavigationView {
@@ -16,10 +29,12 @@ struct CreateView: View {
                 VStack(alignment: .leading, spacing: 16) {
 
                     // Tag
-                    Text("NEW FRAGMENT")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("AppPurple"))
+                    Button(action: { showMoodPicker = true }) {
+                        Text(selectedMood.uppercased())
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("AppPurple"))
+                    }
 
                     // Title
                     Text("Create.")
@@ -53,11 +68,11 @@ struct CreateView: View {
                     }
 
                     // Add Audio
-                    Button(action: {}) {
+                    Button(action: { showAudioImporter = true }) {
                         HStack {
-                            Image(systemName: "waveform")
+                            Image(systemName: selectedAudioURL == nil ? "waveform" : "checkmark.circle.fill")
                                 .foregroundColor(Color("AppPurple"))
-                            Text("Add Audio")
+                            Text(selectedAudioURL == nil ? "Add Audio" : "Audio Added")
                                 .foregroundColor(.white)
                                 .fontWeight(.medium)
                         }
@@ -69,11 +84,11 @@ struct CreateView: View {
 
                     // Add Photo + Mood Tag
                     HStack(spacing: 12) {
-                        Button(action: {}) {
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Image(systemName: "photo")
+                                Image(systemName: selectedImageData == nil ? "photo" : "checkmark.circle.fill")
                                     .foregroundColor(Color("AppPurple"))
-                                Text("Add Photo")
+                                Text(selectedImageData == nil ? "Add Photo" : "Photo Added")
                                     .foregroundColor(.white)
                                     .fontWeight(.medium)
                                 Text("Visual Muse")
@@ -85,15 +100,22 @@ struct CreateView: View {
                             .background(Color("CardBackground"))
                             .cornerRadius(12)
                         }
+                        .onChange(of: selectedItem) { newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    selectedImageData = data
+                                }
+                            }
+                        }
 
-                        Button(action: {}) {
+                        Button(action: { showMoodPicker = true }) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Image(systemName: "sparkles")
                                     .foregroundColor(Color("AppPurple"))
                                 Text("Mood Tag")
                                     .foregroundColor(.white)
                                     .fontWeight(.medium)
-                                Text("Sonic Texture")
+                                Text(selectedMood)
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                             }
@@ -105,19 +127,39 @@ struct CreateView: View {
                     }
 
                     // Post button
-                    Button(action: {}) {
+                    Button(action: {
+                        if !postText.isEmpty {
+                            store.addPost(tag: selectedMood.uppercased(), title: "New Creation", description: postText)
+                            postText = ""
+                            selectedImageData = nil
+                            selectedAudioURL = nil
+                            // Usually you'd navigate away or show success
+                        }
+                    }) {
                         Text("Post")
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color("AppPurple"))
+                            .background(postText.isEmpty ? Color.gray : Color("AppPurple"))
                             .cornerRadius(30)
                     }
+                    .disabled(postText.isEmpty)
                 }
                 .padding()
             }
             .background(Color("AppBackground"))
+            .sheet(isPresented: $showMoodPicker) {
+                MoodPickerView(selectedMood: $selectedMood)
+            }
+            .fileImporter(isPresented: $showAudioImporter, allowedContentTypes: [.audio]) { result in
+                switch result {
+                case .success(let url):
+                    selectedAudioURL = url
+                case .failure(let error):
+                    print("Error selecting audio: \(error.localizedDescription)")
+                }
+            }
         }
     }
 }
@@ -177,8 +219,10 @@ struct MoodPickerView: View {
 
 #Preview {
     CreateView()
+        .environmentObject(PostStore())
 }
 
 #Preview {
     CreateView()
+        .environmentObject(PostStore())
 }
