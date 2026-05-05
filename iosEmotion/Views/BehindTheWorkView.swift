@@ -8,24 +8,15 @@
 import SwiftUI
 
 struct BehindTheWorkView: View {
+    @EnvironmentObject var store: PostStore
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
-                    PostCardView(
-                        tag: "SPOTLIGHT",
-                        title: "LIMBO",
-                        description: "The sonic architecture of a dream state. Exploring the reverb trails in GABRIEL.",
-                        likes: "24.1k",
-                        comments: "842"
-                    )
-                    PostCardView(
-                        tag: "NEW FRAGMENT",
-                        title: "The Geometry of Noise",
-                        description: "This album got me through the hardest year of my life.",
-                        likes: "12.4k",
-                        comments: "391"
-                    )
+                    ForEach(store.posts.prefix(2)) { post in
+                        PostCardView(post: post)
+                    }
                 }
                 .padding()
             }
@@ -51,11 +42,9 @@ struct BehindTheWorkView: View {
 }
 
 struct PostCardView: View {
-    var tag: String
-    var title: String
-    var description: String
-    var likes: String
-    var comments: String
+    @EnvironmentObject var store: PostStore
+    var post: Post
+    @State private var showComments = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -79,7 +68,7 @@ struct PostCardView: View {
 
                 // Text overlay
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(tag)
+                    Text(post.tag)
                         .font(.caption)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -88,11 +77,11 @@ struct PostCardView: View {
                         .background(Color.purple.opacity(0.8))
                         .cornerRadius(6)
 
-                    Text(title)
+                    Text(post.title)
                         .font(.system(size: 42, weight: .heavy))
                         .foregroundColor(Color("AppPurple"))
 
-                    Text(description)
+                    Text(post.description)
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.9))
                         .lineLimit(2)
@@ -103,21 +92,29 @@ struct PostCardView: View {
             // Action bar
             HStack(spacing: 16) {
                 // Heart
-                HStack(spacing: 4) {
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(.pink)
-                    Text(likes)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                Button(action: {
+                    store.toggleLike(for: post.id)
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                            .foregroundColor(post.isLiked ? .pink : .gray)
+                        Text(post.likeCountString)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
                 }
 
                 // Comment
-                HStack(spacing: 4) {
-                    Image(systemName: "bubble.left")
-                        .foregroundColor(.gray)
-                    Text(comments)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                Button(action: {
+                    showComments = true
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bubble.left")
+                            .foregroundColor(.gray)
+                        Text("\(post.comments.count)")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
                 }
 
                 // React
@@ -138,9 +135,13 @@ struct PostCardView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 14)
         }
+        .sheet(isPresented: $showComments) {
+            CommentSheet(store: store, postID: post.id)
+        }
     }
 }
 
 #Preview {
     BehindTheWorkView()
+        .environmentObject(PostStore())
 }

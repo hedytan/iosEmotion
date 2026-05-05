@@ -145,27 +145,14 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - Journey Detail
-
 struct JourneyDetailView: View {
+    @EnvironmentObject var store: PostStore
     var title: String
-
-    let posts = [
-        JourneyPost(tag: "NEW RELEASE", title: "LIMBO",
-                    description: "The story and making of a brand new song exploring the honest nature of existing.",
-                    likes: "24.1k", comments: "842"),
-        JourneyPost(tag: "FRAGMENT", title: "The Geometry of Noise",
-                    description: "This album got me through the hardest year of my life.",
-                    likes: "12.4k", comments: "391"),
-        JourneyPost(tag: "BEHIND THE SCENE", title: "Studio Session 01",
-                    description: "3am and the chords finally made sense.",
-                    likes: "8.2k", comments: "204")
-    ]
 
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                ForEach(posts) { post in
+                ForEach(store.posts) { post in
                     JourneyPostCard(post: post)
                 }
             }
@@ -177,21 +164,12 @@ struct JourneyDetailView: View {
     }
 }
 
-// MARK: - Models
-
-struct JourneyPost: Identifiable {
-    let id = UUID()
-    var tag: String
-    var title: String
-    var description: String
-    var likes: String
-    var comments: String
-}
-
 // MARK: - Journey Post Card
 
 struct JourneyPostCard: View {
-    var post: JourneyPost
+    @EnvironmentObject var store: PostStore
+    var post: Post
+    @State private var showComments = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -234,14 +212,25 @@ struct JourneyPostCard: View {
 
             // Action bar
             HStack(spacing: 16) {
-                HStack(spacing: 4) {
-                    Image(systemName: "heart.fill").foregroundColor(.pink)
-                    Text(post.likes).font(.subheadline).foregroundColor(.gray)
+                Button(action: {
+                    store.toggleLike(for: post.id)
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                            .foregroundColor(post.isLiked ? .pink : .gray)
+                        Text(post.likeCountString).font(.subheadline).foregroundColor(.gray)
+                    }
                 }
-                HStack(spacing: 4) {
-                    Image(systemName: "bubble.left").foregroundColor(.gray)
-                    Text(post.comments).font(.subheadline).foregroundColor(.gray)
+                
+                Button(action: {
+                    showComments = true
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bubble.left").foregroundColor(.gray)
+                        Text("\(post.comments.count)").font(.subheadline).foregroundColor(.gray)
+                    }
                 }
+                
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles").foregroundColor(Color("AppPurple"))
                     Text("React").font(.subheadline).foregroundColor(Color("AppPurple"))
@@ -252,9 +241,13 @@ struct JourneyPostCard: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
         }
+        .sheet(isPresented: $showComments) {
+            CommentSheet(store: store, postID: post.id)
+        }
     }
 }
 
 #Preview {
     ProfileView()
+        .environmentObject(PostStore())
 }

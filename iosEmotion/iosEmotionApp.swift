@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct iosEmotionApp: App {
+    @StateObject private var postStore = PostStore()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(postStore)
         }
     }
 }
