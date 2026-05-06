@@ -11,17 +11,33 @@ struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            LazyVStack(spacing: 0) {
-                ForEach(store.posts) { post in
-                    PostCardView(post: post)
-                        .containerRelativeFrame(.vertical)
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    // Header
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("BEHIND THE")
+                            .font(.system(size: 28, weight: .black))
+                            .foregroundColor(Color("AppPurple"))
+                        Text("WORK")
+                            .font(.system(size: 28, weight: .black))
+                            .italic()
+                            .foregroundColor(Color("AppPurple"))
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+
+                    // Feed
+                    LazyVStack(spacing: 20) {
+                        ForEach(store.posts) { post in
+                            PostCardView(post: post)
+                        }
+                    }
                 }
             }
+            .background(Color("AppBackground"))
+            .navigationBarHidden(true)
         }
-        .scrollTargetBehavior(.paging)
-        .ignoresSafeArea(edges: .top)
-        .background(Color.black)
     }
 }
 
@@ -31,112 +47,118 @@ struct PostCardView: View {
     @State private var showComments = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Full Screen Image/Background
-            GeometryReader { geo in
-                if let data = post.imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: geo.size.width, height: geo.size.height)
-                        .clipped()
-                } else {
-                    Rectangle()
-                        .fill(LinearGradient(colors: [Color("AppPurple").opacity(0.3), .black], startPoint: .top, endPoint: .bottom))
-                        .frame(width: geo.size.width, height: geo.size.height)
+        VStack(alignment: .leading, spacing: 16) {
+            // Tag & Title
+            VStack(alignment: .leading, spacing: 8) {
+                Text("NEW RELEASED")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.cyan)
+                
+                Text(post.title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+            }
+            
+            // Artist Info
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Text("H")
+                            .foregroundColor(.white)
+                            .font(.system(size: 14, weight: .bold))
+                    )
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("keshi")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                    Text("Artist • Fragment Mode")
+                        .font(.caption2)
+                        .foregroundColor(.gray)
                 }
             }
-            .ignoresSafeArea()
+            
+            // Image (if any)
+            if let data = post.imageData, let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 200)
+                    .clipped()
+                    .cornerRadius(12)
+            }
 
-            // Dark Gradient for text readability
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.8)],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // Description
+            Text(post.description)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .lineLimit(3)
+                .padding(.leading, 8)
+                .overlay(
+                    Rectangle()
+                        .fill(Color("AppPurple"))
+                        .frame(width: 2)
+                        .padding(.vertical, 2),
+                    alignment: .leading
+                )
+            
+            // Shared info (Static placeholder)
+            HStack {
+                HStack(spacing: -8) {
+                    ForEach(0..<3) { _ in
+                        Circle()
+                            .fill(Color.gray)
+                            .frame(width: 20, height: 20)
+                            .overlay(Circle().stroke(Color("CardBackground"), lineWidth: 2))
+                    }
+                }
+                Text("Shared by top curators")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+            }
 
-            // Floating UI Content
-            VStack(alignment: .leading, spacing: 16) {
+            // Action Bar
+            HStack {
+                HStack(spacing: 16) {
+                    Button(action: { store.toggleLike(for: post.id) }) {
+                        Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                            .foregroundColor(post.isLiked ? .pink : .white)
+                    }
+                    
+                    Button(action: { showComments = true }) {
+                        Image(systemName: "bubble.left")
+                            .foregroundColor(.white)
+                    }
+                    
+                    Button(action: { store.toggleSave(for: post.id) }) {
+                        Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
+                            .foregroundColor(post.isSaved ? .white : .white)
+                    }
+                }
+                
                 Spacer()
                 
-                HStack(alignment: .bottom) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(post.tag)
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Color.purple.opacity(0.8))
-                            .cornerRadius(6)
-
-                        Text(post.title)
-                            .font(.system(size: 32, weight: .heavy))
-                            .foregroundColor(.white)
-
-                        Text(post.description)
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.9))
-                            .lineLimit(3)
-                    }
-                    
-                    Spacer()
-                    
-                    // Vertical Action Bar
-                    VStack(spacing: 20) {
-                        // Heart
-                        Button(action: { store.toggleLike(for: post.id) }) {
-                            VStack(spacing: 4) {
-                                Image(systemName: post.isLiked ? "heart.fill" : "heart")
-                                    .font(.title2)
-                                    .foregroundColor(post.isLiked ? .pink : .white)
-                                Text(post.likeCountString)
-                                    .font(.caption2)
-                                    .foregroundColor(.white)
-                            }
-                        }
-
-                        // Comment
-                        Button(action: { showComments = true }) {
-                            VStack(spacing: 4) {
-                                Image(systemName: "bubble.left.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                Text("\(post.comments.count)")
-                                    .font(.caption2)
-                                    .foregroundColor(.white)
-                            }
-                        }
-
-                        // React
-                        Menu {
-                            Button("✨ Sparkle") { store.setReaction(for: post.id, reaction: "✨") }
-                            Button("🔥 Fire") { store.setReaction(for: post.id, reaction: "🔥") }
-                            Button("💜 Heart") { store.setReaction(for: post.id, reaction: "💜") }
-                        } label: {
-                            VStack(spacing: 4) {
-                                Text(post.reaction ?? "✨")
-                                    .font(.title2)
-                                Text("React")
-                                    .font(.caption2)
-                                    .foregroundColor(.white)
-                            }
-                        }
-
-                        // Bookmark
-                        Button(action: { store.toggleSave(for: post.id) }) {
-                            Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
-                                .font(.title2)
-                                .foregroundColor(post.isSaved ? .yellow : .white)
-                        }
-                    }
-                    .padding(.bottom, 20)
+                Button(action: { showComments = true }) {
+                    Text("JOIN DISCUSSION")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color("AppPurple"))
+                        .cornerRadius(20)
                 }
             }
-            .padding(20)
-            .padding(.bottom, 60) // Extra padding for the tab bar
         }
+        .padding(20)
+        .background(Color("CardBackground"))
+        .cornerRadius(24)
+        .padding(.horizontal)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
