@@ -17,7 +17,7 @@ struct CommentSheet: View {
                     List {
                         if post.comments.isEmpty {
                             Text("No comments yet. Be the first to share your thoughts.")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .font(.subheadline)
                                 .listRowSeparator(.hidden)
                                 .padding(.top, 20)
@@ -30,13 +30,13 @@ struct CommentSheet: View {
                                         .foregroundColor(Color("AppPurple"))
                                     Text(comment)
                                         .font(.subheadline)
+                                        .foregroundColor(.primary)
                                 }
                                 .padding(.vertical, 4)
                             }
                         }
                     }
                     .listStyle(.plain)
-                    
                     Divider()
                     
                     HStack {
@@ -44,6 +44,7 @@ struct CommentSheet: View {
                             .padding(10)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
+                            .foregroundColor(.primary)
                         
                         Button(action: {
                             if !newComment.isEmpty {
@@ -62,6 +63,7 @@ struct CommentSheet: View {
             }
             .navigationTitle("Comments")
             .navigationBarTitleDisplayMode(.inline)
+            .background(Color.white)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {

@@ -29,7 +29,7 @@ struct BehindTheWorkView: View {
                             ZStack(alignment: .topTrailing) {
                                 Image(systemName: "bell.fill")
                                     .font(.title3)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color("AppPurple"))
                                 
                                 if store.unreadCount > 0 {
                                     Circle()
@@ -51,7 +51,7 @@ struct BehindTheWorkView: View {
                     }
                 }
             }
-            .background(Color("AppBackground"))
+            .background(Color(.systemGroupedBackground))
             .navigationBarHidden(true)
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
@@ -72,22 +72,22 @@ struct PostCardView: View {
                 Text("NEW RELEASED")
                     .font(.caption2)
                     .fontWeight(.bold)
-                    .foregroundColor(Color.cyan)
+                    .foregroundColor(Color("AppPurple"))
                 
                 Text(post.title)
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
             }
             
             // Artist Info
             HStack(spacing: 12) {
                 Circle()
-                    .fill(Color.gray.opacity(0.3))
+                    .fill(Color("AppPurple").opacity(0.1))
                     .frame(width: 40, height: 40)
                     .overlay(
                         Text("H")
-                            .foregroundColor(.white)
+                            .foregroundColor(Color("AppPurple"))
                             .font(.system(size: 14, weight: .bold))
                     )
                 
@@ -95,10 +95,10 @@ struct PostCardView: View {
                     Text("keshi")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                     Text("Artist • Fragment Mode")
                         .font(.caption2)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.secondary)
                 }
             }
             
@@ -115,7 +115,7 @@ struct PostCardView: View {
             // Description
             Text(post.description)
                 .font(.subheadline)
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
                 .lineLimit(3)
                 .padding(.leading, 8)
                 .overlay(
@@ -126,19 +126,19 @@ struct PostCardView: View {
                     alignment: .leading
                 )
             
-            // Shared info (Static placeholder)
+            // Shared info
             HStack {
                 HStack(spacing: -8) {
                     ForEach(0..<3) { _ in
                         Circle()
-                            .fill(Color.gray)
+                            .fill(Color.gray.opacity(0.3))
                             .frame(width: 20, height: 20)
-                            .overlay(Circle().stroke(Color("CardBackground"), lineWidth: 2))
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2))
                     }
                 }
                 Text("Shared by top curators")
                     .font(.caption2)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
             }
 
             // Action Bar
@@ -146,17 +146,17 @@ struct PostCardView: View {
                 HStack(spacing: 16) {
                     Button(action: { store.toggleLike(for: post.id) }) {
                         Image(systemName: post.isLiked ? "heart.fill" : "heart")
-                            .foregroundColor(post.isLiked ? .pink : .white)
+                            .foregroundColor(post.isLiked ? .pink : .gray)
                     }
                     
                     Button(action: { showComments = true }) {
                         Image(systemName: "bubble.left")
-                            .foregroundColor(.white)
+                            .foregroundColor(.gray)
                     }
                     
                     Button(action: { store.toggleSave(for: post.id) }) {
                         Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
-                            .foregroundColor(post.isSaved ? .white : .white)
+                            .foregroundColor(post.isSaved ? Color("AppPurple") : .gray)
                     }
                 }
                 
@@ -175,8 +175,9 @@ struct PostCardView: View {
             }
         }
         .padding(20)
-        .background(Color("CardBackground"))
+        .background(Color.white)
         .cornerRadius(24)
+        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
         .padding(.horizontal)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)

@@ -7,12 +7,12 @@ struct NotificationView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color("AppBackground").ignoresSafeArea()
+                Color(.systemGroupedBackground).ignoresSafeArea()
                 
                 List {
                     if store.notifications.isEmpty {
                         Text("No notifications yet.")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                             .padding()
                             .listRowBackground(Color.clear)
                     } else {
@@ -26,15 +26,15 @@ struct NotificationView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(notif.message)
                                         .font(.subheadline)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(.primary)
                                         .fontWeight(.medium)
                                     Text(notif.timestamp, style: .relative)
                                         .font(.caption2)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.secondary)
                                 }
                             }
                             .padding(.vertical, 8)
-                            .listRowBackground(Color("CardBackground").opacity(0.6))
+                            .listRowBackground(Color.white.opacity(0.8))
                         }
                     }
                 }
@@ -51,9 +51,6 @@ struct NotificationView: View {
                     }
                 }
             }
-            .background(Color("AppBackground"))
-            .scrollContentBackground(.hidden)
         }
-        .preferredColorScheme(.dark)
     }
 }

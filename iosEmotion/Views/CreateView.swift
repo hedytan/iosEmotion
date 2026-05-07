@@ -51,17 +51,17 @@ struct CreateView: View {
                     // Text input
                     ZStack(alignment: .topLeading) {
                         RoundedRectangle(cornerRadius: 12)
-                            .fill(Color("CardBackground"))
+                            .fill(Color.gray.opacity(0.1))
                             .frame(minHeight: 120)
 
                         if postText.isEmpty {
                             Text("What were you feeling when you made this?")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.secondary)
                                 .padding(16)
                         }
 
                         TextEditor(text: $postText)
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                             .scrollContentBackground(.hidden)
                             .background(Color.clear)
                             .padding(12)
@@ -74,12 +74,12 @@ struct CreateView: View {
                             Image(systemName: selectedAudioURL == nil ? "waveform" : "checkmark.circle.fill")
                                 .foregroundColor(Color("AppPurple"))
                             Text(selectedAudioURL == nil ? "Add Audio" : "Audio Added")
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .fontWeight(.medium)
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color("CardBackground"))
+                        .background(Color.gray.opacity(0.1))
                         .cornerRadius(12)
                     }
 
@@ -90,15 +90,15 @@ struct CreateView: View {
                                 Image(systemName: selectedImageData == nil ? "photo" : "checkmark.circle.fill")
                                     .foregroundColor(Color("AppPurple"))
                                 Text(selectedImageData == nil ? "Add Photo" : "Photo Added")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                     .fontWeight(.medium)
                                 Text("Visual Muse")
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
-                            .background(Color("CardBackground"))
+                            .background(Color.gray.opacity(0.1))
                             .cornerRadius(12)
                         }
                         .onChange(of: selectedItem) { newItem in
@@ -114,15 +114,15 @@ struct CreateView: View {
                                 Image(systemName: "sparkles")
                                     .foregroundColor(Color("AppPurple"))
                                 Text("Mood Tag")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                                     .fontWeight(.medium)
                                 Text(selectedMood)
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
-                            .background(Color("CardBackground"))
+                            .background(Color.gray.opacity(0.1))
                             .cornerRadius(12)
                         }
                     }
@@ -151,7 +151,7 @@ struct CreateView: View {
                 }
                 .padding()
             }
-            .background(Color("AppBackground"))
+            .background(Color(.systemGroupedBackground))
             .sheet(isPresented: $showMoodPicker) {
                 MoodPickerView(selectedMood: $selectedMood)
             }
@@ -185,7 +185,7 @@ struct MoodPickerView: View {
             Text("Choose a Mood")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding(.top)
 
             LazyVGrid(columns: [
@@ -201,13 +201,13 @@ struct MoodPickerView: View {
                             Image(systemName: mood.1)
                                 .foregroundColor(Color("AppPurple"))
                             Text(mood.0)
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                             Spacer()
                         }
                         .padding()
                         .background(
                             selectedMood == mood.0 ?
-                            Color("AppPurple").opacity(0.3) : Color("CardBackground")
+                            Color("AppPurple").opacity(0.1) : Color.gray.opacity(0.1)
                         )
                         .cornerRadius(12)
                     }
@@ -216,7 +216,7 @@ struct MoodPickerView: View {
             Spacer()
         }
         .padding()
-        .background(Color("AppBackground"))
+        .background(Color(.systemGroupedBackground))
     }
 }
 
