@@ -14,14 +14,32 @@ class PostStore: ObservableObject {
              likes: 8200, comments: ["Relatable", "3am sessions are the best"])
     ]
 
+    @Published var notifications: [AppNotification] = []
+
+    var unreadCount: Int {
+        notifications.filter { !$0.isRead }.count
+    }
+
     func toggleLike(for postID: UUID) {
         if let index = posts.firstIndex(where: { $0.id == postID }) {
             posts[index].isLiked.toggle()
             if posts[index].isLiked {
                 posts[index].likes += 1
+                addNotification(type: .like, message: "Someone liked your post: \(posts[index].title)")
             } else {
                 posts[index].likes -= 1
             }
+        }
+    }
+
+    func addNotification(type: AppNotification.NotificationType, message: String) {
+        let newNotif = AppNotification(type: type, message: message)
+        notifications.insert(newNotif, at: 0)
+    }
+    
+    func markAllAsRead() {
+        for i in 0..<notifications.count {
+            notifications[i].isRead = true
         }
     }
 
@@ -45,6 +63,7 @@ class PostStore: ObservableObject {
     func addComment(to postID: UUID, text: String) {
         if let index = posts.firstIndex(where: { $0.id == postID }) {
             posts[index].comments.append(text)
+            addNotification(type: .comment, message: "New comment on \(posts[index].title): \"\(text)\"")
         }
     }
 }

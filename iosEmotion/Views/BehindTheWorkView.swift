@@ -9,20 +9,36 @@ import SwiftUI
 
 struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
+    @State private var showNotifications = false
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     // Header
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("BEHIND THE")
-                            .font(.system(size: 28, weight: .black))
-                            .foregroundColor(Color("AppPurple"))
-                        Text("WORK")
-                            .font(.system(size: 28, weight: .black))
-                            .italic()
-                            .foregroundColor(Color("AppPurple"))
+                    HStack {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("RESONANCE")
+                                .font(.system(size: 28, weight: .black))
+                                .foregroundColor(Color("AppPurple"))
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: { showNotifications = true }) {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "bell.fill")
+                                    .font(.title3)
+                                    .foregroundColor(.white)
+                                
+                                if store.unreadCount > 0 {
+                                    Circle()
+                                        .fill(.red)
+                                        .frame(width: 10, height: 10)
+                                        .offset(x: 2, y: -2)
+                                }
+                            }
+                        }
                     }
                     .padding(.horizontal)
                     .padding(.top, 10)
@@ -37,6 +53,9 @@ struct BehindTheWorkView: View {
             }
             .background(Color("AppBackground"))
             .navigationBarHidden(true)
+            .sheet(isPresented: $showNotifications) {
+                NotificationView()
+            }
         }
     }
 }
