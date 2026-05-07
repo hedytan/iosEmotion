@@ -20,12 +20,15 @@ class PostStore: ObservableObject {
         notifications.filter { !$0.isRead }.count
     }
 
+    private let randomUsers = ["Artist_Muse", "SonicExplorer", "Visionary", "PureVibe", "DigitalSoul", "Echo_Writer"]
+
     func toggleLike(for postID: UUID) {
         if let index = posts.firstIndex(where: { $0.id == postID }) {
             posts[index].isLiked.toggle()
             if posts[index].isLiked {
                 posts[index].likes += 1
-                addNotification(type: .like, message: "Someone liked your post: \(posts[index].title)")
+                let user = randomUsers.randomElement() ?? "Someone"
+                addNotification(type: .like, message: "\(user) liked your photo: \(posts[index].title)")
             } else {
                 posts[index].likes -= 1
             }
@@ -63,7 +66,8 @@ class PostStore: ObservableObject {
     func addComment(to postID: UUID, text: String) {
         if let index = posts.firstIndex(where: { $0.id == postID }) {
             posts[index].comments.append(text)
-            addNotification(type: .comment, message: "New comment on \(posts[index].title): \"\(text)\"")
+            let user = randomUsers.randomElement() ?? "Someone"
+            addNotification(type: .comment, message: "\(user) commented: \"\(text)\"")
         }
     }
 }
