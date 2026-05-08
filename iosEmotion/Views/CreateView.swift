@@ -10,6 +10,7 @@ import PhotosUI
 
 struct CreateView: View {
     @EnvironmentObject var store: PostStore
+    @Binding var selectedTab: Int
     @State private var postText: String = ""
     @State private var selectedMood: String = "NEW FRAGMENT"
     @State private var showMoodPicker = false
@@ -167,7 +168,7 @@ struct CreateView: View {
                             postText = ""
                             selectedImageData = nil
                             selectedAudioURL = nil
-                            dismiss() // Dismiss the view after posting
+                            selectedTab = 0 // Jump to Explore tab
                         }
                     }) {
                         Text("Post")
@@ -252,11 +253,11 @@ struct MoodPickerView: View {
 }
 
 #Preview {
-    CreateView()
+    CreateView(selectedTab: .constant(1))
         .environmentObject(PostStore())
 }
 
 #Preview {
-    CreateView()
+    CreateView(selectedTab: .constant(1))
         .environmentObject(PostStore())
 }
