@@ -68,9 +68,8 @@ struct PostCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Card Container (Image or Audio Player)
+            // 1. The Media/Art Card
             ZStack(alignment: .bottomLeading) {
-                // Background Image or Artistic Gradient
                 Group {
                     if let data = post.imageData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
@@ -85,7 +84,7 @@ struct PostCardView: View {
                 .frame(maxWidth: .infinity)
                 .clipped()
                 
-                // Content Overlay (Tag & Title or Audio Controls)
+                // Content Overlay
                 if post.isAudio {
                     VStack {
                         Spacer()
@@ -122,7 +121,6 @@ struct PostCardView: View {
                         .background(BlurView(style: .systemUltraThinMaterialDark))
                     }
                 } else {
-                    // Artistic Text Overlay for Photo Posts
                     LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
                     
                     VStack(alignment: .leading, spacing: 8) {
@@ -144,10 +142,9 @@ struct PostCardView: View {
                 }
             }
             .frame(height: 400)
-            .cornerRadius(24)
-            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+            .clipped()
             
-            // Interaction Bar (Below Card)
+            // 2. Interaction Area
             VStack(alignment: .leading, spacing: 12) {
                 Text(post.description)
                     .font(.subheadline)
@@ -192,10 +189,13 @@ struct PostCardView: View {
                     }
                 }
             }
-            .padding(.horizontal, 8)
+            .padding([.horizontal, .bottom], 20)
         }
+        .background(Color.white)
+        .cornerRadius(24)
+        .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
         .padding(.horizontal, 20)
-        .padding(.bottom, 32)
+        .padding(.bottom, 24)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
