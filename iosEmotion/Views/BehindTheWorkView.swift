@@ -71,21 +71,22 @@ struct PostCardView: View {
             // Card Container (Image or Audio Player)
             ZStack(alignment: .bottomLeading) {
                 // Background Image or Artistic Gradient
-                if let data = post.imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 400)
-                        .clipped()
-                } else {
-                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                        .frame(height: 400)
+                Group {
+                    if let data = post.imageData, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
+                        LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing)
+                    }
                 }
+                .frame(height: 400)
+                .frame(maxWidth: .infinity)
+                .clipped()
                 
                 // Content Overlay (Tag & Title or Audio Controls)
                 if post.isAudio {
-                    // Audio UI ... (same as before)
                     VStack {
                         Spacer()
                         HStack {
@@ -144,7 +145,7 @@ struct PostCardView: View {
             }
             .frame(height: 400)
             .cornerRadius(24)
-            .clipped() // Ensures the image respects the corners
+            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
             
             // Interaction Bar (Below Card)
             VStack(alignment: .leading, spacing: 12) {
@@ -191,7 +192,7 @@ struct PostCardView: View {
                     }
                 }
             }
-            .padding(.horizontal, 4) // Align with card edges
+            .padding(.horizontal, 8)
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 32)
