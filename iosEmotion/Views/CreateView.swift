@@ -71,13 +71,29 @@ struct CreateView: View {
                     // Add Audio
                     Button(action: { showAudioImporter = true }) {
                         HStack {
-                            Image(systemName: selectedAudioURL == nil ? "waveform" : "checkmark.circle.fill")
-                                .foregroundColor(Color("AppPurple"))
-                            Text(selectedAudioURL == nil ? "Add Audio" : "Audio Added")
-                                .foregroundColor(.primary)
-                                .fontWeight(.medium)
+                            if let audioURL = selectedAudioURL {
+                                Image(systemName: "waveform.circle.fill")
+                                    .font(.title2)
+                                    .foregroundColor(Color("AppPurple"))
+                                VStack(alignment: .leading) {
+                                    Text("Audio Ready")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(audioURL.lastPathComponent)
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                        .lineLimit(1)
+                                }
+                            } else {
+                                Image(systemName: "waveform")
+                                    .foregroundColor(Color("AppPurple"))
+                                Text("Add Audio")
+                                    .foregroundColor(.primary)
+                                    .fontWeight(.medium)
+                            }
                         }
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(12)
@@ -123,10 +139,13 @@ struct CreateView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Image(systemName: "sparkles")
                                     .foregroundColor(Color("AppPurple"))
-                                Text("Mood Tag")
-                                    .foregroundColor(.primary)
-                                    .fontWeight(.medium)
+                                
                                 Text(selectedMood)
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.primary)
+                                
+                                Text("Selected Mood")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
                             }
