@@ -68,136 +68,139 @@ struct PostCardView: View {
     @State private var isPlaying = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // 1. Media Area
-            ZStack(alignment: .bottomLeading) {
-                if let data = post.imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 450)
-                        .clipped()
-                } else {
-                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                        .frame(height: 450)
-                }
-                
-                // Content Overlay
-                if post.isAudio {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Button(action: { isPlaying.toggle() }) {
-                                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                                    .font(.system(size: 60))
-                                    .foregroundColor(.white)
-                                    .shadow(radius: 10)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("NOW PLAYING")
-                                    .font(.caption2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.white.opacity(0.8))
-                                Text(post.title)
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                            }
+        HStack {
+            Spacer()
+            VStack(alignment: .leading, spacing: 0) {
+                // 1. Media Area
+                ZStack(alignment: .bottomLeading) {
+                    if let data = post.imageData, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(height: 480)
+                            .clipped()
+                    } else {
+                        LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing)
+                            .frame(height: 480)
+                    }
+                    
+                    // Content Overlay
+                    if post.isAudio {
+                        VStack {
                             Spacer()
-                            
-                            // Mock Waveform
-                            HStack(spacing: 3) {
-                                ForEach(0..<10) { i in
-                                    RoundedRectangle(cornerRadius: 2)
-                                        .fill(Color.white)
-                                        .frame(width: 3, height: isPlaying ? CGFloat.random(in: 10...30) : 5)
-                                        .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.1), value: isPlaying)
+                            HStack {
+                                Button(action: { isPlaying.toggle() }) {
+                                    Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                                        .font(.system(size: 60))
+                                        .foregroundColor(.white)
+                                        .shadow(radius: 10)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("NOW PLAYING")
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.white.opacity(0.8))
+                                    Text(post.title)
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                }
+                                Spacer()
+                                
+                                // Mock Waveform
+                                HStack(spacing: 3) {
+                                    ForEach(0..<10) { i in
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(Color.white)
+                                            .frame(width: 3, height: isPlaying ? CGFloat.random(in: 10...30) : 5)
+                                            .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.1), value: isPlaying)
+                                    }
                                 }
                             }
+                            .padding(20)
+                            .background(BlurView(style: .systemUltraThinMaterialDark))
+                        }
+                    } else {
+                        LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(post.tag)
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color("AppPurple"))
+                                .foregroundColor(.white)
+                                .cornerRadius(4)
+                            
+                            Text(post.title)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
                         }
                         .padding(20)
-                        .background(BlurView(style: .systemUltraThinMaterialDark))
                     }
-                } else {
-                    LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(post.tag)
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color("AppPurple"))
-                            .foregroundColor(.white)
-                            .cornerRadius(4)
-                        
-                        Text(post.title)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    }
-                    .padding(20)
                 }
-            }
-            .frame(height: 450)
-            .clipped()
-            
-            // 2. Interaction Area
-            VStack(alignment: .leading, spacing: 12) {
-                Text(post.description)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .padding(.top, 12)
+                .frame(height: 480)
+                .clipped()
                 
-                HStack {
-                    HStack(spacing: 20) {
-                        Button(action: { store.toggleLike(for: post.id) }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: post.isLiked ? "heart.fill" : "heart")
-                                Text(post.likeCountString)
-                                    .font(.caption)
+                // 2. Interaction Area
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(post.description)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .padding(.top, 12)
+                    
+                    HStack {
+                        HStack(spacing: 20) {
+                            Button(action: { store.toggleLike(for: post.id) }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                                    Text(post.likeCountString)
+                                        .font(.caption)
+                                }
+                                .foregroundColor(post.isLiked ? .pink : .gray)
                             }
-                            .foregroundColor(post.isLiked ? .pink : .gray)
+                            
+                            Button(action: { showComments = true }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "bubble.left")
+                                    Text("\(post.comments.count)")
+                                        .font(.caption)
+                                }
+                                .foregroundColor(.gray)
+                            }
                         }
+                        
+                        Spacer()
                         
                         Button(action: { showComments = true }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "bubble.left")
-                                Text("\(post.comments.count)")
-                                    .font(.caption)
-                            }
-                            .foregroundColor(.gray)
+                            Text("JOIN DISCUSSION")
+                                .font(.caption2)
+                                .fontWeight(.bold)
+                                .foregroundColor(Color("AppPurple"))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(Color("AppPurple"), lineWidth: 1)
+                                )
                         }
                     }
-                    
-                    Spacer()
-                    
-                    Button(action: { showComments = true }) {
-                        Text("JOIN DISCUSSION")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color("AppPurple"))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(Color("AppPurple"), lineWidth: 1)
-                            )
-                    }
                 }
+                .padding([.horizontal, .bottom], 20)
             }
-            .padding([.horizontal, .bottom], 20)
+            .frame(maxWidth: 340) // STRICT PHONE SIZE
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+            .sheet(isPresented: $showComments) {
+                CommentSheet(store: store, postID: post.id)
+            }
+            Spacer()
         }
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-        .sheet(isPresented: $showComments) {
-            CommentSheet(store: store, postID: post.id)
-        }
-    }
-}
     }
 }
 
