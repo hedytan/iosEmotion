@@ -162,10 +162,12 @@ struct CreateView: View {
                             store.addPost(tag: selectedMood.uppercased(), 
                                           title: "New Creation", 
                                           description: postText,
-                                          imageData: selectedImageData)
+                                          imageData: selectedImageData,
+                                          isAudio: selectedAudioURL != nil)
                             postText = ""
                             selectedImageData = nil
                             selectedAudioURL = nil
+                            dismiss() // Dismiss the view after posting
                         }
                     }) {
                         Text("Post")

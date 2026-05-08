@@ -79,7 +79,7 @@ struct PostCardView: View {
                 } else {
                     LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.05)],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
-                        .frame(height: 300)
+                        .frame(height: 400)
                 }
                 
                 // Audio Overlay
