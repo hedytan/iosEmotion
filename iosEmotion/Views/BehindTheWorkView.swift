@@ -64,125 +64,146 @@ struct PostCardView: View {
     @EnvironmentObject var store: PostStore
     var post: Post
     @State private var showComments = false
+    @State private var isPlaying = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Tag & Title
-            VStack(alignment: .leading, spacing: 8) {
-                Text("NEW RELEASED")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color("AppPurple"))
-                
-                Text(post.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-            }
-            
-            // Artist Info
-            HStack(spacing: 12) {
-                Circle()
-                    .fill(Color("AppPurple").opacity(0.1))
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Text("H")
-                            .foregroundColor(Color("AppPurple"))
-                            .font(.system(size: 14, weight: .bold))
-                    )
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("keshi")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-                    Text("Artist • Fragment Mode")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .bottomLeading) {
+                // Background Image or Artistic Gradient
+                if let data = post.imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 400)
+                        .clipped()
+                } else {
+                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.05)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                        .frame(height: 300)
                 }
-            }
-            
-            // Image (if any)
-            if let data = post.imageData, let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 200)
-                    .clipped()
-                    .cornerRadius(12)
-            }
-
-            // Description
-            Text(post.description)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .lineLimit(3)
-                .padding(.leading, 8)
-                .overlay(
-                    Rectangle()
-                        .fill(Color("AppPurple"))
-                        .frame(width: 2)
-                        .padding(.vertical, 2),
-                    alignment: .leading
-                )
-            
-            // Shared info
-            HStack {
-                HStack(spacing: -8) {
-                    ForEach(0..<3) { _ in
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 20, height: 20)
-                            .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                
+                // Audio Overlay
+                if post.isAudio {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Button(action: { isPlaying.toggle() }) {
+                                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.white)
+                                    .shadow(radius: 10)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("NOW PLAYING")
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white.opacity(0.8))
+                                Text(post.title)
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                            }
+                            Spacer()
+                            
+                            // Mock Waveform
+                            HStack(spacing: 3) {
+                                ForEach(0..<10) { i in
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color.white)
+                                        .frame(width: 3, height: isPlaying ? CGFloat.random(in: 10...30) : 5)
+                                        .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.1), value: isPlaying)
+                                }
+                            }
+                        }
+                        .padding(20)
+                        .background(BlurView(style: .systemUltraThinMaterialDark))
                     }
+                } else {
+                    // Artistic Text Overlay for Photo Posts
+                    LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(post.tag)
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color("AppPurple"))
+                            .foregroundColor(.white)
+                            .cornerRadius(4)
+                        
+                        Text(post.title)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                    }
+                    .padding(20)
                 }
-                Text("Shared by top curators")
-                    .font(.caption2)
+            }
+            .cornerRadius(24)
+            .padding(.horizontal)
+            
+            // Interaction Bar (Below Card)
+            VStack(alignment: .leading, spacing: 12) {
+                Text(post.description)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
-            }
-
-            // Action Bar
-            HStack {
-                HStack(spacing: 16) {
-                    Button(action: { store.toggleLike(for: post.id) }) {
-                        Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                    .lineLimit(2)
+                    .padding(.top, 12)
+                
+                HStack {
+                    HStack(spacing: 20) {
+                        Button(action: { store.toggleLike(for: post.id) }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                                Text(post.likeCountString)
+                                    .font(.caption)
+                            }
                             .foregroundColor(post.isLiked ? .pink : .gray)
+                        }
+                        
+                        Button(action: { showComments = true }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "bubble.left")
+                                Text("\(post.comments.count)")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.gray)
+                        }
                     }
+                    
+                    Spacer()
                     
                     Button(action: { showComments = true }) {
-                        Image(systemName: "bubble.left")
-                            .foregroundColor(.gray)
+                        Text("JOIN DISCUSSION")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("AppPurple"))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(Color("AppPurple"), lineWidth: 1)
+                            )
                     }
-                    
-                    Button(action: { store.toggleSave(for: post.id) }) {
-                        Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
-                            .foregroundColor(post.isSaved ? Color("AppPurple") : .gray)
-                    }
-                }
-                
-                Spacer()
-                
-                Button(action: { showComments = true }) {
-                    Text("JOIN DISCUSSION")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color("AppPurple"))
-                        .cornerRadius(20)
                 }
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 24)
         }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(24)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-        .padding(.horizontal)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
     }
+}
+
+// Helper for Blur
+struct BlurView: UIViewRepresentable {
+    var style: UIBlurEffect.Style
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: style))
+    }
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
 
 #Preview {
