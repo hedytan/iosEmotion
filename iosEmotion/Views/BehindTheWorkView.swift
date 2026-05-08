@@ -69,21 +69,19 @@ struct PostCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // 1. The Media/Art Card
+            // 1. Media Area
             ZStack(alignment: .bottomLeading) {
-                Group {
-                    if let data = post.imageData, let uiImage = UIImage(data: data) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else {
-                        LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
-                                       startPoint: .topLeading, endPoint: .bottomTrailing)
-                    }
+                if let data = post.imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 450)
+                        .clipped()
+                } else {
+                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                        .frame(height: 450)
                 }
-                .frame(height: 450) // Increased height for "Phone" feel
-                .frame(maxWidth: .infinity)
-                .clipped()
                 
                 // Content Overlay
                 if post.isAudio {
@@ -143,6 +141,7 @@ struct PostCardView: View {
                 }
             }
             .frame(height: 450)
+            .clipped()
             
             // 2. Interaction Area
             VStack(alignment: .leading, spacing: 12) {
@@ -192,13 +191,13 @@ struct PostCardView: View {
             .padding([.horizontal, .bottom], 20)
         }
         .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 24)) // Forced clipping of all content
-        .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
-        .padding(.horizontal, 20)
-        .padding(.bottom, 32)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
+    }
+}
     }
 }
 
