@@ -80,7 +80,7 @@ struct PostCardView: View {
                                        startPoint: .topLeading, endPoint: .bottomTrailing)
                     }
                 }
-                .frame(height: 400)
+                .frame(height: 450) // Increased height for "Phone" feel
                 .frame(maxWidth: .infinity)
                 .clipped()
                 
@@ -141,8 +141,7 @@ struct PostCardView: View {
                     .padding(20)
                 }
             }
-            .frame(height: 400)
-            .clipped()
+            .frame(height: 450)
             
             // 2. Interaction Area
             VStack(alignment: .leading, spacing: 12) {
@@ -192,10 +191,10 @@ struct PostCardView: View {
             .padding([.horizontal, .bottom], 20)
         }
         .background(Color.white)
-        .cornerRadius(24)
+        .clipShape(RoundedRectangle(cornerRadius: 24)) // Forced clipping of all content
         .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
         .padding(.horizontal, 20)
-        .padding(.bottom, 24)
+        .padding(.bottom, 32)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
