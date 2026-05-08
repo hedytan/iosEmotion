@@ -43,12 +43,13 @@ struct BehindTheWorkView: View {
                     .padding(.horizontal)
                     .padding(.top, 10)
 
-                    // Feed
-                    LazyVStack(spacing: 20) {
+                    LazyVStack(spacing: 32) { // Increased spacing for a cleaner look
                         ForEach(store.posts) { post in
                             PostCardView(post: post)
                         }
                     }
+                    .padding(.horizontal, 24) // GUTTER: Forces everything to stay in 'Phone Size'
+                    .padding(.top)
                 }
             }
             .background(Color(.systemGroupedBackground))
