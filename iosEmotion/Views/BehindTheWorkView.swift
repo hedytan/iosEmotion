@@ -111,7 +111,7 @@ struct PostCardView: View {
                 .clipped()
                 
                 // 2. Interaction Area (Stays white)
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 12) {
                     // Description
                     if !post.description.isEmpty {
                         Text(post.description)
@@ -119,12 +119,15 @@ struct PostCardView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(2)
                             .padding(.top, 12)
+                    } else {
+                        // Maintain spacing if no description
+                        Spacer().frame(height: 12)
                     }
                     
                     // Buttons Row
                     HStack {
                         // Likes & Comments
-                        HStack(spacing: 16) {
+                        HStack(spacing: 20) {
                             Button(action: { store.toggleLike(for: post.id) }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: post.isLiked ? "heart.fill" : "heart")
@@ -142,6 +145,7 @@ struct PostCardView: View {
                             }
                         }
                         .font(.subheadline)
+                        .fontWeight(.medium)
                         
                         Spacer()
                         
@@ -151,14 +155,17 @@ struct PostCardView: View {
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color("AppPurple"))
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, 14)
                                 .padding(.vertical, 8)
+                                .background(Color("AppPurple").opacity(0.05))
+                                .cornerRadius(20)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color("AppPurple"), lineWidth: 1)
+                                        .stroke(Color("AppPurple").opacity(0.3), lineWidth: 1)
                                 )
                         }
                     }
+                    .frame(maxWidth: .infinity) // FORCE FULL WIDTH
                     .padding(.bottom, 20)
                 }
                 .padding(.horizontal, 20)
