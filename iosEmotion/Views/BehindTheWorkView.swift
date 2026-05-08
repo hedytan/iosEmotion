@@ -71,7 +71,7 @@ struct PostCardView: View {
         HStack {
             Spacer()
             VStack(alignment: .leading, spacing: 0) {
-                // 1. Media Area
+                // 1. Media Area (Image or Audio Background)
                 ZStack(alignment: .bottomLeading) {
                     if let data = post.imageData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
@@ -85,43 +85,8 @@ struct PostCardView: View {
                             .frame(height: 480)
                     }
                     
-                    // Content Overlay
-                    if post.isAudio {
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Button(action: { isPlaying.toggle() }) {
-                                    Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                                        .font(.system(size: 60))
-                                        .foregroundColor(.white)
-                                        .shadow(radius: 10)
-                                }
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("NOW PLAYING")
-                                        .font(.caption2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.white.opacity(0.8))
-                                    Text(post.title)
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                }
-                                Spacer()
-                                
-                                // Mock Waveform
-                                HStack(spacing: 3) {
-                                    ForEach(0..<10) { i in
-                                        RoundedRectangle(cornerRadius: 2)
-                                            .fill(Color.white)
-                                            .frame(width: 3, height: isPlaying ? CGFloat.random(in: 10...30) : 5)
-                                            .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.1), value: isPlaying)
-                                    }
-                                }
-                            }
-                            .padding(20)
-                            .background(BlurView(style: .systemUltraThinMaterialDark))
-                        }
-                    } else {
+                    // Text Overlay for Photo Posts
+                    if !post.isAudio {
                         LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -145,21 +110,25 @@ struct PostCardView: View {
                 .frame(height: 480)
                 .clipped()
                 
-                // 2. Interaction Area
-                VStack(alignment: .leading, spacing: 12) {
-                    Text(post.description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                        .padding(.top, 12)
+                // 2. Interaction Area (Stays white)
+                VStack(alignment: .leading, spacing: 16) {
+                    // Description
+                    if !post.description.isEmpty {
+                        Text(post.description)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                            .padding(.top, 12)
+                    }
                     
+                    // Buttons Row
                     HStack {
-                        HStack(spacing: 20) {
+                        // Likes & Comments
+                        HStack(spacing: 16) {
                             Button(action: { store.toggleLike(for: post.id) }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: post.isLiked ? "heart.fill" : "heart")
                                     Text(post.likeCountString)
-                                        .font(.caption)
                                 }
                                 .foregroundColor(post.isLiked ? .pink : .gray)
                             }
@@ -168,34 +137,75 @@ struct PostCardView: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: "bubble.left")
                                     Text("\(post.comments.count)")
-                                        .font(.caption)
                                 }
                                 .foregroundColor(.gray)
                             }
                         }
+                        .font(.subheadline)
                         
                         Spacer()
                         
+                        // Action Button
                         Button(action: { showComments = true }) {
                             Text("JOIN DISCUSSION")
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(Color("AppPurple"))
                                 .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                                .padding(.vertical, 8)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 15)
+                                    RoundedRectangle(cornerRadius: 20)
                                         .stroke(Color("AppPurple"), lineWidth: 1)
                                 )
                         }
                     }
+                    .padding(.bottom, 20)
                 }
-                .padding([.horizontal, .bottom], 20)
+                .padding(.horizontal, 20)
+                
+                // Special Audio Player Controls (Only for Audio posts)
+                if post.isAudio {
+                    HStack {
+                        Button(action: { isPlaying.toggle() }) {
+                            Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                                .padding(12)
+                                .background(Color("AppPurple"))
+                                .clipShape(Circle())
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(post.title)
+                                .font(.caption)
+                                .fontWeight(.bold)
+                            Text("NOW PLAYING")
+                                .font(.system(size: 8))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        // Mock Waveform
+                        HStack(spacing: 2) {
+                            ForEach(0..<8) { i in
+                                RoundedRectangle(cornerRadius: 1)
+                                    .fill(Color("AppPurple").opacity(0.3))
+                                    .frame(width: 2, height: isPlaying ? CGFloat.random(in: 10...20) : 4)
+                                    .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.1), value: isPlaying)
+                            }
+                        }
+                    }
+                    .padding(12)
+                    .background(Color("AppPurple").opacity(0.05))
+                    .cornerRadius(12)
+                    .padding([.horizontal, .bottom], 12)
+                }
             }
-            .frame(maxWidth: 340) // STRICT PHONE SIZE
+            .frame(maxWidth: 340)
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
             .sheet(isPresented: $showComments) {
                 CommentSheet(store: store, postID: post.id)
             }
