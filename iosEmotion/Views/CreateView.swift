@@ -87,11 +87,21 @@ struct CreateView: View {
                     HStack(spacing: 12) {
                         PhotosPicker(selection: $selectedItem, matching: .images) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Image(systemName: selectedImageData == nil ? "photo" : "checkmark.circle.fill")
-                                    .foregroundColor(Color("AppPurple"))
-                                Text(selectedImageData == nil ? "Add Photo" : "Photo Added")
-                                    .foregroundColor(.primary)
-                                    .fontWeight(.medium)
+                                if let data = selectedImageData, let uiImage = UIImage(data: data) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: 80)
+                                        .cornerRadius(8)
+                                } else {
+                                    Image(systemName: "photo")
+                                        .foregroundColor(Color("AppPurple"))
+                                    Text("Add Photo")
+                                        .foregroundColor(.primary)
+                                        .fontWeight(.medium)
+                                }
+                                
                                 Text("Visual Muse")
                                     .font(.caption2)
                                     .foregroundColor(.secondary)
