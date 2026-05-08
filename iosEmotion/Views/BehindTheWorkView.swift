@@ -68,6 +68,7 @@ struct PostCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            // Card Container (Image or Audio Player)
             ZStack(alignment: .bottomLeading) {
                 // Background Image or Artistic Gradient
                 if let data = post.imageData, let uiImage = UIImage(data: data) {
@@ -77,13 +78,14 @@ struct PostCardView: View {
                         .frame(height: 400)
                         .clipped()
                 } else {
-                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.05)],
+                    LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                         .frame(height: 400)
                 }
                 
-                // Audio Overlay
+                // Content Overlay (Tag & Title or Audio Controls)
                 if post.isAudio {
+                    // Audio UI ... (same as before)
                     VStack {
                         Spacer()
                         HStack {
@@ -120,7 +122,7 @@ struct PostCardView: View {
                     }
                 } else {
                     // Artistic Text Overlay for Photo Posts
-                    LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom)
+                    LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
                     
                     VStack(alignment: .leading, spacing: 8) {
                         Text(post.tag)
@@ -140,8 +142,9 @@ struct PostCardView: View {
                     .padding(20)
                 }
             }
+            .frame(height: 400)
             .cornerRadius(24)
-            .padding(.horizontal)
+            .clipped() // Ensures the image respects the corners
             
             // Interaction Bar (Below Card)
             VStack(alignment: .leading, spacing: 12) {
@@ -188,9 +191,10 @@ struct PostCardView: View {
                     }
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 4) // Align with card edges
         }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 32)
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
