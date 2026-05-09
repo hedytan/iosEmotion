@@ -51,8 +51,8 @@ struct OnboardingView: View {
                     }
                 } else if step == 2 {
                     VStack(spacing: 20) {
-                        Text("Add a Profile\nPhoto.")
-                            .font(.system(size: 32, weight: .black))
+                        Text("Add a Profile Photo")
+                            .font(.system(size: 30, weight: .black))
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color("AppPurple"))
                         
@@ -89,8 +89,8 @@ struct OnboardingView: View {
                     }
                 } else if step == 3 {
                     VStack(spacing: 20) {
-                        Text("Your Artist\nIdentity.")
-                            .font(.system(size: 32, weight: .black))
+                        Text("Your Identity")
+                            .font(.system(size: 30, weight: .black))
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color("AppPurple"))
                         
