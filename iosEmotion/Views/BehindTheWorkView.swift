@@ -120,53 +120,50 @@ struct PostCardView: View {
                             .lineLimit(2)
                             .padding(.top, 12)
                     } else {
-                        // Maintain spacing if no description
                         Spacer().frame(height: 12)
                     }
                     
-                    // Buttons Row
-                    HStack {
+                    // Interaction Bar (Actual Size Row)
+                    HStack(alignment: .center) {
                         // Likes & Comments
                         HStack(spacing: 20) {
                             Button(action: { store.toggleLike(for: post.id) }) {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 6) {
                                     Image(systemName: post.isLiked ? "heart.fill" : "heart")
+                                        .font(.system(size: 18))
                                     Text(post.likeCountString)
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(post.isLiked ? .pink : .gray)
                             }
                             
                             Button(action: { showComments = true }) {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 6) {
                                     Image(systemName: "bubble.left")
+                                        .font(.system(size: 18))
                                     Text("\(post.comments.count)")
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(.gray)
                             }
                         }
-                        .font(.subheadline)
-                        .fontWeight(.medium)
                         
                         Spacer()
                         
                         // Action Button
                         Button(action: { showComments = true }) {
                             Text("JOIN DISCUSSION")
-                                .font(.caption2)
-                                .fontWeight(.bold)
+                                .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(Color("AppPurple"))
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 8)
-                                .background(Color("AppPurple").opacity(0.05))
+                                .background(Color("AppPurple").opacity(0.08))
                                 .cornerRadius(20)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(Color("AppPurple").opacity(0.3), lineWidth: 1)
-                                )
                         }
                     }
-                    .frame(maxWidth: .infinity) // FORCE FULL WIDTH
-                    .padding(.bottom, 20)
+                    .frame(height: 44) // Actual size height for touch targets
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 16)
                 }
                 .padding(.horizontal, 20)
                 
