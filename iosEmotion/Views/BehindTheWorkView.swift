@@ -13,47 +13,55 @@ struct BehindTheWorkView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Header
-                    HStack {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("RESONANCE")
-                                .font(.system(size: 28, weight: .black))
-                                .foregroundColor(Color("AppPurple"))
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: { showNotifications = true }) {
-                            ZStack(alignment: .topTrailing) {
-                                Image(systemName: "bell.fill")
-                                    .font(.title3)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Header
+                        HStack {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("RESONANCE")
+                                    .font(.system(size: 28, weight: .black))
                                     .foregroundColor(Color("AppPurple"))
-                                
-                                if store.unreadCount > 0 {
-                                    Circle()
-                                        .fill(.red)
-                                        .frame(width: 10, height: 10)
-                                        .offset(x: 2, y: -2)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: { showNotifications = true }) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell.fill")
+                                        .font(.title3)
+                                        .foregroundColor(Color("AppPurple"))
+                                    
+                                    if store.unreadCount > 0 {
+                                        Circle()
+                                            .fill(.red)
+                                            .frame(width: 10, height: 10)
+                                            .offset(x: 2, y: -2)
+                                    }
                                 }
                             }
                         }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 10)
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+                        .id("TOP")
 
-                    LazyVStack(spacing: 32) { // Increased spacing for a cleaner look
-                        ForEach(store.posts) { post in
-                            PostCardView(post: post)
+                        LazyVStack(spacing: 32) { // Increased spacing for a cleaner look
+                            ForEach(store.posts) { post in
+                                PostCardView(post: post)
+                            }
                         }
+                        .padding(.horizontal, 24) // GUTTER: Forces everything to stay in 'Phone Size'
+                        .padding(.top)
                     }
-                    .padding(.horizontal, 24) // GUTTER: Forces everything to stay in 'Phone Size'
-                    .padding(.top)
+                }
+                .background(Color(.systemGroupedBackground))
+                .navigationBarHidden(true)
+                .onChange(of: store.posts.count) { _ in
+                    withAnimation(.spring()) {
+                        proxy.scrollTo("TOP", anchor: .top)
+                    }
                 }
             }
-            .background(Color(.systemGroupedBackground))
-            .navigationBarHidden(true)
             .sheet(isPresented: $showNotifications) {
                 NotificationView()
             }
