@@ -18,20 +18,30 @@ struct ProfileView: View {
                     // Avatar
                     HStack {
                         ZStack(alignment: .bottomTrailing) {
-                            Circle()
-                                .fill(Color("AppPurple").opacity(0.1))
-                                .frame(width: 80, height: 80)
-                                .overlay(
-                                    Image(systemName: "person.fill")
-                                        .font(.system(size: 36))
-                                        .foregroundColor(Color("AppPurple"))
-                                )
+                            if let data = store.currentUser.avatarData, let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color("AppPurple").opacity(0.1), lineWidth: 4))
+                            } else {
+                                Circle()
+                                    .fill(Color("AppPurple").opacity(0.1))
+                                    .frame(width: 80, height: 80)
+                                    .overlay(
+                                        Image(systemName: "person.fill")
+                                            .font(.system(size: 36))
+                                            .foregroundColor(Color("AppPurple"))
+                                    )
+                            }
+                            
                             Circle()
                                 .fill(Color("AppPurple"))
-                                .frame(width: 22, height: 22)
+                                .frame(width: 26, height: 26)
                                 .overlay(
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.system(size: 12, weight: .bold))
                                         .foregroundColor(.white)
                                 )
                         }
@@ -40,14 +50,20 @@ struct ProfileView: View {
                     .padding(.horizontal)
 
                     // Name + bio
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(store.currentUser.name)
-                            .font(.system(size: 34, weight: .heavy))
+                            .font(.system(size: 38, weight: .black))
                             .foregroundColor(Color("AppPurple"))
-                        Text(store.currentUser.bio.uppercased())
-                            .font(.system(size: 10, weight: .bold))
+                        
+                        Text(store.currentUser.profession.uppercased())
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.secondary)
-                            .kerning(1)
+                            .kerning(1.5)
+                        
+                        Text(store.currentUser.bio)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
                     }
                     .padding(.horizontal)
 

@@ -2,13 +2,16 @@ import Foundation
 import Combine
 
 struct UserProfile {
-    var name: String = "hedy"
-    var handle: String = "@hedytan"
-    var bio: String = "Digital Artist & Sound Explorer"
+    var name: String = ""
+    var handle: String = ""
+    var bio: String = ""
+    var profession: String = "Artist"
+    var avatarData: Data? = nil // Circular profile photo
 }
 
 class PostStore: ObservableObject {
     @Published var currentUser = UserProfile()
+    @Published var hasCompletedOnboarding: Bool = false
     @Published var posts: [Post] = [
         Post(username: "HYBS", tag: "SPOTLIGHT", title: "LIMBO",
              description: "The sonic architecture of a dream state. Exploring the reverb trails in GABRIEL.",

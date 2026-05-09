@@ -30,20 +30,6 @@ struct CreateView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
 
-                    // Artist Identity
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("POSTING AS")
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.secondary)
-                        
-                        TextField("Your Name", text: $store.currentUser.name)
-                            .font(.headline)
-                            .foregroundColor(Color("AppPurple"))
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(12)
-                    }
-
                     // Tag
                     Button(action: { showMoodPicker = true }) {
                         Text(selectedMood.uppercased())

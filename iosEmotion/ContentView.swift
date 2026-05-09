@@ -8,39 +8,44 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var store: PostStore
     @State private var selectedTab: Int = 0
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            BehindTheWorkView()
-                .tabItem {
-                    Image(systemName: "safari")
-                    Text("EXPLORE")
-                }
-                .tag(0)
-            
-            CreateView(selectedTab: $selectedTab)
-                .tabItem {
-                    Image(systemName: "plus.circle")
-                    Text("CREATE")
-                }
-                .tag(1)
-            
-            BoardView()
-                .tabItem {
-                    Image(systemName: "bookmark")
-                    Text("SAVED")
-                }
-                .tag(2)
-            
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person")
-                    Text("PROFILE")
-                }
-                .tag(3)
+        if !store.hasCompletedOnboarding {
+            OnboardingView(selectedTab: $selectedTab)
+        } else {
+            TabView(selection: $selectedTab) {
+                BehindTheWorkView()
+                    .tabItem {
+                        Image(systemName: "safari")
+                        Text("EXPLORE")
+                    }
+                    .tag(0)
+                
+                CreateView(selectedTab: $selectedTab)
+                    .tabItem {
+                        Image(systemName: "plus.circle")
+                        Text("CREATE")
+                    }
+                    .tag(1)
+                
+                BoardView()
+                    .tabItem {
+                        Image(systemName: "bookmark")
+                        Text("SAVED")
+                    }
+                    .tag(2)
+                
+                ProfileView()
+                    .tabItem {
+                        Image(systemName: "person")
+                        Text("PROFILE")
+                    }
+                    .tag(3)
+            }
+            .tint(Color("AppPurple"))
         }
-        .tint(Color("AppPurple"))
     }
 }
 
