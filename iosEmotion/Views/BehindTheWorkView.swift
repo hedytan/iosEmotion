@@ -73,6 +73,7 @@ struct PostCardView: View {
     @EnvironmentObject var store: PostStore
     var post: Post
     @State private var showComments = false
+    @State private var showSaveSheet = false
     @State private var isPlaying = false
 
     var body: some View {
@@ -250,6 +251,12 @@ struct PostCardView: View {
             .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
             .sheet(isPresented: $showComments) {
                 CommentSheet(store: store, postID: post.id)
+            }
+            .sheet(isPresented: $showSaveSheet) {
+                SaveToAlbumSheet(postID: post.id)
+            }
+            .sheet(isPresented: $showSaveSheet) {
+                SaveToAlbumSheet(postID: post.id)
             }
             Spacer()
         }
