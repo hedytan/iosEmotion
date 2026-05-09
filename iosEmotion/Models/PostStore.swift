@@ -106,8 +106,8 @@ class PostStore: ObservableObject {
         }
     }
     
-    func addPost(username: String = "You", userAvatarData: Data? = nil, tag: String, title: String, description: String, imageData: Data? = nil, isAudio: Bool = false) {
-        let newPost = Post(username: username, userAvatarData: userAvatarData, tag: tag, title: title, description: description, likes: 0, imageData: imageData, isAudio: isAudio)
+    func addPost(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, imageData: Data? = nil, isAudio: Bool = false) {
+        let newPost = Post(username: username, userAvatarData: userAvatarData, userProfession: userProfession, tag: tag, title: title, description: description, likes: 0, imageData: imageData, isAudio: isAudio)
         posts.insert(newPost, at: 0)
     }
     

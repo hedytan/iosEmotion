@@ -3,7 +3,8 @@ import Foundation
 struct Post: Identifiable {
     let id = UUID()
     let username: String
-    let userAvatarData: Data? // New property for artist's profile picture
+    let userAvatarData: Data?
+    let userProfession: String? // New property for the artist's profession
     var tag: String
     var title: String
     var description: String
@@ -15,9 +16,10 @@ struct Post: Identifiable {
     var isAudio: Bool = false
     var comments: [String] = []
     
-    init(username: String = "You", userAvatarData: Data? = nil, tag: String, title: String, description: String, likes: Int = 0, imageData: Data? = nil, isAudio: Bool = false, comments: [String] = []) {
+    init(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, likes: Int = 0, imageData: Data? = nil, isAudio: Bool = false, comments: [String] = []) {
         self.username = username
         self.userAvatarData = userAvatarData
+        self.userProfession = userProfession
         self.tag = tag
         self.title = title
         self.description = description

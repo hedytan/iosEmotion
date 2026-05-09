@@ -103,7 +103,7 @@ struct PostCardView: View {
                         Text(post.username)
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.primary)
-                        Text("Artist & Musician")
+                        Text(post.userProfession ?? "Artist & Musician")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
