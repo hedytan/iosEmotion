@@ -109,44 +109,47 @@ struct PostCardView: View {
                 .padding(.vertical, 12)
                 .background(Color.white)
 
-                // 1. Media Area (Image or Audio Background)
-                ZStack(alignment: .bottomLeading) {
-                    if let data = post.imageData, let uiImage = UIImage(data: data) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 480)
-                            .clipped()
-                    } else {
-                        LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
-                                       startPoint: .topLeading, endPoint: .bottomTrailing)
-                            .frame(height: 480)
-                    }
-                    
-                    // Text Overlay for Photo Posts
-                    if !post.isAudio {
-                        LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(post.tag)
-                                .font(.caption2)
-                                .fontWeight(.bold)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color("AppPurple"))
-                                .foregroundColor(.white)
-                                .cornerRadius(4)
-                            
-                            Text(post.title)
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
+                // 1. Media Area (Only if Photo or Audio exists)
+                if post.imageData != nil || post.isAudio {
+                    ZStack(alignment: .bottomLeading) {
+                        if let data = post.imageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 480)
+                                .clipped()
+                        } else {
+                            // Audio placeholder or fallback gradient
+                            LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
+                                           startPoint: .topLeading, endPoint: .bottomTrailing)
+                                .frame(height: 480)
                         }
-                        .padding(20)
+                        
+                        // Text Overlay for Photo Posts
+                        if !post.isAudio {
+                            LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(post.tag)
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color("AppPurple"))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(4)
+                                
+                                Text(post.title)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                            }
+                            .padding(20)
+                        }
                     }
+                    .frame(height: 480)
+                    .clipped()
                 }
-                .frame(height: 480)
-                .clipped()
                 
                 // 2. Interaction Area (Stays white)
                 VStack(alignment: .leading, spacing: 12) {
