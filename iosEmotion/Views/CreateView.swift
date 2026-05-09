@@ -164,6 +164,7 @@ struct CreateView: View {
                         
                         if canPost {
                             store.addPost(username: store.currentUser.name,
+                                          userAvatarData: store.currentUser.avatarData,
                                           tag: selectedMood.uppercased(), 
                                           title: "New Creation", 
                                           description: postText,

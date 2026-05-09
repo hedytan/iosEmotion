@@ -45,12 +45,12 @@ struct BehindTheWorkView: View {
                         .padding(.top, 10)
                         .id("TOP")
 
-                        LazyVStack(spacing: 32) { // Increased spacing for a cleaner look
+                        LazyVStack(spacing: 32) {
                             ForEach(store.posts) { post in
                                 PostCardView(post: post)
                             }
                         }
-                        .padding(.horizontal, 24) // GUTTER: Forces everything to stay in 'Phone Size'
+                        .padding(.horizontal, 24)
                         .padding(.top)
                     }
                 }
@@ -81,14 +81,22 @@ struct PostCardView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // 0. Artist Header
                 HStack(spacing: 10) {
-                    Circle()
-                        .fill(Color("AppPurple").opacity(0.1))
-                        .frame(width: 32, height: 32)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 14))
-                                .foregroundColor(Color("AppPurple"))
-                        )
+                    if let avatarData = post.userAvatarData, let uiImage = UIImage(data: avatarData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 32, height: 32)
+                            .clipShape(Circle())
+                    } else {
+                        Circle()
+                            .fill(Color("AppPurple").opacity(0.1))
+                            .frame(width: 32, height: 32)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color("AppPurple"))
+                            )
+                    }
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text(post.username)
@@ -116,16 +124,14 @@ struct PostCardView: View {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 340, height: 480) // LOCK BOTH WIDTH AND HEIGHT
+                                .frame(width: 340, height: 480)
                                 .clipped()
                         } else {
-                            // Audio placeholder or fallback gradient
                             LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
                                            startPoint: .topLeading, endPoint: .bottomTrailing)
-                                .frame(width: 340, height: 480) // LOCK PLACEHOLDER SIZE
+                                .frame(width: 340, height: 480)
                         }
                         
-                        // Text Overlay for Photo Posts
                         if !post.isAudio {
                             LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
                                 .frame(width: 340, height: 480)
@@ -148,13 +154,12 @@ struct PostCardView: View {
                             .padding(20)
                         }
                     }
-                    .frame(width: 340, height: 480) // REINFORCE CONTAINER SIZE
+                    .frame(width: 340, height: 480)
                     .clipped()
                 }
                 
-                // 2. Interaction Area (Stays white)
+                // 2. Interaction Area
                 VStack(alignment: .leading, spacing: 12) {
-                    // Description
                     if !post.description.isEmpty {
                         Text(post.description)
                             .font(.subheadline)
@@ -165,9 +170,7 @@ struct PostCardView: View {
                         Spacer().frame(height: 12)
                     }
                     
-                    // Interaction Bar (Actual Size Row)
                     HStack(alignment: .center) {
-                        // Likes & Comments
                         HStack(spacing: 20) {
                             Button(action: { store.toggleLike(for: post.id) }) {
                                 HStack(spacing: 6) {
@@ -191,14 +194,14 @@ struct PostCardView: View {
                         }
                         
                         Spacer()
+                        // THE BUTTON IS GONE HERE
                     }
-                    .frame(height: 44) // Actual size height for touch targets
+                    .frame(height: 44)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 16)
                 }
                 .padding(.horizontal, 20)
                 
-                // Special Audio Player Controls (Only for Audio posts)
                 if post.isAudio {
                     HStack {
                         Button(action: { isPlaying.toggle() }) {
@@ -221,7 +224,6 @@ struct PostCardView: View {
                         
                         Spacer()
                         
-                        // Mock Waveform
                         HStack(spacing: 2) {
                             ForEach(0..<8) { i in
                                 RoundedRectangle(cornerRadius: 1)
@@ -237,7 +239,7 @@ struct PostCardView: View {
                     .padding([.horizontal, .bottom], 12)
                 }
             }
-            .frame(width: 340) // FIXED PHYSICAL SIZE
+            .frame(width: 340)
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
@@ -247,15 +249,6 @@ struct PostCardView: View {
             Spacer()
         }
     }
-}
-
-// Helper for Blur
-struct BlurView: UIViewRepresentable {
-    var style: UIBlurEffect.Style
-    func makeUIView(context: Context) -> UIVisualEffectView {
-        UIVisualEffectView(effect: UIBlurEffect(style: style))
-    }
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
 
 #Preview {
