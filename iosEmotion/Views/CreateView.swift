@@ -12,7 +12,6 @@ struct CreateView: View {
     @EnvironmentObject var store: PostStore
     @Binding var selectedTab: Int
     @State private var postText: String = ""
-    @State private var username: String = "Your Artist Name" // New state
     @State private var selectedMood: String = "NEW FRAGMENT"
     @State private var showMoodPicker = false
     
@@ -37,7 +36,7 @@ struct CreateView: View {
                             .font(.system(size: 10, weight: .bold))
                             .foregroundColor(.secondary)
                         
-                        TextField("Artist Name (e.g. HYBS)", text: $username)
+                        TextField("Your Name", text: $store.currentUser.name)
                             .font(.headline)
                             .foregroundColor(Color("AppPurple"))
                             .padding()
@@ -178,7 +177,7 @@ struct CreateView: View {
                         let canPost = !postText.isEmpty || selectedImageData != nil || selectedAudioURL != nil
                         
                         if canPost {
-                            store.addPost(username: username,
+                            store.addPost(username: store.currentUser.name,
                                           tag: selectedMood.uppercased(), 
                                           title: "New Creation", 
                                           description: postText,
@@ -187,7 +186,6 @@ struct CreateView: View {
                             
                             // Reset state
                             postText = ""
-                            username = "Your Artist Name"
                             selectedImageData = nil
                             selectedAudioURL = nil
                             selectedItem = nil
