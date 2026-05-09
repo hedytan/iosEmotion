@@ -36,8 +36,8 @@ struct OnboardingView: View {
                 
                 if step == 1 {
                     VStack(spacing: 20) {
-                        Text("What is\nyour name?")
-                            .font(.system(size: 34, weight: .black))
+                        Text("What is your name?")
+                            .font(.system(size: 30, weight: .black))
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color("AppPurple"))
                         
