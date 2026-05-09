@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var store: PostStore
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -17,12 +19,12 @@ struct ProfileView: View {
                     HStack {
                         ZStack(alignment: .bottomTrailing) {
                             Circle()
-                                .fill(Color.gray.opacity(0.3))
+                                .fill(Color("AppPurple").opacity(0.1))
                                 .frame(width: 80, height: 80)
                                 .overlay(
                                     Image(systemName: "person.fill")
                                         .font(.system(size: 36))
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(Color("AppPurple"))
                                 )
                             Circle()
                                 .fill(Color("AppPurple"))
@@ -39,12 +41,12 @@ struct ProfileView: View {
 
                     // Name + bio
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("keshi")
+                        Text(store.currentUser.name)
                             .font(.system(size: 34, weight: .heavy))
                             .foregroundColor(Color("AppPurple"))
-                        Text("SINGER. SONGWRITER. PRODUCER")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                        Text(store.currentUser.bio.uppercased())
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
                             .kerning(1)
                     }
                     .padding(.horizontal)
