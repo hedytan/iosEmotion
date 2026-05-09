@@ -22,6 +22,29 @@ struct OnboardingView: View {
             Color.white.ignoresSafeArea()
             
             VStack(spacing: 30) {
+                // Top Navigation Bar
+                HStack {
+                    if step > 1 {
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                step -= 1
+                            }
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                    .fontWeight(.bold)
+                                Text("Back")
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(Color("AppPurple"))
+                        }
+                        .padding(.leading, 20)
+                    }
+                    
+                    Spacer()
+                }
+                .frame(height: 44)
+                
                 // Progress Indicator
                 HStack(spacing: 8) {
                     ForEach(1...3, id: \.self) { i in
