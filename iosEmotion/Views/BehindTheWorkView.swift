@@ -116,18 +116,19 @@ struct PostCardView: View {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(height: 480)
+                                .frame(width: 340, height: 480) // LOCK BOTH WIDTH AND HEIGHT
                                 .clipped()
                         } else {
                             // Audio placeholder or fallback gradient
                             LinearGradient(colors: [Color("AppPurple").opacity(0.2), Color("AppPurple").opacity(0.1)],
                                            startPoint: .topLeading, endPoint: .bottomTrailing)
-                                .frame(height: 480)
+                                .frame(width: 340, height: 480) // LOCK PLACEHOLDER SIZE
                         }
                         
                         // Text Overlay for Photo Posts
                         if !post.isAudio {
                             LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
+                                .frame(width: 340, height: 480)
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(post.tag)
@@ -147,7 +148,7 @@ struct PostCardView: View {
                             .padding(20)
                         }
                     }
-                    .frame(height: 480)
+                    .frame(width: 340, height: 480) // REINFORCE CONTAINER SIZE
                     .clipped()
                 }
                 
