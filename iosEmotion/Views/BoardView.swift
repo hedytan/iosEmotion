@@ -8,18 +8,13 @@
 import SwiftUI
 
 struct BoardView: View {
-    let boards = [
-        BoardItem(title: "Midnight Echoes", tag: "MOOD · NOIR", color: Color(red: 0.1, green: 0.15, blue: 0.2)),
-        BoardItem(title: "Velvet Distortion", tag: "TEXTURE · WARM", color: Color(red: 0.4, green: 0.15, blue: 0.1)),
-        BoardItem(title: "Dune Rhythm", tag: "BEAT · EARTH", color: Color(red: 0.45, green: 0.3, blue: 0.1)),
-        BoardItem(title: "Static Pulse", tag: "ENERGY · DARK", color: Color(red: 0.05, green: 0.05, blue: 0.2))
-    ]
-
+    @EnvironmentObject var store: PostStore
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(boards) { board in
+                    ForEach(store.boards) { board in
                         NavigationLink(destination: BoardDetailView(board: board)) {
                             BoardRowView(board: board)
                         }
@@ -47,12 +42,6 @@ struct BoardView: View {
     }
 }
 
-struct BoardItem: Identifiable {
-    let id = UUID()
-    var title: String
-    var tag: String
-    var color: Color
-}
 
 struct BoardRowView: View {
     var board: BoardItem
@@ -80,85 +69,55 @@ struct BoardRowView: View {
 }
 
 struct BoardDetailView: View {
+    @EnvironmentObject var store: PostStore
     var board: BoardItem
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-
-                // Cover photo
-                ZStack(alignment: .topLeading) {
-                    Rectangle()
-                        .fill(Color.black.opacity(0.8))
-                        .frame(height: 280)
-                        .cornerRadius(16)
-
-                    // Camera info
-                    Text("35MM / ISO 400")
+            VStack(alignment: .leading, spacing: 24) {
+                // Board Header
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(board.tag)
                         .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fontWeight(.bold)
+                        .foregroundColor(board.color)
+                    Text(board.title)
+                        .font(.system(size: 34, weight: .heavy))
+                        .foregroundColor(.primary)
                 }
-
-                // Audio player card
-                VStack(spacing: 16) {
-                    HStack(spacing: 16) {
-                        Button(action: {}) {
-                            Image(systemName: "play.fill")
-                                .foregroundColor(.white)
-                                .padding(14)
-                                .background(Color("AppPurple"))
-                                .clipShape(Circle())
-                        }
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Demo_001.mp3")
-                                .foregroundColor(.white)
-                                .fontWeight(.semibold)
-                            Text("0:45 · Lo-fi Loop")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        Spacer()
+                .padding(.horizontal)
+                .padding(.top)
+                
+                // Saved Posts
+                let savedPosts = store.getPosts(for: board)
+                
+                if savedPosts.isEmpty {
+                    VStack(spacing: 20) {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray.opacity(0.3))
+                        Text("No posts saved yet.")
+                            .font(.headline)
+                            .foregroundColor(.gray)
                     }
-
-                    // Waveform dots
-                    HStack(spacing: 6) {
-                        ForEach(0..<12) { i in
-                            Circle()
-                                .fill(i < 4 ? Color("AppPurple") : Color.gray.opacity(0.4))
-                                .frame(width: i % 3 == 0 ? 14 : 10,
-                                       height: i % 3 == 0 ? 14 : 10)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 100)
+                } else {
+                    VStack(spacing: 32) {
+                        ForEach(savedPosts) { post in
+                            PostCardView(post: post)
                         }
-                        Spacer()
                     }
+                    .padding(.horizontal)
                 }
-                .padding()
-                .background(Color("CardBackground"))
-                .cornerRadius(16)
             }
-            .padding()
         }
         .background(Color.white)
-        .navigationTitle(board.title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("SAVED")
-                        .font(.caption2)
-                        .foregroundColor(Color("AppPurple"))
-                    Text("Board.")
-                        .font(.headline)
-                        .fontWeight(.heavy)
-                        .foregroundColor(Color("AppPurple"))
-                }
-            }
-        }
     }
 }
 
 #Preview {
     BoardView()
+        .environmentObject(PostStore())
 }

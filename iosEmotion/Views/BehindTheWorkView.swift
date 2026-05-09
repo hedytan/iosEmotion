@@ -255,9 +255,6 @@ struct PostCardView: View {
             .sheet(isPresented: $showSaveSheet) {
                 SaveToAlbumSheet(postID: post.id)
             }
-            .sheet(isPresented: $showSaveSheet) {
-                SaveToAlbumSheet(postID: post.id)
-            }
             Spacer()
         }
     }
