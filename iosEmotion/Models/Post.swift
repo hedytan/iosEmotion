@@ -2,6 +2,7 @@ import Foundation
 
 struct Post: Identifiable {
     let id = UUID()
+    let username: String // New property
     var tag: String
     var title: String
     var description: String
@@ -12,6 +13,17 @@ struct Post: Identifiable {
     var imageData: Data? = nil
     var isAudio: Bool = false
     var comments: [String] = []
+    
+    init(username: String = "You", tag: String, title: String, description: String, likes: Int = 0, imageData: Data? = nil, isAudio: Bool = false, comments: [String] = []) {
+        self.username = username
+        self.tag = tag
+        self.title = title
+        self.description = description
+        self.likes = likes
+        self.imageData = imageData
+        self.isAudio = isAudio
+        self.comments = comments
+    }
     
     var likeCountString: String {
         if likes >= 1000 {

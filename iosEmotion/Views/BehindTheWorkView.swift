@@ -79,6 +79,36 @@ struct PostCardView: View {
         HStack {
             Spacer()
             VStack(alignment: .leading, spacing: 0) {
+                // 0. Artist Header
+                HStack(spacing: 10) {
+                    Circle()
+                        .fill(Color("AppPurple").opacity(0.1))
+                        .frame(width: 32, height: 32)
+                        .overlay(
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color("AppPurple"))
+                        )
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(post.username)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.primary)
+                        Text("Artist & Musician")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "ellipsis")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 14))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(Color.white)
+
                 // 1. Media Area (Image or Audio Background)
                 ZStack(alignment: .bottomLeading) {
                     if let data = post.imageData, let uiImage = UIImage(data: data) {

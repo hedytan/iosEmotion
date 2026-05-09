@@ -3,13 +3,13 @@ import Combine
 
 class PostStore: ObservableObject {
     @Published var posts: [Post] = [
-        Post(tag: "SPOTLIGHT", title: "LIMBO",
+        Post(username: "HYBS", tag: "SPOTLIGHT", title: "LIMBO",
              description: "The sonic architecture of a dream state. Exploring the reverb trails in GABRIEL.",
              likes: 24100, isAudio: true, comments: ["This is incredible", "The production is top notch!", "Can't wait for the full release"]),
-        Post(tag: "NEW FRAGMENT", title: "The Geometry of Noise",
+        Post(username: "Babychair", tag: "NEW FRAGMENT", title: "The Geometry of Noise",
              description: "This album got me through the hardest year of my life.",
              likes: 12400, comments: ["I feel this", "Pure art"]),
-        Post(tag: "FRAGMENT", title: "Studio Session 01",
+        Post(username: "Phum Viphurit", tag: "FRAGMENT", title: "Studio Session 01",
              description: "3am and the chords finally made sense.",
              likes: 8200, isAudio: true, comments: ["Relatable", "3am sessions are the best"])
     ]
@@ -58,8 +58,8 @@ class PostStore: ObservableObject {
         }
     }
     
-    func addPost(tag: String, title: String, description: String, imageData: Data? = nil, isAudio: Bool = false) {
-        let newPost = Post(tag: tag, title: title, description: description, likes: 0, imageData: imageData, isAudio: isAudio)
+    func addPost(username: String = "You", tag: String, title: String, description: String, imageData: Data? = nil, isAudio: Bool = false) {
+        let newPost = Post(username: username, tag: tag, title: title, description: description, likes: 0, imageData: imageData, isAudio: isAudio)
         posts.insert(newPost, at: 0)
     }
     

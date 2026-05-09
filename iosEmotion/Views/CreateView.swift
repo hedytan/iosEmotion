@@ -12,6 +12,7 @@ struct CreateView: View {
     @EnvironmentObject var store: PostStore
     @Binding var selectedTab: Int
     @State private var postText: String = ""
+    @State private var username: String = "Your Artist Name" // New state
     @State private var selectedMood: String = "NEW FRAGMENT"
     @State private var showMoodPicker = false
     
@@ -29,6 +30,20 @@ struct CreateView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+
+                    // Artist Identity
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("POSTING AS")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                        
+                        TextField("Artist Name (e.g. HYBS)", text: $username)
+                            .font(.headline)
+                            .foregroundColor(Color("AppPurple"))
+                            .padding()
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(12)
+                    }
 
                     // Tag
                     Button(action: { showMoodPicker = true }) {
@@ -163,7 +178,8 @@ struct CreateView: View {
                         let canPost = !postText.isEmpty || selectedImageData != nil || selectedAudioURL != nil
                         
                         if canPost {
-                            store.addPost(tag: selectedMood.uppercased(), 
+                            store.addPost(username: username,
+                                          tag: selectedMood.uppercased(), 
                                           title: "New Creation", 
                                           description: postText,
                                           imageData: selectedImageData,
@@ -171,6 +187,7 @@ struct CreateView: View {
                             
                             // Reset state
                             postText = ""
+                            username = "Your Artist Name"
                             selectedImageData = nil
                             selectedAudioURL = nil
                             selectedItem = nil
