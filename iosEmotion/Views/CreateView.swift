@@ -159,15 +159,21 @@ struct CreateView: View {
 
                     // Post button
                     Button(action: {
-                        if !postText.isEmpty {
+                        // Allow posting if there's either text, an image, or an audio file
+                        let canPost = !postText.isEmpty || selectedImageData != nil || selectedAudioURL != nil
+                        
+                        if canPost {
                             store.addPost(tag: selectedMood.uppercased(), 
                                           title: "New Creation", 
                                           description: postText,
                                           imageData: selectedImageData,
                                           isAudio: selectedAudioURL != nil)
+                            
+                            // Reset state
                             postText = ""
                             selectedImageData = nil
                             selectedAudioURL = nil
+                            selectedItem = nil
                             selectedTab = 0 // Jump to Explore tab
                         }
                     }) {
@@ -176,10 +182,10 @@ struct CreateView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(postText.isEmpty ? Color.gray : Color("AppPurple"))
+                            .background((!postText.isEmpty || selectedImageData != nil || selectedAudioURL != nil) ? Color("AppPurple") : Color.gray)
                             .cornerRadius(30)
                     }
-                    .disabled(postText.isEmpty)
+                    .disabled(postText.isEmpty && selectedImageData == nil && selectedAudioURL == nil)
                 }
                 .padding()
             }
