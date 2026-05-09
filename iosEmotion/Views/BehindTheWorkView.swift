@@ -191,17 +191,6 @@ struct PostCardView: View {
                         }
                         
                         Spacer()
-                        
-                        // Action Button
-                        Button(action: { showComments = true }) {
-                            Text("JOIN DISCUSSION")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(Color("AppPurple"))
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(Color("AppPurple").opacity(0.08))
-                                .cornerRadius(20)
-                        }
                     }
                     .frame(height: 44) // Actual size height for touch targets
                     .frame(maxWidth: .infinity)
