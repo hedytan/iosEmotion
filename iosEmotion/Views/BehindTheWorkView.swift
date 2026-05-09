@@ -206,7 +206,7 @@ struct PostCardView: View {
                     .padding([.horizontal, .bottom], 12)
                 }
             }
-            .frame(maxWidth: 340)
+            .frame(width: 340) // FIXED PHYSICAL SIZE
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
