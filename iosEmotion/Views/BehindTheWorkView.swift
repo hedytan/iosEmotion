@@ -194,7 +194,12 @@ struct PostCardView: View {
                         }
                         
                         Spacer()
-                        // THE BUTTON IS GONE HERE
+                        
+                        Button(action: { showSaveSheet = true }) {
+                            Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
+                                .font(.system(size: 18))
+                                .foregroundColor(post.isSaved ? Color("AppPurple") : .gray)
+                        }
                     }
                     .frame(height: 44)
                     .frame(maxWidth: .infinity)
