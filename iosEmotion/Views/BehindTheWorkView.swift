@@ -102,21 +102,21 @@ struct PostCardView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(post.username)
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.white)
                         Text(post.userProfession ?? "Artist & Musician")
                             .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white.opacity(0.6))
                     }
                     
                     Spacer()
                     
                     Image(systemName: "ellipsis")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white.opacity(0.4))
                         .font(.system(size: 14))
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-                .background(Color.white)
+                .background(Color.clear)
 
                 // 1. Media Area (Only if Photo or Audio exists)
                 if post.imageData != nil || post.isAudio {
@@ -164,7 +164,7 @@ struct PostCardView: View {
                     if !post.description.isEmpty {
                         Text(post.description)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.white.opacity(0.8))
                             .lineLimit(2)
                             .padding(.top, 12)
                     } else {
@@ -180,7 +180,7 @@ struct PostCardView: View {
                                     Text(post.likeCountString)
                                         .font(.system(size: 14, weight: .medium))
                                 }
-                                .foregroundColor(post.isLiked ? .pink : .gray)
+                                .foregroundColor(post.isLiked ? .pink : .white.opacity(0.6))
                             }
                             
                             Button(action: { showComments = true }) {
@@ -190,7 +190,7 @@ struct PostCardView: View {
                                     Text("\(post.comments.count)")
                                         .font(.system(size: 14, weight: .medium))
                                 }
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white.opacity(0.6))
                             }
                         }
                         
@@ -199,7 +199,7 @@ struct PostCardView: View {
                         Button(action: { showSaveSheet = true }) {
                             Image(systemName: post.isSaved ? "bookmark.fill" : "bookmark")
                                 .font(.system(size: 18))
-                                .foregroundColor(post.isSaved ? Color("AppPurple") : .gray)
+                                .foregroundColor(post.isSaved ? Color("AppPurple") : .white.opacity(0.6))
                         }
                     }
                     .frame(height: 44)
@@ -223,9 +223,10 @@ struct PostCardView: View {
                             Text(post.title)
                                 .font(.caption)
                                 .fontWeight(.bold)
+                                .foregroundColor(.white)
                             Text("NOW PLAYING")
                                 .font(.system(size: 8))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.white.opacity(0.6))
                         }
                         
                         Spacer()
@@ -240,15 +241,19 @@ struct PostCardView: View {
                         }
                     }
                     .padding(12)
-                    .background(Color("AppPurple").opacity(0.05))
+                    .background(Color.white.opacity(0.05))
                     .cornerRadius(12)
                     .padding([.horizontal, .bottom], 12)
                 }
             }
             .frame(width: 340)
-            .background(Color.white)
+            .background(Color(red: 0.05, green: 0.05, blue: 0.07)) // Midnight Card
             .clipShape(RoundedRectangle(cornerRadius: 24))
-            .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.2), radius: 20, x: 0, y: 10)
             .sheet(isPresented: $showComments) {
                 CommentSheet(store: store, postID: post.id)
             }
