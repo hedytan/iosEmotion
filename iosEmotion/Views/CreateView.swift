@@ -51,82 +51,83 @@ struct CreateView: View {
 
                     // Text input
                     ZStack(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.gray.opacity(0.1))
-                            .frame(minHeight: 120)
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(Color(red: 0.05, green: 0.05, blue: 0.05)) // Deep dark background
+                            .frame(minHeight: 160)
 
                         if postText.isEmpty {
-                            Text("What were you feeling when you made this?")
-                                .foregroundColor(.secondary)
-                                .padding(16)
+                            Text("What were you feeling when\nyou made this?")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(.white.opacity(0.3))
+                                .padding(.horizontal, 20)
+                                .padding(.top, 24)
                         }
 
                         TextEditor(text: $postText)
-                            .foregroundColor(.primary)
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(.white)
                             .scrollContentBackground(.hidden)
                             .background(Color.clear)
-                            .padding(12)
-                            .frame(minHeight: 120)
+                            .padding(16)
+                            .frame(minHeight: 160)
                     }
 
                     // Add Audio
                     Button(action: { showAudioImporter = true }) {
                         HStack {
-                            if let audioURL = selectedAudioURL {
-                                Image(systemName: "waveform.circle.fill")
-                                    .font(.title2)
-                                    .foregroundColor(Color("AppPurple"))
-                                VStack(alignment: .leading) {
-                                    Text("Audio Ready")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Text(audioURL.lastPathComponent)
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.primary)
-                                        .lineLimit(1)
-                                }
-                            } else {
+                            VStack(alignment: .leading, spacing: 12) {
                                 Image(systemName: "waveform")
+                                    .font(.title)
                                     .foregroundColor(Color("AppPurple"))
+                                
                                 Text("Add Audio")
-                                    .foregroundColor(.primary)
-                                    .fontWeight(.medium)
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("AppPurple"))
                             }
+                            Spacer()
+                            Image(systemName: "plus")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white.opacity(0.1))
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(12)
+                        .padding(24)
+                        .background(Color(red: 0.08, green: 0.08, blue: 0.15)) // Midnight Navy
+                        .cornerRadius(24)
                     }
 
                     // Add Photo + Mood Tag
                     HStack(spacing: 12) {
                         PhotosPicker(selection: $selectedItem, matching: .images) {
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 12) {
                                 if let data = selectedImageData, let uiImage = UIImage(data: data) {
                                     Image(uiImage: uiImage)
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 80)
-                                        .cornerRadius(8)
+                                        .cornerRadius(12)
                                 } else {
-                                    Image(systemName: "photo")
-                                        .foregroundColor(Color("AppPurple"))
-                                    Text("Add Photo")
-                                        .foregroundColor(.primary)
-                                        .fontWeight(.medium)
+                                    Image(systemName: "camera")
+                                        .font(.title2)
+                                        .foregroundColor(.pink.opacity(0.8))
+                                    
+                                    Spacer()
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Add Photo")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(Color("AppPurple"))
+                                        Text("Visual Muse")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.white.opacity(0.4))
+                                    }
                                 }
-                                
-                                Text("Visual Muse")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
+                            .padding(20)
+                            .background(Color(red: 0.08, green: 0.08, blue: 0.12)) // Dark grey
+                            .cornerRadius(24)
                         }
                         .onChange(of: selectedItem) { newItem in
                             Task {
@@ -137,23 +138,26 @@ struct CreateView: View {
                         }
 
                         Button(action: { showMoodPicker = true }) {
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 12) {
                                 Image(systemName: "sparkles")
-                                    .foregroundColor(Color("AppPurple"))
+                                    .font(.title2)
+                                    .foregroundColor(.cyan.opacity(0.8))
                                 
-                                Text(selectedMood)
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
+                                Spacer()
                                 
-                                Text("Selected Mood")
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Mood Tag")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(Color("AppPurple"))
+                                    Text(selectedMood)
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.white.opacity(0.4))
+                                }
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity, minHeight: 140, alignment: .leading)
+                            .padding(20)
+                            .background(Color(red: 0.08, green: 0.08, blue: 0.12)) // Dark grey
+                            .cornerRadius(24)
                         }
                     }
 

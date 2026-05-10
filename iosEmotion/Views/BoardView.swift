@@ -13,7 +13,19 @@ struct BoardView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Premium Header
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("SAVED")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(Color("AppPurple"))
+                            .kerning(1.2)
+                        Text("Board.")
+                            .font(.system(size: 44, weight: .black))
+                            .foregroundColor(Color("AppPurple"))
+                    }
+                    .padding(.bottom, 10)
+                    
                     ForEach(store.boards) { board in
                         NavigationLink(destination: BoardDetailView(board: board)) {
                             BoardRowView(board: board)
