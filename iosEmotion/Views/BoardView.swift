@@ -37,19 +37,6 @@ struct BoardView: View {
             }
             .background(Color.white)
             .navigationTitle("")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("SAVED")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color("AppPurple"))
-                        Text("Board.")
-                            .font(.system(size: 34, weight: .heavy))
-                            .foregroundColor(Color("AppPurple"))
-                    }
-                }
-            }
         }
     }
 }
