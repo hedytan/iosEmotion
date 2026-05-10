@@ -15,85 +15,94 @@ struct ProfileView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
-                    // Avatar
-                    HStack {
+                    // Artist Header (Photo next to Name & Stats)
+                    HStack(alignment: .top, spacing: 20) {
+                        // Avatar with checkmark
                         ZStack(alignment: .bottomTrailing) {
                             if let data = store.currentUser.avatarData, let uiImage = UIImage(data: data) {
                                 Image(uiImage: uiImage)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(width: 100, height: 100)
+                                    .frame(width: 110, height: 110)
                                     .clipShape(Circle())
                                     .overlay(Circle().stroke(Color("AppPurple").opacity(0.1), lineWidth: 4))
                             } else {
                                 Circle()
                                     .fill(Color("AppPurple").opacity(0.1))
-                                    .frame(width: 80, height: 80)
+                                    .frame(width: 110, height: 110)
                                     .overlay(
                                         Image(systemName: "person.fill")
-                                            .font(.system(size: 36))
+                                            .font(.system(size: 40))
                                             .foregroundColor(Color("AppPurple"))
                                     )
                             }
                             
                             Circle()
                                 .fill(Color("AppPurple"))
-                                .frame(width: 26, height: 26)
+                                .frame(width: 28, height: 28)
                                 .overlay(
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 12, weight: .bold))
+                                        .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.white)
                                 )
+                                .offset(x: -4, y: -4)
                         }
-                        Spacer()
+                        
+                        // Name + Stats
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(store.currentUser.name)
+                                .font(.system(size: 34, weight: .black))
+                                .foregroundColor(Color("AppPurple"))
+                            
+                            // Stats in a sleek row
+                            HStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("2.4M")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.primary)
+                                    Text("FOLLOWERS")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("182")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.primary)
+                                    Text("FOLLOWING")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("45.8K")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(.primary)
+                                    Text("RESONANCES")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .padding(.top, 4)
                     }
                     .padding(.horizontal)
 
-                    // Name + bio
+                    // Identity + Bio (Below Photo)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(store.currentUser.name)
-                            .font(.system(size: 38, weight: .black))
-                            .foregroundColor(Color("AppPurple"))
-                        
                         Text(store.currentUser.profession.uppercased())
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color("AppPurple").opacity(0.8))
                             .kerning(1.5)
                         
                         Text(store.currentUser.bio)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                            .padding(.top, 4)
+                            .lineSpacing(4)
                     }
                     .padding(.horizontal)
-
-                    // Stats
-                    HStack(spacing: 0) {
-                        VStack(spacing: 4) {
-                            Text("2.4M")
-                                .font(.headline).fontWeight(.bold).foregroundColor(.white)
-                            Text("FOLLOWERS")
-                                .font(.caption2).foregroundColor(.gray)
-                        }.frame(maxWidth: .infinity)
-
-                        VStack(spacing: 4) {
-                            Text("182")
-                                .font(.headline).fontWeight(.bold).foregroundColor(.white)
-                            Text("FOLLOWING")
-                                .font(.caption2).foregroundColor(.gray)
-                        }.frame(maxWidth: .infinity)
-
-                        VStack(spacing: 4) {
-                            Text("45.8K")
-                                .font(.headline).fontWeight(.bold).foregroundColor(.white)
-                            Text("RESONANCES")
-                                .font(.caption2).foregroundColor(.gray)
-                        }.frame(maxWidth: .infinity)
-                    }
-                    .padding(.vertical, 14)
-                    .background(Color("CardBackground"))
-                    .cornerRadius(14)
-                    .padding(.horizontal)
+                    .padding(.top, 4)
 
                     // My Journey title
                     Text("MY JOURNEY")
