@@ -47,23 +47,42 @@ struct BoardRowView: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            Rectangle()
-                .fill(board.color)
-                .frame(height: 100)
-                .cornerRadius(16)
+            // Cover Image or Fallback Color
+            Group {
+                if let photoURL = board.coverPhoto, let url = URL(string: photoURL), let data = try? Data(contentsOf: url), let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Rectangle()
+                        .fill(board.color)
+                }
+            }
+            .frame(height: 140)
+            .clipped()
+            .cornerRadius(24)
+            
+            // Dark Gradient Overlay for readability
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.8)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .cornerRadius(24)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(board.tag)
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.white.opacity(0.8))
+                    .kerning(1.2)
                 Text(board.title)
-                    .font(.title3)
-                    .fontWeight(.bold)
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.white)
             }
-            .padding(16)
+            .padding(20)
         }
+        .frame(height: 140)
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -79,13 +98,13 @@ struct BoardDetailView: View {
                     Text(board.tag)
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(board.color)
+                        .foregroundColor(Color("AppPurple"))
                     Text(board.title)
-                        .font(.system(size: 34, weight: .heavy))
-                        .foregroundColor(.primary)
+                        .font(.system(size: 34, weight: .black))
+                        .foregroundColor(Color("AppPurple"))
                 }
                 .padding(.horizontal)
-                .padding(.top)
+                .padding(.top, 40)
                 
                 // Saved Posts
                 let savedPosts = store.getPosts(for: board)
@@ -94,10 +113,10 @@ struct BoardDetailView: View {
                     VStack(spacing: 20) {
                         Image(systemName: "square.and.arrow.down")
                             .font(.system(size: 50))
-                            .foregroundColor(.gray.opacity(0.3))
+                            .foregroundColor(.white.opacity(0.2))
                         Text("No posts saved yet.")
                             .font(.headline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white.opacity(0.4))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 100)
@@ -108,10 +127,18 @@ struct BoardDetailView: View {
                         }
                     }
                     .padding(.horizontal)
+                    .padding(.bottom, 40)
                 }
             }
         }
-        .background(Color.white)
+        .background(
+            LinearGradient(
+                colors: [Color(red: 0.05, green: 0.05, blue: 0.05), Color(red: 0.6, green: 0.6, blue: 0.65)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+        )
         .navigationBarTitleDisplayMode(.inline)
     }
 }

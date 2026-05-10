@@ -7,6 +7,7 @@ struct BoardItem: Identifiable {
     var title: String
     var tag: String
     var color: Color
+    var coverPhoto: String? // Added for artistic cover images
     var postIDs: [UUID] = [] // Store the IDs of saved posts
 }
 
@@ -34,9 +35,10 @@ class PostStore: ObservableObject {
     ]
 
     @Published var boards: [BoardItem] = [
-        BoardItem(title: "Midnight Echoes", tag: "MOOD · NOIR", color: Color(red: 0.1, green: 0.15, blue: 0.2)),
-        BoardItem(title: "Velvet Distortion", tag: "TEXTURE · WARM", color: Color(red: 0.4, green: 0.15, blue: 0.1)),
-        BoardItem(title: "Dune Rhythm", tag: "BEAT · EARTH", color: Color(red: 0.45, green: 0.3, blue: 0.1))
+        BoardItem(title: "Midnight Echoes", tag: "MOOD · NOIR", color: Color(red: 0.1, green: 0.1, blue: 0.15), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/midnight_echoes_cover_1778405740695.png"),
+        BoardItem(title: "Velvet Distortion", tag: "TEXTURE · WARM", color: Color(red: 0.3, green: 0.1, blue: 0.05), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/velvet_distortion_cover_1778405783107.png"),
+        BoardItem(title: "Dune Rhythm", tag: "BEAT · EARTH", color: Color(red: 0.35, green: 0.2, blue: 0.1), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png"),
+        BoardItem(title: "Static Pulse", tag: "ENERGY · ELECTRIC", color: Color(red: 0.1, green: 0.1, blue: 0.3), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/static_pulse_cover_1778405966946.png")
     ]
 
     @Published var notifications: [AppNotification] = []
