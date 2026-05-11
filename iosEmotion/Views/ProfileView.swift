@@ -149,28 +149,46 @@ struct ProfileView: View {
 
                     // Swipeable Content Area
                     TabView(selection: $selectedContent) {
-                        // 1. My Journey
+                        // 1. My Journey (Irregular Masonry)
                         ScrollView {
                             let myPosts = store.posts.filter { $0.username == store.currentUser.name }
-                            VStack(spacing: 20) {
-                                if myPosts.isEmpty {
-                                    VStack(spacing: 20) {
-                                        Image(systemName: "plus.square.dashed")
-                                            .font(.system(size: 40))
-                                            .foregroundColor(.gray.opacity(0.3))
-                                        Text("No fragments yet.")
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
+                            
+                            if myPosts.isEmpty {
+                                VStack(spacing: 20) {
+                                    Image(systemName: "plus.square.dashed")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray.opacity(0.3))
+                                    Text("No fragments yet.")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.top, 60)
+                            } else {
+                                // 2-Column Masonry Layout
+                                HStack(alignment: .top, spacing: 16) {
+                                    // Column 1
+                                    VStack(spacing: 16) {
+                                        ForEach(Array(myPosts.enumerated()), id: \.element.id) { index, post in
+                                            if index % 2 == 0 {
+                                                JourneyPostCard(post: post, height: index % 3 == 0 ? 280 : 200)
+                                            }
+                                        }
                                     }
-                                    .padding(.top, 60)
-                                } else {
-                                    ForEach(myPosts) { post in
-                                        PostCardView(post: post)
+                                    
+                                    // Column 2
+                                    VStack(spacing: 16) {
+                                        ForEach(Array(myPosts.enumerated()), id: \.element.id) { index, post in
+                                            if index % 2 != 0 {
+                                                JourneyPostCard(post: post, height: index % 3 == 0 ? 200 : 280)
+                                            }
+                                        }
                                     }
                                 }
+                                .padding(.horizontal)
+                                .padding(.top, 20)
                             }
-                            .padding(.horizontal)
-                            .padding(.bottom, 100)
+                            
+                            Spacer(minLength: 120)
                         }
                         .tag(ContentMode.journey)
                         
@@ -329,6 +347,55 @@ struct JourneyPostCard: View {
         .sheet(isPresented: $showComments) {
             CommentSheet(store: store, postID: post.id)
         }
+    }
+struct JourneyPostCard: View {
+    var post: Post
+    var height: CGFloat
+    
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            // Background Image/Color
+            Group {
+                if let data = post.imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else if let path = post.imagePath, let url = URL(string: path), let data = try? Data(contentsOf: url), let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.1))
+                }
+            }
+            .frame(height: height)
+            .frame(maxWidth: .infinity)
+            .clipped()
+            
+            // Subtle Overlay for details
+            LinearGradient(colors: [.clear, .black.opacity(0.4)], startPoint: .top, endPoint: .bottom)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(post.tag)
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundColor(.white.opacity(0.8))
+                Text(post.title)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+                
+                if post.isAudio {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 10))
+                        .foregroundColor(Color("AppPurple"))
+                        .padding(.top, 4)
+                }
+            }
+            .padding(12)
+        }
+        .frame(height: height)
+        .cornerRadius(20)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
 }
 
