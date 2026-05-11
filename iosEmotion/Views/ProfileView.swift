@@ -110,72 +110,87 @@ struct ProfileView: View {
                     .padding(.horizontal)
                     .padding(.top, 4)
 
-                    // Content Switcher
-                    HStack(spacing: 24) {
-                        Button(action: { selectedContent = .journey }) {
-                            VStack(alignment: .leading, spacing: 4) {
+                    // Content Switcher (Centered)
+                    HStack(spacing: 40) {
+                        Button(action: { 
+                            withAnimation(.spring()) {
+                                selectedContent = .journey 
+                            }
+                        }) {
+                            VStack(alignment: .center, spacing: 4) {
                                 Text("MY JOURNEY")
                                     .font(.system(size: 14, weight: .black))
                                     .foregroundColor(selectedContent == .journey ? Color("AppPurple") : .gray.opacity(0.4))
-                                if selectedContent == .journey {
-                                    RoundedRectangle(cornerRadius: 2)
-                                        .fill(Color("AppPurple"))
-                                        .frame(width: 20, height: 2)
-                                }
+                                
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(selectedContent == .journey ? Color("AppPurple") : Color.clear)
+                                    .frame(width: 40, height: 2)
                             }
                         }
                         
-                        Button(action: { selectedContent = .saved }) {
-                            VStack(alignment: .leading, spacing: 4) {
+                        Button(action: { 
+                            withAnimation(.spring()) {
+                                selectedContent = .saved 
+                            }
+                        }) {
+                            VStack(alignment: .center, spacing: 4) {
                                 Text("SAVED")
                                     .font(.system(size: 14, weight: .black))
                                     .foregroundColor(selectedContent == .saved ? Color("AppPurple") : .gray.opacity(0.4))
-                                if selectedContent == .saved {
-                                    RoundedRectangle(cornerRadius: 2)
-                                        .fill(Color("AppPurple"))
-                                        .frame(width: 20, height: 2)
-                                }
+                                
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(selectedContent == .saved ? Color("AppPurple") : Color.clear)
+                                    .frame(width: 40, height: 2)
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
                     .padding(.top, 10)
 
-                    if selectedContent == .journey {
-                        // My own posts
-                        let myPosts = store.posts.filter { $0.username == store.currentUser.name }
-                        
-                        if myPosts.isEmpty {
+                    // Swipeable Content Area
+                    TabView(selection: $selectedContent) {
+                        // 1. My Journey
+                        ScrollView {
+                            let myPosts = store.posts.filter { $0.username == store.currentUser.name }
                             VStack(spacing: 20) {
-                                Image(systemName: "plus.square.dashed")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray.opacity(0.3))
-                                Text("No fragments yet.")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 40)
-                        } else {
-                            VStack(spacing: 20) {
-                                ForEach(myPosts) { post in
-                                    PostCardView(post: post)
+                                if myPosts.isEmpty {
+                                    VStack(spacing: 20) {
+                                        Image(systemName: "plus.square.dashed")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.gray.opacity(0.3))
+                                        Text("No fragments yet.")
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.top, 60)
+                                } else {
+                                    ForEach(myPosts) { post in
+                                        PostCardView(post: post)
+                                    }
                                 }
                             }
                             .padding(.horizontal)
+                            .padding(.bottom, 100)
                         }
-                    } else {
-                        // Saved boards (like BoardView)
-                        VStack(spacing: 16) {
-                            ForEach(store.boards) { board in
-                                NavigationLink(destination: BoardDetailView(board: board)) {
-                                    BoardRowView(board: board)
+                        .tag(ContentMode.journey)
+                        
+                        // 2. Saved
+                        ScrollView {
+                            VStack(spacing: 16) {
+                                ForEach(store.boards) { board in
+                                    NavigationLink(destination: BoardDetailView(board: board)) {
+                                        BoardRowView(board: board)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
+                            .padding(.horizontal)
+                            .padding(.bottom, 100)
                         }
-                        .padding(.horizontal)
+                        .tag(ContentMode.saved)
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .frame(minHeight: 600) // Ensure enough height for content
 
                     Spacer(minLength: 40)
                 }
