@@ -13,10 +13,11 @@ struct Post: Identifiable {
     var isSaved: Bool = false
     var reaction: String? = nil
     var imageData: Data? = nil
+    var imagePath: String? = nil // For local file paths
     var isAudio: Bool = false
     var comments: [String] = []
     
-    init(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, likes: Int = 0, imageData: Data? = nil, isAudio: Bool = false, comments: [String] = []) {
+    init(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, likes: Int = 0, imageData: Data? = nil, imagePath: String? = nil, isAudio: Bool = false, comments: [String] = []) {
         self.username = username
         self.userAvatarData = userAvatarData
         self.userProfession = userProfession
@@ -25,6 +26,7 @@ struct Post: Identifiable {
         self.description = description
         self.likes = likes
         self.imageData = imageData
+        self.imagePath = imagePath
         self.isAudio = isAudio
         self.comments = comments
     }

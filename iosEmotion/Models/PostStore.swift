@@ -34,14 +34,20 @@ class PostStore: ObservableObject {
     @Published var hasCompletedOnboarding: Bool = false
     @Published var posts: [Post] = [
         Post(username: "HYBS", tag: "SPOTLIGHT", title: "LIMBO",
-             description: "The sonic architecture of a dream state. Exploring the reverb trails in GABRIEL.",
-             likes: 24100, isAudio: true, comments: ["This is incredible", "The production is top notch!", "Can't wait for the full release"]),
+             description: "The sonic architecture of a dream state. A lone session in the heart of the midnight noir.",
+             likes: 24100, imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/midnight_echoes_cover_1778405740695.png",
+             isAudio: true, 
+             comments: ["This is incredible", "The production is top notch!", "Can't wait for the full release"]),
         Post(username: "Babychair", tag: "NEW FRAGMENT", title: "The Geometry of Noise",
-             description: "This album got me through the hardest year of my life.",
-             likes: 12400, comments: ["I feel this", "Pure art"]),
+             description: "Capturing the earthy resonance of the desert. This fragment feels like a long-lost memory.",
+             likes: 12400, 
+             imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png",
+             comments: ["I feel this", "Pure art"]),
         Post(username: "Phum Viphurit", tag: "FRAGMENT", title: "Studio Session 01",
-             description: "3am and the chords finally made sense.",
-             likes: 8200, isAudio: true, comments: ["Relatable", "3am sessions are the best"])
+             description: "3am and the textures finally made sense. Feeling the velvet distortion.",
+             likes: 8200, imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/velvet_distortion_cover_1778405783107.png",
+             isAudio: true, 
+             comments: ["Relatable", "3am sessions are the best"])
     ]
 
     @Published var boards: [BoardItem] = [
@@ -145,8 +151,8 @@ class PostStore: ObservableObject {
         }
     }
     
-    func addPost(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, imageData: Data? = nil, isAudio: Bool = false) {
-        let newPost = Post(username: username, userAvatarData: userAvatarData, userProfession: userProfession, tag: tag, title: title, description: description, likes: 0, imageData: imageData, isAudio: isAudio)
+    func addPost(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, imageData: Data? = nil, imagePath: String? = nil, isAudio: Bool = false) {
+        let newPost = Post(username: username, userAvatarData: userAvatarData, userProfession: userProfession, tag: tag, title: title, description: description, likes: 0, imageData: imageData, imagePath: imagePath, isAudio: isAudio)
         posts.insert(newPost, at: 0)
     }
     
