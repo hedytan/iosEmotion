@@ -63,7 +63,7 @@ struct ProfileView: View {
                             // Stats in a sleek row
                             HStack(spacing: 16) {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("2.4M")
+                                    Text("\(store.currentUser.followersCount)")
                                         .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.primary)
                                     Text("FOLLOWERS")
@@ -72,7 +72,7 @@ struct ProfileView: View {
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("182")
+                                    Text("\(store.currentUser.followingCount)")
                                         .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.primary)
                                     Text("FOLLOWING")
@@ -81,7 +81,7 @@ struct ProfileView: View {
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("45.8K")
+                                    Text("24") // Mock resonances count
                                         .font(.system(size: 14, weight: .bold))
                                         .foregroundColor(.primary)
                                     Text("RESONANCES")

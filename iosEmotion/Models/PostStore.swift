@@ -25,6 +25,8 @@ struct UserProfile {
     var bio: String = ""
     var profession: String = "Artist"
     var avatarData: Data? = nil // Circular profile photo
+    var followersCount: Int = 42  // Small, niche community feel
+    var followingCount: Int = 128
 }
 
 class PostStore: ObservableObject {
@@ -60,7 +62,20 @@ class PostStore: ObservableObject {
     func toggleFollowArtist(id: UUID) {
         if let index = discoveredArtists.firstIndex(where: { $0.id == id }) {
             discoveredArtists[index].isFollowing.toggle()
+            
+            // Sync with profile following count
+            if discoveredArtists[index].isFollowing {
+                currentUser.followingCount += 1
+            } else {
+                currentUser.followingCount -= 1
+            }
         }
+    }
+
+    func simulateNewFollower() {
+        let newFollowerName = randomUsers.randomElement() ?? "A New Artist"
+        currentUser.followersCount += 1
+        addNotification(type: .like, message: "\(newFollowerName) started following you.")
     }
 
     @Published var notifications: [AppNotification] = []
