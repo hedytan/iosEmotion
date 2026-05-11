@@ -92,13 +92,13 @@ struct ProfileView: View {
                     // Identity + Bio (Below Photo)
                     VStack(alignment: .leading, spacing: 6) {
                         Text(store.currentUser.profession.uppercased())
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Text(store.currentUser.bio)
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(Color("AppPurple").opacity(0.8))
                             .kerning(1.5)
-                        
-                        Text(store.currentUser.bio)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
                             .lineSpacing(4)
                     }
                     .padding(.horizontal)
