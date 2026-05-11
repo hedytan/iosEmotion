@@ -133,7 +133,7 @@ struct BoardDetailView: View {
         }
         .background(
             LinearGradient(
-                colors: [Color(red: 0.05, green: 0.05, blue: 0.05), Color(red: 0.6, green: 0.6, blue: 0.65)],
+                colors: [board.color, Color(red: 0.05, green: 0.05, blue: 0.07)],
                 startPoint: .top,
                 endPoint: .bottom
             )
