@@ -39,12 +39,7 @@ struct ContentView: View {
                 
                 ProfileView()
                     .tabItem {
-                        if let data = store.currentUser.avatarData, let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .renderingMode(.original)
-                        } else {
-                            Image(systemName: "person.crop.circle.fill")
-                        }
+                        Image(systemName: "person")
                         Text("PROFILE")
                     }
                     .tag(3)
