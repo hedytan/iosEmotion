@@ -25,7 +25,7 @@ struct UserProfile {
     var bio: String = ""
     var profession: String = "Artist"
     var avatarData: Data? = nil // Circular profile photo
-    var followersCount: Int = 42  // Small, niche community feel
+    var followersCount: Int = 674  // Updated for that niche authority feel
     var followingCount: Int = 128
 }
 
@@ -52,11 +52,11 @@ class PostStore: ObservableObject {
     ]
 
     @Published var discoveredArtists: [Artist] = [
-        Artist(name: "Ariel Blue", identity: "Dream Pop Vocalist"),
-        Artist(name: "Kaelo", identity: "Neo-Soul Producer"),
-        Artist(name: "Sora", identity: "Ambient Soundscapes"),
-        Artist(name: "Juno", identity: "Indie Electronica"),
-        Artist(name: "Lumi", identity: "Vocal Architect")
+        Artist(name: "Ariel Blue", identity: "Dream Pop Vocalist", avatarImage: "neon"),
+        Artist(name: "Kaelo", identity: "Neo-Soul Producer", avatarImage: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png"),
+        Artist(name: "Sora", identity: "Ambient Soundscapes", avatarImage: "quiet"),
+        Artist(name: "Juno", identity: "Indie Electronica", avatarImage: "bw"),
+        Artist(name: "Lumi", identity: "Vocal Architect", avatarImage: "colorful")
     ]
 
     func toggleFollowArtist(id: UUID) {
