@@ -40,7 +40,7 @@ struct ContentView: View {
                 ProfileView()
                     .tabItem {
                         Image(systemName: "person")
-                        Text("MAIN")
+                        Text("PROFILE")
                     }
                     .tag(3)
             }
