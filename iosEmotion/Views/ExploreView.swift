@@ -64,7 +64,7 @@ struct ExploreView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("DISCOVER")
+                        Text("SEARCH")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(Color("AppPurple"))
                             .kerning(1.2)

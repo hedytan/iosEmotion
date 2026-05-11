@@ -33,7 +33,7 @@ struct ContentView: View {
                 ExploreView()
                     .tabItem {
                         Image(systemName: "magnifyingglass")
-                        Text("EXPLORE")
+                        Text("SEARCH")
                     }
                     .tag(2)
                 
