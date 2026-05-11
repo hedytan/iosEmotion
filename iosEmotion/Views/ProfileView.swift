@@ -10,6 +10,12 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var store: PostStore
     
+    enum ContentMode {
+        case journey, saved
+    }
+    
+    @State private var selectedContent: ContentMode = .journey
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -104,64 +110,72 @@ struct ProfileView: View {
                     .padding(.horizontal)
                     .padding(.top, 4)
 
-                    // My Journey title
-                    Text("MY JOURNEY")
-                        .font(.headline)
-                        .fontWeight(.heavy)
-                        .foregroundColor(Color("AppPurple"))
+                    // Content Switcher
+                    HStack(spacing: 24) {
+                        Button(action: { selectedContent = .journey }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("MY JOURNEY")
+                                    .font(.system(size: 14, weight: .black))
+                                    .foregroundColor(selectedContent == .journey ? Color("AppPurple") : .gray.opacity(0.4))
+                                if selectedContent == .journey {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color("AppPurple"))
+                                        .frame(width: 20, height: 2)
+                                }
+                            }
+                        }
+                        
+                        Button(action: { selectedContent = .saved }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("SAVED")
+                                    .font(.system(size: 14, weight: .black))
+                                    .foregroundColor(selectedContent == .saved ? Color("AppPurple") : .gray.opacity(0.4))
+                                if selectedContent == .saved {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color("AppPurple"))
+                                        .frame(width: 20, height: 2)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+
+                    if selectedContent == .journey {
+                        // My own posts
+                        let myPosts = store.posts.filter { $0.username == store.currentUser.name }
+                        
+                        if myPosts.isEmpty {
+                            VStack(spacing: 20) {
+                                Image(systemName: "plus.square.dashed")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(.gray.opacity(0.3))
+                                Text("No fragments yet.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 40)
+                        } else {
+                            VStack(spacing: 20) {
+                                ForEach(myPosts) { post in
+                                    PostCardView(post: post)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    } else {
+                        // Saved boards (like BoardView)
+                        VStack(spacing: 16) {
+                            ForEach(store.boards) { board in
+                                NavigationLink(destination: BoardDetailView(board: board)) {
+                                    BoardRowView(board: board)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
                         .padding(.horizontal)
-
-                    // Card 1 - GABRIEL
-                    NavigationLink(destination: JourneyDetailView(title: "GABRIEL")) {
-                        ZStack(alignment: .bottomLeading) {
-                            Rectangle()
-                                .fill(Color(red: 0.1, green: 0.1, blue: 0.2))
-                                .frame(height: 100)
-                                .cornerRadius(16)
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("GABRIEL")
-                                        .font(.title3).fontWeight(.heavy)
-                                        .foregroundColor(Color("AppPurple"))
-                                    Text("24 ELEMENTS")
-                                        .font(.caption2).foregroundColor(.white.opacity(0.6))
-                                }
-                                .padding(14)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white.opacity(0.5))
-                                    .padding(.trailing, 14)
-                            }
-                        }
                     }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.horizontal)
-
-                    // Card 2 - TOUR AESTHETICS
-                    NavigationLink(destination: JourneyDetailView(title: "TOUR AESTHETICS")) {
-                        ZStack(alignment: .bottomLeading) {
-                            Rectangle()
-                                .fill(Color(red: 0.15, green: 0.35, blue: 0.35))
-                                .frame(height: 100)
-                                .cornerRadius(16)
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("TOUR AESTHETICS")
-                                        .font(.title3).fontWeight(.heavy)
-                                        .foregroundColor(Color("AppPurple"))
-                                    Text("52 ELEMENTS")
-                                        .font(.caption2).foregroundColor(.white.opacity(0.6))
-                                }
-                                .padding(14)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.white.opacity(0.5))
-                                    .padding(.trailing, 14)
-                            }
-                        }
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.horizontal)
 
                     Spacer(minLength: 40)
                 }
