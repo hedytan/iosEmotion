@@ -30,10 +30,10 @@ struct ContentView: View {
                     }
                     .tag(1)
                 
-                BoardView()
+                ExploreView()
                     .tabItem {
-                        Image(systemName: "bookmark")
-                        Text("SAVED")
+                        Image(systemName: "magnifyingglass")
+                        Text("EXPLORE")
                     }
                     .tag(2)
                 

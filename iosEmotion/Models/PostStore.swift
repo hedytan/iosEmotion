@@ -11,6 +11,14 @@ struct BoardItem: Identifiable {
     var postIDs: [UUID] = [] // Store the IDs of saved posts
 }
 
+struct Artist: Identifiable {
+    let id = UUID()
+    var name: String
+    var identity: String
+    var avatarImage: String?
+    var isFollowing: Bool = false
+}
+
 struct UserProfile {
     var name: String = ""
     var handle: String = ""
@@ -40,6 +48,20 @@ class PostStore: ObservableObject {
         BoardItem(title: "Dune Rhythm", tag: "BEAT · EARTH", color: Color(red: 0.35, green: 0.2, blue: 0.1), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png"),
         BoardItem(title: "Static Pulse", tag: "ENERGY · ELECTRIC", color: Color(red: 0.1, green: 0.1, blue: 0.3), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/static_pulse_cover_1778405966946.png")
     ]
+
+    @Published var discoveredArtists: [Artist] = [
+        Artist(name: "Ariel Blue", identity: "Dream Pop Vocalist"),
+        Artist(name: "Kaelo", identity: "Neo-Soul Producer"),
+        Artist(name: "Sora", identity: "Ambient Soundscapes"),
+        Artist(name: "Juno", identity: "Indie Electronica"),
+        Artist(name: "Lumi", identity: "Vocal Architect")
+    ]
+
+    func toggleFollowArtist(id: UUID) {
+        if let index = discoveredArtists.firstIndex(where: { $0.id == id }) {
+            discoveredArtists[index].isFollowing.toggle()
+        }
+    }
 
     @Published var notifications: [AppNotification] = []
 
