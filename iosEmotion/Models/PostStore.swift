@@ -1,4 +1,6 @@
 import SwiftUI
+import Combine
+import Foundation
 
 struct Post: Identifiable {
     let id = UUID()
