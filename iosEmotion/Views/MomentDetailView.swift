@@ -6,173 +6,168 @@ struct MomentDetailView: View {
     var onResonate: (String) -> Void
     
     @State private var isBreathing = false
-    @State private var selectedOption: Int = 1
+    @State private var selectedOption: String? = nil
     
     var body: some View {
         ZStack {
-            Color(hex: "07060a").ignoresSafeArea()
+            Color(hex: "07060A").ignoresSafeArea()
             
             // Ambient Background Glow (Top-Left)
             Circle()
-                .fill(post.moodColor.opacity(0.06))
+                .fill(post.moodType.color.opacity(0.12))
                 .frame(width: 300, height: 300)
-                .blur(radius: 60)
-                .offset(x: -100, y: -200)
+                .blur(radius: 70)
+                .offset(x: -120, y: -200)
             
             VStack(spacing: 0) {
                 // Top Navigation
                 HStack {
                     Button(action: { dismiss() }) {
-                        Text("← back")
+                        Text("‹ feed")
                             .font(.custom("DMMono-Regular", size: 9))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white.opacity(0.25))
                     }
                     Spacer()
                 }
-                .padding(.horizontal, 22)
+                .padding(.horizontal, 24)
                 .padding(.top, 10)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 40) {
+                    VStack(spacing: 0) {
                         // 1. Artist Row
                         HStack(spacing: 12) {
                             Circle()
-                                .fill(Color.white.opacity(0.05))
-                                .frame(width: 30, height: 30)
+                                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                                .background(Circle().fill(Color.white.opacity(0.04)))
+                                .frame(width: 34, height: 34)
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(post.artist)
-                                    .font(.custom("DMMono-Regular", size: 12))
-                                    .foregroundColor(.white.opacity(0.8))
+                                    .font(.system(size: 13, weight: .medium)) // SF Pro
+                                    .foregroundColor(.white.opacity(0.82))
                                 
-                                Text("3 days ago · \(post.song)")
+                                Text("\(post.daysAgo) days ago · \(post.song)")
                                     .font(.custom("DMMono-Regular", size: 8))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.white.opacity(0.22))
                             }
                             Spacer()
                         }
                         .padding(.top, 24)
+                        .padding(.bottom, 24)
                         
-                        // 2. Large Mood Shape with Breathing Animation
-                        ZStack {
-                            Circle()
-                                .fill(post.moodColor.opacity(0.2))
-                                .frame(width: 140, height: 140)
-                                .blur(radius: 40)
-                            
-                            MoodShapeView(type: post.moodType, color: post.moodColor)
-                                .scaleEffect(isBreathing ? 1.05 : 1.0)
-                                .frame(width: 110, height: 110)
-                        }
-                        .onAppear {
-                            withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
-                                isBreathing = true
+                        // 2. Large Mood Shape
+                        MoodShapeView(type: post.moodType, color: post.moodType.color, isLarge: true)
+                            .frame(width: 120, height: 120)
+                            .scaleEffect(isBreathing ? 1.05 : 1.0)
+                            .onAppear {
+                                withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
+                                    isBreathing = true
+                                }
                             }
-                        }
+                            .padding(.vertical, 32)
                         
                         // 3. Mood Name
-                        Text(post.mood.uppercased())
+                        Text(post.moodType.displayName.uppercased())
                             .font(.custom("DMMono-Regular", size: 9))
-                            .kerning(2.5)
-                            .foregroundColor(post.moodColor.opacity(0.5))
-                            .padding(.top, -10)
+                            .kerning(0.22 * 9)
+                            .foregroundColor(post.moodType.color.opacity(0.45))
+                            .padding(.bottom, 18)
                         
                         // 4. Quote
                         Text(post.quote)
-                            .font(.custom("Lora-Italic", size: 15))
+                            .font(.custom("Lora-Italic", size: 16))
                             .italic()
                             .foregroundColor(.white.opacity(0.82))
-                            .lineSpacing(10)
+                            .lineSpacing(16 * 1.75 - 16)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
                         
                         // 5. Song Name
-                        Text("\(post.song) · 2008")
-                            .font(.custom("DMMono-Regular", size: 8.5))
-                            .foregroundColor(.gray)
-                            .padding(.top, -10)
+                        Text("\(post.song) · \(post.year)")
+                            .font(.custom("DMMono-Regular", size: 9))
+                            .kerning(0.08 * 9)
+                            .foregroundColor(.white.opacity(0.20))
+                            .padding(.bottom, 32)
                         
                         // 6. Resonance Section
-                        VStack(spacing: 20) {
+                        VStack(spacing: 12) {
                             Text("how did this feel?")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(1.5)
-                                .foregroundColor(.gray)
+                                .kerning(0.16 * 8)
+                                .foregroundColor(.white.opacity(0.15))
+                                .padding(.bottom, 12)
                             
-                            VStack(spacing: 12) {
-                                Button(action: { onResonate("felt this in my chest") }) {
-                                    ResonanceOptionRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == 1, moodColor: post.moodColor)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Button(action: { onResonate("took me somewhere else") }) {
-                                    ResonanceOptionRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == 2, moodColor: post.moodColor)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Button(action: { onResonate("reminds me of someone") }) {
-                                    ResonanceOptionRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == 3, moodColor: post.moodColor)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Button(action: { onResonate("can't explain it") }) {
-                                    ResonanceOptionRow(label: "can't explain it", count: "432", isSelected: selectedOption == 4, moodColor: post.moodColor)
-                                }
-                                .buttonStyle(PlainButtonStyle())
+                            VStack(spacing: 8) {
+                                ResonanceRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == "felt this in my chest", moodColor: post.moodType.color) { select("felt this in my chest") }
+                                ResonanceRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == "took me somewhere else", moodColor: post.moodType.color) { select("took me somewhere else") }
+                                ResonanceRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == "reminds me of someone", moodColor: post.moodType.color) { select("reminds me of someone") }
+                                ResonanceRow(label: "can't explain it", count: "432", isSelected: selectedOption == "can't explain it", moodColor: post.moodType.color) { select("can't explain it") }
                             }
                         }
-                        .padding(.top, 20)
                     }
-                    .padding(.horizontal, 22)
-                    .padding(.bottom, 120)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 80)
                 }
             }
         }
         .navigationBarHidden(true)
     }
+    
+    private func select(_ feeling: String) {
+        selectedOption = feeling
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            onResonate(feeling)
+        }
+    }
 }
 
-struct ResonanceOptionRow: View {
+struct ResonanceRow: View {
     var label: String
     var count: String
     var isSelected: Bool
     var moodColor: Color
+    var action: () -> Void
     
     var body: some View {
-        HStack(spacing: 14) {
-            Circle()
-                .fill(isSelected ? moodColor : Color.white.opacity(0.2))
-                .frame(width: 6, height: 6)
-            
-            Text(label)
-                .font(.custom("Lora-Italic", size: 11))
-                .italic()
-                .foregroundColor(.white.opacity(isSelected ? 0.78 : 0.4))
-            
-            Spacer()
-            
-            Text(count)
-                .font(.custom("DMMono-Regular", size: 8))
-                .foregroundColor(isSelected ? moodColor.opacity(0.6) : .gray)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-        .background(isSelected ? moodColor.opacity(0.04) : Color.clear)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? moodColor.opacity(0.4) : Color.white.opacity(0.06), lineWidth: 1)
-        )
-        .overlay(
-            HStack {
-                if isSelected {
-                    Rectangle()
-                        .fill(moodColor)
-                        .frame(width: 2)
-                        .padding(.vertical, 12)
-                }
+        Button(action: action) {
+            HStack(spacing: 16) {
+                // Dot
+                Circle()
+                    .fill(isSelected ? moodColor : Color.white.opacity(0.10))
+                    .frame(width: 7, height: 7)
+                
+                Text(label)
+                    .font(.custom("Lora-Italic", size: 12.5))
+                    .italic()
+                    .foregroundColor(.white.opacity(isSelected ? 0.80 : 0.38))
+                
                 Spacer()
+                
+                Text(count)
+                    .font(.custom("DMMono-Regular", size: 8.5))
+                    .foregroundColor(.white.opacity(isSelected ? 0.60 : 0.15))
+                    .foregroundColor(isSelected ? moodColor : .white)
             }
-        )
+            .padding(.vertical, 13)
+            .padding(.horizontal, 16)
+            .background(isSelected ? moodColor.opacity(0.04) : Color.white.opacity(0.02))
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(isSelected ? moodColor.opacity(0.50) : Color.white.opacity(0.06), lineWidth: 1)
+            )
+            .overlay(
+                HStack {
+                    if isSelected {
+                        Rectangle()
+                            .fill(moodColor)
+                            .frame(width: 2.5)
+                            .padding(.vertical, 14)
+                    }
+                    Spacer()
+                }
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }

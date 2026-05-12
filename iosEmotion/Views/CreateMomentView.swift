@@ -3,157 +3,182 @@ import SwiftUI
 struct CreateMomentView: View {
     @Environment(\.dismiss) var dismiss
     @State private var selectedMood: Post.MoodType = .joy
-    @State private var quoteText = "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song."
-    @State private var songSelected = true
+    @State private var quoteText = ""
+    @State private var selectedSong: String? = nil
+    @State private var showingSongPicker = false
     
-    let moods: [(Post.MoodType, String, Color)] = [
-        (.joy, "Joy", Color(hex: "f0a840")),
-        (.melancholy, "Melancholy", Color(hex: "6888b8")),
-        (.wonder, "Wonder", Color(hex: "40b8c8")),
-        (.tender, "Tender", Color(hex: "d890b8")),
-        (.urgency, "Urgency", Color(hex: "e05040")),
-        (.awe, "Awe", Color(hex: "7090d0"))
-    ]
+    let songs = ["稻香", "七里香", "青花瓷", "夜曲", "晴天"]
     
-    var moodColor: Color {
-        moods.first(where: { $0.0 == selectedMood })?.2 ?? .white
+    var isReady: Bool {
+        !quoteText.isEmpty && selectedSong != nil
     }
     
     var body: some View {
         ZStack {
-            Color(hex: "08070b").ignoresSafeArea()
+            Color(hex: "08070C").ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Top Navigation
-                HStack {
-                    Button("cancel") { dismiss() }
-                        .font(.custom("DMMono-Regular", size: 9))
-                        .foregroundColor(.white.opacity(0.25))
+                // Top Navigation Bar
+                VStack(spacing: 0) {
+                    HStack {
+                        Button("cancel") { dismiss() }
+                            .font(.custom("DMMono-Regular", size: 9.5))
+                            .foregroundColor(.white.opacity(0.28))
+                        
+                        Spacer()
+                        
+                        Text("a moment")
+                            .font(.custom("Lora-Italic", size: 14))
+                            .italic()
+                            .foregroundColor(.white.opacity(0.5))
+                        
+                        Spacer()
+                        
+                        Button("publish") {
+                            if isReady { dismiss() }
+                        }
+                        .font(.custom("DMMono-Regular", size: 9.5))
+                        .foregroundColor(isReady ? Color(hex: "F0A840").opacity(0.8) : .white.opacity(0.2))
+                        .disabled(!isReady)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 16)
                     
-                    Spacer()
-                    
-                    Text("a moment")
-                        .font(.custom("Lora-Italic", size: 13))
-                        .italic()
-                        .foregroundColor(.white.opacity(0.5))
-                    
-                    Spacer()
-                    
-                    Button("share") { }
-                        .font(.custom("DMMono-Regular", size: 9))
-                        .foregroundColor(.white.opacity(0.20))
+                    Rectangle()
+                        .fill(Color.white.opacity(0.04))
+                        .frame(height: 1)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 32) {
+                    VStack(alignment: .leading, spacing: 0) {
                         
                         // STEP 01
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("01 · How does it feel?")
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("01 · how does it feel?")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(1.5)
+                                .kerning(0.2 * 8)
                                 .foregroundColor(.white.opacity(0.18))
                             
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 24) {
-                                    ForEach(moods, id: \.1) { mood in
-                                        MoodSelectionItem(type: mood.0, name: mood.1, color: mood.2, isSelected: selectedMood == mood.0)
+                                HStack(spacing: 14) {
+                                    ForEach(Post.MoodType.allCases, id: \.self) { mood in
+                                        MoodSelectionItem(type: mood, isSelected: selectedMood == mood)
                                             .onTapGesture {
-                                                withAnimation(.spring()) {
-                                                    selectedMood = mood.0
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                    selectedMood = mood
                                                 }
                                             }
                                     }
                                 }
-                                .padding(.horizontal, 4)
                             }
                         }
+                        .padding(.top, 22)
                         
-                        Divider().background(Color.white.opacity(0.05))
+                        ThinDivider().padding(.vertical, 28)
                         
                         // STEP 02
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("02 · Say it in one thought")
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("02 · say it in one thought")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(1.5)
+                                .kerning(0.2 * 8)
                                 .foregroundColor(.white.opacity(0.18))
                             
-                            ZStack(alignment: .bottomTrailing) {
+                            ZStack(alignment: .topLeading) {
+                                if quoteText.isEmpty {
+                                    Text("say it how it was…")
+                                        .font(.custom("Lora-Italic", size: 14))
+                                        .italic()
+                                        .foregroundColor(.white.opacity(0.18))
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 16)
+                                }
+                                
                                 TextEditor(text: $quoteText)
-                                    .font(.custom("Lora-Italic", size: 13))
+                                    .font(.custom("Lora-Italic", size: 14))
                                     .italic()
-                                    .foregroundColor(.white.opacity(0.72))
+                                    .foregroundColor(.white.opacity(0.75))
+                                    .lineSpacing(14 * 1.75 - 14)
                                     .padding(16)
-                                    .frame(minHeight: 140)
+                                    .frame(minHeight: 110)
                                     .scrollContentBackground(.hidden)
                                     .background(
                                         ZStack {
-                                            Color(hex: "08070b")
-                                            RadialGradient(colors: [moodColor.opacity(0.05), .clear], center: .center, startRadius: 0, endRadius: 100)
+                                            Color.white.opacity(0.02)
+                                            RadialGradient(colors: [selectedMood.color.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 100)
                                         }
                                     )
-                                    .cornerRadius(14)
+                                    .cornerRadius(16)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 14)
-                                            .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(quoteText.isEmpty ? Color.white.opacity(0.06) : selectedMood.color.opacity(0.26), lineWidth: 1)
                                     )
-                                
+                            }
+                            
+                            HStack {
+                                Spacer()
                                 Text("\(quoteText.count) / 200")
                                     .font(.custom("DMMono-Regular", size: 8))
                                     .foregroundColor(.white.opacity(0.15))
-                                    .padding(12)
                             }
+                            .padding(.top, 8)
                         }
+                        
+                        ThinDivider().padding(.vertical, 28)
                         
                         // STEP 03
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text("03 · Which song?")
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("03 · which song?")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(1.5)
+                                .kerning(0.2 * 8)
                                 .foregroundColor(.white.opacity(0.18))
                             
-                            HStack {
-                                Image(systemName: "music.note")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.gray)
-                                
-                                Text("稻香")
-                                    .font(.custom("DMMono-Regular", size: 9))
-                                    .foregroundColor(.white.opacity(0.55))
-                                
-                                Spacer()
-                                
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.white.opacity(0.4))
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 12)
-                            .background(Color.white.opacity(0.015))
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-                            )
-                        }
-                        
-                        Spacer(minLength: 40)
-                        
-                        // SHARE BUTTON
-                        Button(action: { dismiss() }) {
-                            Text("Share this moment")
-                                .font(.custom("DMMono-Regular", size: 10))
-                                .kerning(1.5)
-                                .foregroundColor(Color(hex: "080706"))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(moodColor.opacity(0.9))
+                            Button(action: { showingSongPicker = true }) {
+                                HStack {
+                                    Image(systemName: "music.note")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.white.opacity(0.25))
+                                    
+                                    Text(selectedSong ?? "link a song")
+                                        .font(.custom("DMMono-Regular", size: 9.5))
+                                        .foregroundColor(.white.opacity(selectedSong == nil ? 0.25 : 0.55))
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: selectedSong == nil ? "chevron.right" : "checkmark")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.white.opacity(0.40))
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(Color.white.opacity(0.015))
                                 .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                                )
+                            }
+                            .confirmationDialog("Link a song", isPresented: $showingSongPicker) {
+                                ForEach(songs, id: \.self) { song in
+                                    Button(song) { selectedSong = song }
+                                }
+                            }
                         }
+                        .padding(.bottom, 26)
+                        
+                        // PUBLISH BUTTON
+                        Button(action: { dismiss() }) {
+                            Text("share this moment")
+                                .font(.custom("DMMono-Regular", size: 10.5))
+                                .kerning(0.16 * 10.5)
+                                .foregroundColor(isReady ? Color(hex: "070604") : Color(hex: "F0A840").opacity(0.3))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 15)
+                                .background(isReady ? Color(hex: "F0A840").opacity(0.9) : Color(hex: "F0A840").opacity(0.15))
+                                .cornerRadius(14)
+                        }
+                        .disabled(!isReady)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 24)
                     .padding(.bottom, 40)
                 }
             }
@@ -163,28 +188,30 @@ struct CreateMomentView: View {
 
 struct MoodSelectionItem: View {
     var type: Post.MoodType
-    var name: String
-    var color: Color
     var isSelected: Bool
     
     var body: some View {
-        VStack(spacing: 12) {
-            ZStack {
-                if isSelected {
+        VStack(spacing: 8) {
+            MoodShapeView(type: type, color: type.color)
+                .frame(width: 52, height: 52)
+                .scaleEffect(isSelected ? 1.1 : 1.0)
+                .background(
                     MoodShape(type: type)
-                        .fill(RadialGradient(colors: [color.opacity(0.16), .clear], center: .center, startRadius: 0, endRadius: 24))
-                }
-                
-                MoodShape(type: type)
-                    .stroke(color.opacity(isSelected ? 0.8 : 0.4), lineWidth: 1)
-                    .fill(color.opacity(isSelected ? 0.16 : 0.07))
-            }
-            .frame(width: 48, height: 48)
-            .scaleEffect(isSelected ? 1.12 : 1.0)
+                        .fill(type.color.opacity(isSelected ? 0.18 : 0.08))
+                )
             
-            Text(name)
-                .font(.custom("DMMono-Regular", size: 8))
-                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.2))
+            Text(type.displayName.uppercased())
+                .font(.custom("DMMono-Regular", size: 7.5))
+                .kerning(0.1 * 7.5)
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
         }
+    }
+}
+
+struct ThinDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(Color.white.opacity(0.04))
+            .frame(height: 1)
     }
 }

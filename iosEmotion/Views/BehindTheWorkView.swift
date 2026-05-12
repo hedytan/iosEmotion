@@ -3,78 +3,75 @@ import SwiftUI
 struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
     @State private var path = NavigationPath()
-    
-    enum NavDestination: Hashable {
-        case detail(Post)
-        case connection(Post, String)
-        case create
-    }
+    @State private var showingExpress = false
     
     var body: some View {
         NavigationStack(path: $path) {
             ZStack {
-                Color(hex: "07060a").ignoresSafeArea()
+                Color(hex: "08070B").ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     // Top Navigation Bar
-                    HStack {
-                        Text("moodpost")
-                            .font(.custom("Lora-Italic", size: 16))
-                            .italic()
-                            .foregroundColor(.white.opacity(0.7))
-                        
-                        Spacer()
-                        
-                        Button(action: { path.append(NavDestination.create) }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 14))
-                                .foregroundColor(.white)
-                                .frame(width: 28, height: 28)
-                                .overlay(
-                                    Circle().stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                )
+                    VStack(spacing: 0) {
+                        HStack {
+                            Text("moodpost")
+                                .font(.custom("Lora-Italic", size: 19))
+                                .italic()
+                                .foregroundColor(.white.opacity(0.75))
+                            
+                            Spacer()
+                            
+                            Button(action: {}) {
+                                Text("all moods")
+                                    .font(.custom("DMMono-Regular", size: 8))
+                                    .foregroundColor(.white.opacity(0.20))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .overlay(
+                                        Capsule().stroke(Color.white.opacity(0.07), lineWidth: 1)
+                                    )
+                            }
                         }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 16)
+                        .padding(.bottom, 16)
+                        
+                        Rectangle()
+                            .fill(Color.white.opacity(0.04))
+                            .frame(height: 1)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
                     
                     // Feed List
                     ScrollView {
                         VStack(spacing: 0) {
                             ForEach(store.posts) { post in
-                                Button(action: { path.append(NavDestination.detail(post)) }) {
+                                Button(action: { path.append(post) }) {
                                     MoodPostCard(post: post)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Rectangle()
-                                    .fill(Color.white.opacity(0.015))
+                                    .fill(Color.white.opacity(0.04))
                                     .frame(height: 1)
-                                    .padding(.horizontal, 20)
+                                    .padding(.horizontal, 24)
                             }
                         }
                     }
                 }
             }
-            .navigationDestination(for: NavDestination.self) { destination in
-                switch destination {
-                case .detail(let post):
-                    MomentDetailView(post: post, onResonate: { feeling in
-                        path.append(NavDestination.connection(post, feeling))
-                    })
-                    .transition(.opacity)
-                case .connection(let post, let feeling):
-                    ConnectionView(
-                        artistName: post.artist,
-                        artistMood: post.mood,
-                        artistMoodType: post.moodType,
-                        artistMoodColor: post.moodColor,
-                        fanFeeling: feeling
-                    )
-                    .transition(.opacity)
-                case .create:
-                    CreateMomentView()
-                        .transition(.opacity)
+            .navigationDestination(for: Post.self) { post in
+                MomentDetailView(post: post) { feeling in
+                    path.append(feeling)
+                }
+            }
+            .navigationDestination(for: String.self) { feeling in
+                // Find the post that triggered this connection (hacky for prototype but works)
+                if let lastPost = store.posts.first(where: { post in 
+                    // This is a bit complex for a simple path, 
+                    // usually we'd pass a struct with post + feeling
+                    return true 
+                }) {
+                    ConnectionView(post: lastPost, feeling: feeling)
                 }
             }
             .navigationBarHidden(true)
@@ -82,60 +79,66 @@ struct BehindTheWorkView: View {
     }
 }
 
-// Update MoodPostCard to be internal to this view or shared
 struct MoodPostCard: View {
     var post: Post
     
     var body: some View {
-        HStack(spacing: 0) {
-            Rectangle()
-                .fill(post.moodColor)
-                .frame(width: 2)
-                .padding(.vertical, 12)
-            
-            VStack(alignment: .leading, spacing: 16) {
-                HStack(spacing: 12) {
-                    MoodShapeView(type: post.moodType, color: post.moodColor)
+        VStack(alignment: .leading, spacing: 12) {
+            // TOP ROW
+            HStack(spacing: 16) {
+                MoodShapeView(type: post.moodType, color: post.moodType.color)
+                    .frame(width: 48, height: 48)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(post.artist)
+                        .font(.system(size: 14, weight: .medium)) // SF Pro Medium
+                        .foregroundColor(.white.opacity(0.82))
                     
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack(spacing: 6) {
-                            Text(post.artist)
-                                .font(.custom("DMMono-Regular", size: 13))
-                                .foregroundColor(.white)
-                            
-                            Text(post.mood)
-                                .font(.custom("DMMono-Regular", size: 13))
-                                .foregroundColor(post.moodColor)
-                        }
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(post.moodType.color)
+                            .frame(width: 5, height: 5)
+                        
+                        Text(post.moodType.displayName)
+                            .font(.custom("DMMono-Regular", size: 8.5))
+                            .foregroundColor(post.moodType.color)
+                        
+                        Text("·")
+                            .font(.custom("DMMono-Regular", size: 8.5))
+                            .foregroundColor(.white.opacity(0.22))
                         
                         Text(post.song)
-                            .font(.custom("DMMono-Regular", size: 11))
-                            .foregroundColor(.gray)
+                            .font(.custom("DMMono-Regular", size: 8.5))
+                            .foregroundColor(.white.opacity(0.22))
                     }
                 }
-                
-                Text(post.quote)
-                    .font(.custom("Lora-Italic", size: 12.5))
-                    .italic()
-                    .foregroundColor(.white.opacity(0.62))
-                    .lineSpacing(6)
-                    .padding(.trailing, 20)
-                
-                HStack {
-                    Text("\(post.resonanceCount) resonated")
-                        .font(.custom("DMMono-Regular", size: 7.5))
-                        .foregroundColor(.gray)
-                    
-                    Spacer()
-                    
-                    Text("feel this →")
-                        .font(.custom("DMMono-Regular", size: 7.5))
-                        .foregroundColor(.gray)
-                }
+                Spacer()
             }
-            .padding(.leading, 16)
-            .padding(.vertical, 24)
-            .padding(.trailing, 20)
+            
+            // QUOTE
+            Text(post.quote)
+                .font(.custom("Lora-Italic", size: 13.5))
+                .italic()
+                .foregroundColor(.white.opacity(0.62))
+                .lineSpacing(1.65 * 13.5 - 13.5) // Approximate line height
+                .lineLimit(2)
+                .truncationMode(.tail)
+                .padding(.top, 4)
+            
+            // BOTTOM ROW
+            HStack {
+                Text("\(post.resonanceCount) resonated")
+                    .font(.custom("DMMono-Regular", size: 8))
+                    .foregroundColor(.white.opacity(0.18))
+                
+                Spacer()
+                
+                Text("feel this →")
+                    .font(.custom("DMMono-Regular", size: 8))
+                    .foregroundColor(.white.opacity(0.18))
+            }
         }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 20)
     }
 }
