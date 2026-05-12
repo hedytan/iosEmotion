@@ -177,8 +177,6 @@ struct PostCardView: View {
         .sheet(isPresented: $showComments) { CommentSheet(store: store, postID: post.id) }
     }
 }
-    }
-}
 
 #Preview {
     BehindTheWorkView()
