@@ -4,7 +4,7 @@ struct MomentDetailView: View {
     @Environment(\.dismiss) var dismiss
     var post: Post
     @State private var isBreathing = false
-    @State private var selectedOption: Int = 1 // Jay Chou / Joy example has #1 selected
+    @State private var selectedOption: Int = 1
     
     var body: some View {
         ZStack {
@@ -40,7 +40,7 @@ struct MomentDetailView: View {
                             
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(post.artist)
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.custom("DMMono-Regular", size: 12))
                                     .foregroundColor(.white.opacity(0.8))
                                 
                                 Text("3 days ago · \(post.song)")
@@ -53,7 +53,6 @@ struct MomentDetailView: View {
                         
                         // 2. Large Mood Shape with Breathing Animation
                         ZStack {
-                            // Soft Glow behind shape
                             Circle()
                                 .fill(post.moodColor.opacity(0.2))
                                 .frame(width: 140, height: 140)
@@ -139,7 +138,6 @@ struct ResonanceOptionRow: View {
     
     var body: some View {
         HStack(spacing: 14) {
-            // Left Dot or Accent
             Circle()
                 .fill(isSelected ? moodColor : Color.white.opacity(0.2))
                 .frame(width: 6, height: 6)

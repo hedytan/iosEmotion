@@ -73,11 +73,11 @@ struct MoodPostCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(post.artist)
-                                .font(.system(size: 13, weight: .bold))
+                                .font(.custom("DMMono-Regular", size: 13))
                                 .foregroundColor(.white)
                             
                             Text(post.mood)
-                                .font(.system(size: 13, weight: .bold))
+                                .font(.custom("DMMono-Regular", size: 13))
                                 .foregroundColor(post.moodColor)
                         }
                         
@@ -113,9 +113,4 @@ struct MoodPostCard: View {
             .padding(.trailing, 20)
         }
     }
-}
-
-#Preview {
-    BehindTheWorkView()
-        .environmentObject(PostStore())
 }

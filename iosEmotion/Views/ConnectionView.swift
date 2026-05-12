@@ -7,8 +7,8 @@ struct ConnectionView: View {
     var artistMoodType: Post.MoodType
     var artistMoodColor: Color
     var fanFeeling: String
-    var fanMoodType: Post.MoodType = .tender // Defaulting to tender for "felt this in my chest"
-    var fanMoodColor: Color = Color(hex: "d890b8") // Pinkish for fan resonance
+    var fanMoodType: Post.MoodType = .tender
+    var fanMoodColor: Color = Color(hex: "d890b8")
     
     @State private var isBreathing = false
     @State private var dotPosition: CGFloat = 0.0
@@ -17,8 +17,6 @@ struct ConnectionView: View {
         ZStack {
             Color(hex: "07060a").ignoresSafeArea()
             
-            // AMBIENT BACKGROUND GLOW
-            // Warm-to-pink atmospheric glow connecting the two shapes
             RadialGradient(
                 stops: [
                     .init(color: artistMoodColor.opacity(0.06), location: 0),
@@ -35,9 +33,7 @@ struct ConnectionView: View {
             VStack(spacing: 0) {
                 Spacer()
                 
-                // 1. CONNECTION VISUALIZATION (top third)
                 HStack(spacing: 0) {
-                    // LEFT — Artist shape
                     VStack(spacing: 12) {
                         MoodShapeView(type: artistMoodType, color: artistMoodColor)
                             .frame(width: 56, height: 56)
@@ -48,9 +44,7 @@ struct ConnectionView: View {
                             .foregroundColor(.white.opacity(0.2))
                     }
                     
-                    // CENTER — Connection line with travelling dot
                     ZStack {
-                        // Gradient Line
                         Rectangle()
                             .fill(
                                 LinearGradient(
@@ -65,7 +59,6 @@ struct ConnectionView: View {
                             )
                             .frame(width: 100, height: 1)
                         
-                        // Animated Travelling Dot
                         Circle()
                             .fill(Color.white.opacity(0.5))
                             .frame(width: 4, height: 4)
@@ -73,9 +66,8 @@ struct ConnectionView: View {
                             .opacity(dotPosition < 0.1 || dotPosition > 0.9 ? 0 : 1)
                     }
                     .padding(.horizontal, 10)
-                    .padding(.bottom, 20) // Align with shapes
+                    .padding(.bottom, 20)
                     
-                    // RIGHT — Fan shape
                     VStack(spacing: 12) {
                         MoodShapeView(type: fanMoodType, color: fanMoodColor)
                             .frame(width: 56, height: 56)
@@ -98,7 +90,6 @@ struct ConnectionView: View {
                 
                 Spacer()
                 
-                // 2. CONNECTION TEXT (center)
                 VStack(spacing: 0) {
                     Text("\(artistName) shared a moment of \(artistMood). You felt —")
                         .font(.custom("Lora-Italic", size: 13))
@@ -123,14 +114,12 @@ struct ConnectionView: View {
                 
                 Spacer()
                 
-                // 3. DIVIDER
                 Rectangle()
                     .fill(Color.white.opacity(0.06))
                     .frame(width: 40, height: 1)
                 
                 Spacer()
                 
-                // 4. PROMPT TO SHARE (bottom third)
                 VStack(spacing: 24) {
                     VStack(spacing: 8) {
                         Text("WANT TO SHARE YOURS?")
@@ -165,14 +154,4 @@ struct ConnectionView: View {
         }
         .navigationBarHidden(true)
     }
-}
-
-#Preview {
-    ConnectionView(
-        artistName: "Jay Chou",
-        artistMood: "Joy",
-        artistMoodType: .joy,
-        artistMoodColor: Color(hex: "f0a840"),
-        fanFeeling: "felt this in my chest"
-    )
 }
