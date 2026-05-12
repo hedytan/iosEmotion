@@ -46,7 +46,6 @@ struct BehindTheWorkView: View {
                 }
             }
             .navigationDestination(for: String.self) { feeling in
-                // Find the post associated with this connection (simplified for prototype)
                 if let post = store.posts.first {
                     ConnectionView(post: post, feeling: feeling)
                         .navigationBarBackButtonHidden(true)
@@ -99,7 +98,27 @@ struct ResonanceCard: View {
                 .lineSpacing(4)
                 .multilineTextAlignment(.leading)
             
-            // FOOTER: Metrics (Minimal)
+            // THE VISUAL FRAGMENT (Optional)
+            if let image = post.attachedImage {
+                ZStack(alignment: .bottomTrailing) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 180)
+                        .clipped()
+                        .cornerRadius(16)
+                        .overlay(post.themeColor.opacity(0.22)) // MOOD TINT
+                    
+                    // Watermark
+                    MoodShapeView(type: post.moodType, color: .white, customMood: post.customMood)
+                        .frame(width: 40, height: 40)
+                        .opacity(0.10)
+                        .padding(12)
+                }
+            }
+            
+            // FOOTER: Metrics
             HStack {
                 Text("\(post.resonanceCount) resonated")
                     .font(.custom("DMMono-Regular", size: 8.5))
@@ -115,17 +134,8 @@ struct ResonanceCard: View {
         .padding(24)
         .background(
             ZStack {
-                if let image = post.attachedImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                        .overlay(post.themeColor.opacity(0.28)) // THE MOOD TINT
-                        .opacity(0.5) // Subtler in the feed
-                }
                 Color.white.opacity(0.02)
-                RadialGradient(colors: [post.themeColor.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 150)
+                RadialGradient(colors: [post.themeColor.opacity(0.04), .clear], center: .center, startRadius: 0, endRadius: 150)
             }
         )
         .cornerRadius(24)

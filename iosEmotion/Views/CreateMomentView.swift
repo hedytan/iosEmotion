@@ -10,10 +10,10 @@ struct CreateMomentView: View {
     @State private var quoteText = ""
     @State private var selectedSong: String? = nil
     @State private var attachedImage: UIImage? = nil
+    @State private var tintOpacity: Double = 0.25
     
     @State private var showingSongPicker = false
     @State private var showingDrawSheet = false
-    @State private var showingImagePicker = false
     @State private var pickerItem: PhotosPickerItem? = nil
     
     let songs = ["稻香", "七里香", "青花瓷", "夜曲", "晴天"]
@@ -24,6 +24,10 @@ struct CreateMomentView: View {
     
     var moodColor: Color {
         selectedCustom?.strokeColor ?? selectedPreset?.color ?? Color(hex: "F0A840")
+    }
+    
+    var moodName: String {
+        selectedCustom?.name ?? selectedPreset?.displayName ?? "Joy"
     }
     
     var body: some View {
@@ -65,11 +69,11 @@ struct CreateMomentView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         
-                        // STEP 01
+                        // STEP 01: HOW DOES IT FEEL?
                         VStack(alignment: .leading, spacing: 14) {
                             Text("01 · how does it feel?")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(0.2 * 8)
+                                .kerning(1.6)
                                 .foregroundColor(.white.opacity(0.18))
                             
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -112,11 +116,11 @@ struct CreateMomentView: View {
                         
                         ThinDivider().padding(.vertical, 28)
                         
-                        // STEP 02
+                        // STEP 02: SAY IT IN ONE THOUGHT
                         VStack(alignment: .leading, spacing: 14) {
                             Text("02 · say it in one thought")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(0.2 * 8)
+                                .kerning(1.6)
                                 .foregroundColor(.white.opacity(0.18))
                             
                             ZStack(alignment: .topLeading) {
@@ -154,21 +158,69 @@ struct CreateMomentView: View {
                         VStack(alignment: .leading, spacing: 14) {
                             Text("03 · add a visual fragment")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(0.2 * 8)
+                                .kerning(1.6)
                                 .foregroundColor(.white.opacity(0.18))
                             
-                            PhotosPicker(selection: $pickerItem, matching: .images) {
-                                ZStack {
-                                    if let attachedImage {
+                            if let attachedImage {
+                                // IMAGE ATTACHED STATE
+                                VStack(alignment: .leading, spacing: 12) {
+                                    ZStack(alignment: .bottomLeading) {
                                         Image(uiImage: attachedImage)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(maxWidth: .infinity)
-                                            .frame(height: 80)
+                                            .frame(height: 220)
                                             .clipped()
-                                            .cornerRadius(14)
-                                            .overlay(moodColor.opacity(0.25)) // THE TINT
-                                    } else {
+                                            .cornerRadius(18)
+                                            .overlay(moodColor.opacity(tintOpacity)) // ADJUSTABLE TINT
+                                        
+                                        // Mood Name (Bottom Left)
+                                        Text(moodName.uppercased())
+                                            .font(.custom("DMMono-Regular", size: 9))
+                                            .kerning(2)
+                                            .foregroundColor(.white.opacity(0.8))
+                                            .padding(16)
+                                        
+                                        // Mood Shape Watermark (Bottom Right)
+                                        HStack {
+                                            Spacer()
+                                            MoodShapeView(type: selectedPreset ?? .custom, color: .white, customMood: selectedCustom)
+                                                .frame(width: 60, height: 60)
+                                                .opacity(0.12)
+                                                .padding(12)
+                                        }
+                                    }
+                                    
+                                    // Controls
+                                    HStack(spacing: 16) {
+                                        PhotosPicker(selection: $pickerItem, matching: .images) {
+                                            Label("change photo", systemImage: "arrow.triangle.2.circlepath")
+                                                .font(.custom("DMMono-Regular", size: 8.5))
+                                                .foregroundColor(.white.opacity(0.4))
+                                        }
+                                        
+                                        Button(action: {
+                                            withAnimation {
+                                                tintOpacity = (tintOpacity >= 0.6) ? 0.15 : tintOpacity + 0.15
+                                            }
+                                        }) {
+                                            Label("mood filter", systemImage: "slider.horizontal.3")
+                                                .font(.custom("DMMono-Regular", size: 8.5))
+                                                .foregroundColor(.white.opacity(0.4))
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: { attachedImage = nil }) {
+                                            Image(systemName: "xmark.circle")
+                                                .foregroundColor(.white.opacity(0.2))
+                                        }
+                                    }
+                                }
+                            } else {
+                                // EMPTY STATE
+                                PhotosPicker(selection: $pickerItem, matching: .images) {
+                                    ZStack {
                                         RoundedRectangle(cornerRadius: 14)
                                             .stroke(Color.white.opacity(0.12), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
                                             .frame(height: 80)
@@ -176,44 +228,37 @@ struct CreateMomentView: View {
                                         
                                         VStack(spacing: 8) {
                                             HStack(spacing: 8) {
-                                                Image(systemName: "photo")
-                                                    .font(.system(size: 14))
-                                                Text("attach a photo")
-                                                    .font(.custom("Lora-Italic", size: 12))
-                                                    .italic()
+                                                Image(systemName: "photo").font(.system(size: 14))
+                                                Text("attach a photo").font(.custom("Lora-Italic", size: 12)).italic()
                                             }
                                             .foregroundColor(.white.opacity(0.5))
                                             
-                                            Text("camera roll · take photo · files")
-                                                .font(.custom("DMMono-Regular", size: 8))
-                                                .foregroundColor(.white.opacity(0.15))
+                                            Text("camera roll · take photo · files").font(.custom("DMMono-Regular", size: 8)).foregroundColor(.white.opacity(0.15))
                                         }
                                     }
                                 }
-                            }
-                            .onChange(of: pickerItem) { newItem in
-                                Task {
-                                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                        attachedImage = UIImage(data: data)
-                                    }
+                                
+                                HStack {
+                                    Spacer()
+                                    Text("mood tints the image automatically").font(.custom("DMMono-Regular", size: 7)).foregroundColor(.white.opacity(0.12))
                                 }
                             }
-                            
-                            HStack {
-                                Spacer()
-                                Text("mood tints the image automatically")
-                                    .font(.custom("DMMono-Regular", size: 7))
-                                    .foregroundColor(.white.opacity(0.12))
+                        }
+                        .onChange(of: pickerItem) { newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    attachedImage = UIImage(data: data)
+                                }
                             }
                         }
                         
                         ThinDivider().padding(.vertical, 28)
                         
-                        // STEP 04: SONG LINKING
+                        // STEP 04: WHICH SONG?
                         VStack(alignment: .leading, spacing: 14) {
                             Text("04 · which song?")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(0.2 * 8)
+                                .kerning(1.6)
                                 .foregroundColor(.white.opacity(0.18))
                             
                             Button(action: { showingSongPicker = true }) {
@@ -231,7 +276,7 @@ struct CreateMomentView: View {
                                 }
                             }
                         }
-                        .padding(.bottom, 26)
+                        .padding(.bottom, 32)
                         
                         Button(action: publishMoment) {
                             Text("share this moment")
@@ -255,7 +300,7 @@ struct CreateMomentView: View {
         let newPost = Post(
             artist: "You",
             song: selectedSong ?? "Unknown",
-            mood: selectedCustom?.name ?? selectedPreset?.displayName ?? "Joy",
+            mood: moodName,
             moodType: selectedPreset ?? .custom,
             customMood: selectedCustom,
             attachedImage: attachedImage,
@@ -269,63 +314,8 @@ struct CreateMomentView: View {
     }
 }
 
-struct MoodSelectionItem: View {
-    var type: Post.MoodType
-    var isSelected: Bool
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            MoodShapeView(type: type, color: type.color)
-                .frame(width: 52, height: 52)
-                .scaleEffect(isSelected ? 1.1 : 1.0)
-                .background(
-                    MoodShape(type: type)
-                        .fill(type.color.opacity(isSelected ? 0.18 : 0.08))
-                )
-            
-            Text(type.displayName.uppercased())
-                .font(.custom("DMMono-Regular", size: 7.5))
-                .kerning(0.1 * 7.5)
-                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
-        }
-    }
-}
-
-struct CustomMoodSelectionItem: View {
-    var custom: CustomMood
-    var isSelected: Bool
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle()
-                    .fill(custom.strokeColor.opacity(isSelected ? 0.18 : 0.08))
-                    .frame(width: 52, height: 52)
-                
-                Image(uiImage: custom.thumbnail)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
-                    .padding(6)
-            }
-            .scaleEffect(isSelected ? 1.1 : 1.0)
-            .overlay(
-                Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.8 : 0.4), lineWidth: 1)
-                    .frame(width: 52, height: 52)
-            )
-            
-            Text(custom.name.uppercased())
-                .font(.custom("DMMono-Regular", size: 7.5))
-                .kerning(0.1 * 7.5)
-                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
-        }
-    }
-}
-
 struct ThinDivider: View {
     var body: some View {
-        Rectangle()
-            .fill(Color.white.opacity(0.04))
-            .frame(height: 1)
+        Rectangle().fill(Color.white.opacity(0.04)).frame(height: 1)
     }
 }
