@@ -7,37 +7,48 @@ struct ConnectionView: View {
     
     @State private var isBreathing = false
     @State private var dotPosition: CGFloat = 0.0
+    @State private var flashOpacity: Double = 0.0
+    @State private var floatOffset: CGFloat = 0.0
     
-    let fanMoodColor = Color(hex: "D890B8") // Tender pink for fan connection
+    let fanMoodColor = Color(hex: "D890B8")
     
     var body: some View {
         ZStack {
             Color(hex: "07060A").ignoresSafeArea()
             
-            // AMBIENT GLOW (Centered)
-            RadialGradient(
-                stops: [
-                    .init(color: post.moodType.color.opacity(0.07), location: 0),
-                    .init(color: fanMoodColor.opacity(0.04), location: 0.6),
-                    .init(color: .clear, location: 1.0)
-                ],
-                center: .center,
-                startRadius: 0,
-                endRadius: 140
-            )
-            .frame(width: 280, height: 280)
-            .blur(radius: 30)
+            // AMBIENT GLOW (Centered & Pulsing)
+            ZStack {
+                RadialGradient(
+                    stops: [
+                        .init(color: post.moodType.color.opacity(isBreathing ? 0.12 : 0.07), location: 0),
+                        .init(color: fanMoodColor.opacity(isBreathing ? 0.08 : 0.04), location: 0.6),
+                        .init(color: .clear, location: 1.0)
+                    ],
+                    center: .center,
+                    startRadius: 0,
+                    endRadius: isBreathing ? 160 : 140
+                )
+                .frame(width: 320, height: 320)
+                .blur(radius: 30)
+                
+                // THE RESONANCE FLASH (Click effect)
+                Circle()
+                    .fill(Color.white.opacity(flashOpacity))
+                    .frame(width: 200, height: 200)
+                    .blur(radius: 40)
+            }
             
             VStack(spacing: 0) {
                 Spacer()
                 
-                // SECTION 1 — Visual connection
+                // SECTION 1 — Visual connection (Floating Illustrations)
                 HStack(spacing: 0) {
                     // LEFT — Artist shape
                     VStack(spacing: 12) {
                         MoodShapeView(type: post.moodType, color: post.moodType.color)
                             .frame(width: 68, height: 68)
                             .scaleEffect(isBreathing ? 1.05 : 1.0)
+                            .offset(y: floatOffset)
                         
                         Text(post.artist)
                             .font(.custom("DMMono-Regular", size: 8.5))
@@ -46,7 +57,6 @@ struct ConnectionView: View {
                     
                     // CENTER — Connection line
                     ZStack {
-                        // Gradient Line
                         Rectangle()
                             .fill(
                                 LinearGradient(
@@ -62,11 +72,10 @@ struct ConnectionView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 1)
                         
-                        // Animated dot
                         Circle()
                             .fill(Color.white.opacity(0.55))
                             .frame(width: 7, height: 7)
-                            .offset(x: -50 + (100 * dotPosition)) // Approximate but works for visual
+                            .offset(x: -50 + (100 * dotPosition))
                             .opacity(dotPosition < 0.1 || dotPosition > 0.9 ? 0 : 1)
                     }
                     .padding(.horizontal, 16)
@@ -77,6 +86,7 @@ struct ConnectionView: View {
                         MoodShapeView(type: .tender, color: fanMoodColor)
                             .frame(width: 68, height: 68)
                             .scaleEffect(isBreathing ? 1.05 : 1.0)
+                            .offset(y: -floatOffset)
                             .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true).delay(0.6), value: isBreathing)
                         
                         Text("You")
@@ -87,8 +97,18 @@ struct ConnectionView: View {
                 .padding(.horizontal, 32)
                 .padding(.bottom, 32)
                 .onAppear {
+                    // Trigger Resonance Flash (Click)
+                    flashOpacity = 0.6
+                    withAnimation(.easeOut(duration: 0.8)) {
+                        flashOpacity = 0.0
+                    }
+                    
+                    // Trigger Breathing & Floating
                     withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
                         isBreathing = true
+                    }
+                    withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
+                        floatOffset = 8
                     }
                     withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: false)) {
                         dotPosition = 1.0
@@ -119,7 +139,6 @@ struct ConnectionView: View {
                         .foregroundColor(.white.opacity(0.18))
                         .padding(.bottom, 28)
                     
-                    // Divider
                     Rectangle()
                         .fill(Color.white.opacity(0.06))
                         .frame(width: 36, height: 1)
@@ -143,10 +162,7 @@ struct ConnectionView: View {
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 24)
                     
-                    Button(action: { 
-                        // In a real app, this would pop to root
-                        dismiss() 
-                    }) {
+                    Button(action: { dismiss() }) {
                         Text("← back to feed")
                             .font(.custom("DMMono-Regular", size: 9))
                             .kerning(0.1 * 9)
@@ -163,6 +179,6 @@ struct ConnectionView: View {
             }
         }
         .navigationBarHidden(true)
-        .toolbar(.hidden, for: .tabBar) // Hide tab bar on this screen
+        .toolbar(.hidden, for: .tabBar)
     }
 }
