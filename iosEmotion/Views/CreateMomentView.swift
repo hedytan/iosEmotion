@@ -46,7 +46,7 @@ struct CreateMomentView: View {
                         Spacer()
                         
                         Button("publish") {
-                            if isReady { dismiss() }
+                            if isReady { publishMoment() }
                         }
                         .font(.custom("DMMono-Regular", size: 9.5))
                         .foregroundColor(isReady ? Color(hex: "F0A840").opacity(0.8) : .white.opacity(0.2))
@@ -209,7 +209,7 @@ struct CreateMomentView: View {
                         .padding(.bottom, 26)
                         
                         // PUBLISH BUTTON
-                        Button(action: { dismiss() }) {
+                        Button(action: { publishMoment() }) {
                             Text("share this moment")
                                 .font(.custom("DMMono-Regular", size: 10.5))
                                 .kerning(0.16 * 10.5)
@@ -230,6 +230,25 @@ struct CreateMomentView: View {
             DrawMoodSheet()
                 .environmentObject(store)
         }
+    }
+    
+    private func publishMoment() {
+        let newPost = Post(
+            artist: "You",
+            song: selectedSong ?? "Unknown",
+            mood: selectedCustom?.name ?? selectedPreset?.displayName ?? "Joy",
+            moodType: selectedPreset ?? .custom,
+            customMood: selectedCustom,
+            quote: quoteText,
+            resonanceCount: "0",
+            year: "2026",
+            daysAgo: 0
+        )
+        
+        withAnimation {
+            store.posts.insert(newPost, at: 0)
+        }
+        dismiss()
     }
 }
 

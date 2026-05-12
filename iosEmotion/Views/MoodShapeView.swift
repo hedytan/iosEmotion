@@ -4,6 +4,7 @@ struct MoodShapeView: View {
     var type: Post.MoodType
     var color: Color
     var isLarge: Bool = false
+    var customMood: CustomMood? = nil
     
     var body: some View {
         ZStack {
@@ -15,18 +16,37 @@ struct MoodShapeView: View {
                     .blur(radius: 50)
             }
             
-            // Radial Background Fill (15% opacity center -> 0%)
-            MoodShape(type: type)
-                .fill(RadialGradient(colors: [color.opacity(0.15), .clear], center: .center, startRadius: 0, endRadius: isLarge ? 60 : 22))
-            
-            // Outer Stroke (50% opacity, 1pt)
-            MoodShape(type: type)
-                .stroke(color.opacity(0.50), lineWidth: 1)
-            
-            // Inner Dashed Ring (15% opacity)
-            MoodShape(type: type)
-                .scale(0.7)
-                .stroke(color.opacity(0.15), style: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
+            if let custom = customMood {
+                // Custom hand-drawn shape rendering
+                ZStack {
+                    Circle()
+                        .fill(RadialGradient(colors: [color.opacity(0.15), .clear], center: .center, startRadius: 0, endRadius: isLarge ? 60 : 22))
+                        .frame(width: isLarge ? 120 : 48, height: isLarge ? 120 : 48)
+                    
+                    Image(uiImage: custom.thumbnail)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: isLarge ? 100 : 36, height: isLarge ? 100 : 36)
+                        .foregroundColor(color)
+                    
+                    Circle()
+                        .stroke(color.opacity(0.50), lineWidth: 1)
+                        .frame(width: isLarge ? 120 : 48, height: isLarge ? 120 : 48)
+                }
+            } else {
+                // Procedural preset shape rendering
+                ZStack {
+                    MoodShape(type: type)
+                        .fill(RadialGradient(colors: [color.opacity(0.15), .clear], center: .center, startRadius: 0, endRadius: isLarge ? 60 : 22))
+                    
+                    MoodShape(type: type)
+                        .stroke(color.opacity(0.50), lineWidth: 1)
+                    
+                    MoodShape(type: type)
+                        .scale(0.7)
+                        .stroke(color.opacity(0.15), style: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
+                }
+            }
         }
     }
 }
@@ -49,7 +69,7 @@ struct MoodShape: Shape {
         case .awe:
             return awePath(in: rect)
         case .custom:
-            return Path() // Custom moods are rendered via UIImage thumbnails
+            return Path() // Handled by UIImage in MoodShapeView
         }
     }
     

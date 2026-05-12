@@ -86,7 +86,7 @@ struct ResonanceCard: View {
         VStack(alignment: .leading, spacing: 12) {
             // TOP ROW
             HStack(spacing: 16) {
-                MoodShapeView(type: post.moodType, color: post.moodType.color)
+                MoodShapeView(type: post.moodType, color: post.moodType.color, customMood: post.customMood)
                     .frame(width: 48, height: 48)
                 
                 VStack(alignment: .leading, spacing: 4) {

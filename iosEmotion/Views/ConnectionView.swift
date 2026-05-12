@@ -45,7 +45,7 @@ struct ConnectionView: View {
                 HStack(spacing: 0) {
                     // LEFT — Artist shape
                     VStack(spacing: 12) {
-                        MoodShapeView(type: post.moodType, color: post.moodType.color)
+                        MoodShapeView(type: post.moodType, color: post.moodType.color, customMood: post.customMood)
                             .frame(width: 68, height: 68)
                             .scaleEffect(isBreathing ? 1.05 : 1.0)
                             .offset(y: floatOffset)

@@ -56,7 +56,7 @@ struct MomentDetailView: View {
                         .padding(.bottom, 24)
                         
                         // 2. Large Mood Shape
-                        MoodShapeView(type: post.moodType, color: post.moodType.color, isLarge: true)
+                        MoodShapeView(type: post.moodType, color: post.moodType.color, isLarge: true, customMood: post.customMood)
                             .frame(width: 120, height: 120)
                             .scaleEffect(isBreathing ? 1.05 : 1.0)
                             .onAppear {
