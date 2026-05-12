@@ -1,6 +1,5 @@
 import SwiftUI
 import Combine
-import Foundation
 
 struct Post: Identifiable {
     let id = UUID()
@@ -12,44 +11,15 @@ struct Post: Identifiable {
     let resonanceCount: String
     let moodType: MoodType
     var isLiked: Bool = false
-    var isSaved: Bool = false
-    var comments: [String] = []
     
     enum MoodType {
         case joy, melancholy, tender
     }
 }
 
-struct BoardItem: Identifiable {
-    let id = UUID()
-    var title: String
-    var tag: String
-    var color: Color
-    var coverPhoto: String?
-    var postIDs: [UUID] = []
-}
-
-struct Artist: Identifiable {
-    let id = UUID()
-    var name: String
-    var identity: String
-    var avatarImage: String?
-    var isFollowing: Bool = false
-}
-
-struct UserProfile {
-    var name: String = "Hedy"
-    var handle: String = "@hedy_resonance"
-    var bio: String = "Capturing the sonic architecture of midnight. Artist & Dreamer."
-    var profession: String = "Vocal Architect"
-    var avatarData: Data? = nil
-    var followersCount: Int = 674
-    var followingCount: Int = 128
-}
-
 class PostStore: ObservableObject {
-    @Published var currentUser = UserProfile()
     @Published var hasCompletedOnboarding: Bool = false
+    
     @Published var posts: [Post] = [
         Post(artist: "Jay Chou", song: "稻香", mood: "Joy", 
              moodColor: Color(hex: "f0a840"),
@@ -67,37 +37,9 @@ class PostStore: ObservableObject {
              resonanceCount: "31k", moodType: .tender)
     ]
     
-    @Published var boards: [BoardItem] = [
-        BoardItem(title: "Midnight Echoes", tag: "MOOD · NOIR", color: Color(red: 0.1, green: 0.1, blue: 0.15)),
-        BoardItem(title: "Velvet Distortion", tag: "TEXTURE · WARM", color: Color(red: 0.3, green: 0.1, blue: 0.05))
-    ]
-    
-    @Published var discoveredArtists: [Artist] = [
-        Artist(name: "Ariel Blue", identity: "Dream Pop Vocalist"),
-        Artist(name: "Kaelo", identity: "Neo-Soul Producer")
-    ]
-    
-    @Published var unreadCount: Int = 0
-    
     func toggleLike(for id: UUID) {
         if let index = posts.firstIndex(where: { $0.id == id }) {
             posts[index].isLiked.toggle()
-        }
-    }
-    
-    func toggleSave(for id: UUID) {
-        if let index = posts.firstIndex(where: { $0.id == id }) {
-            posts[index].isSaved.toggle()
-        }
-    }
-    
-    func getPosts(for board: BoardItem) -> [Post] {
-        return posts.filter { board.postIDs.contains($0.id) }
-    }
-    
-    func addComment(to id: UUID, text: String) {
-        if let index = posts.firstIndex(where: { $0.id == id }) {
-            posts[index].comments.append(text)
         }
     }
 }
