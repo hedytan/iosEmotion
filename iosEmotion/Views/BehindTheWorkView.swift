@@ -4,48 +4,53 @@ struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
     
     var body: some View {
-        ZStack {
-            Color(hex: "07060a").ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Top Navigation Bar
-                HStack {
-                    Text("moodpost")
-                        .font(.custom("Lora-Italic", size: 16))
-                        .italic()
-                        .foregroundColor(.white.opacity(0.7))
-                    
-                    Spacer()
-                    
-                    Button(action: {}) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 14))
-                            .foregroundColor(.white)
-                            .frame(width: 28, height: 28)
-                            .overlay(
-                                Circle().stroke(Color.white.opacity(0.2), lineWidth: 1)
-                            )
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
+        NavigationView {
+            ZStack {
+                Color(hex: "07060a").ignoresSafeArea()
                 
-                // Feed List
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ForEach(store.posts) { post in
-                            MoodPostCard(post: post)
-                            
-                            Rectangle()
-                                .fill(Color.white.opacity(0.035))
-                                .frame(height: 1)
-                                .padding(.horizontal, 20)
+                VStack(spacing: 0) {
+                    // Top Navigation Bar
+                    HStack {
+                        Text("moodpost")
+                            .font(.custom("Lora-Italic", size: 16))
+                            .italic()
+                            .foregroundColor(.white.opacity(0.7))
+                        
+                        Spacer()
+                        
+                        Button(action: {}) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 14))
+                                .foregroundColor(.white)
+                                .frame(width: 28, height: 28)
+                                .overlay(
+                                    Circle().stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                )
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    
+                    // Feed List
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(store.posts) { post in
+                                NavigationLink(destination: MomentDetailView(post: post)) {
+                                    MoodPostCard(post: post)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Rectangle()
+                                    .fill(Color.white.opacity(0.035))
+                                    .frame(height: 1)
+                                    .padding(.horizontal, 20)
+                            }
                         }
                     }
                 }
             }
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
     }
 }
 
