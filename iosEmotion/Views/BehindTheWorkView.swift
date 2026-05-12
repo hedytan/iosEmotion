@@ -14,7 +14,7 @@ struct BehindTheWorkView: View {
                     // Top Navigation Bar
                     VStack(spacing: 0) {
                         HStack {
-                            Text("moodpost")
+                            Text("resonance")
                                 .font(.custom("Lora-Italic", size: 19))
                                 .italic()
                                 .foregroundColor(.white.opacity(0.75))
@@ -46,7 +46,7 @@ struct BehindTheWorkView: View {
                         VStack(spacing: 0) {
                             ForEach(store.posts) { post in
                                 Button(action: { path.append(post) }) {
-                                    MoodPostCard(post: post)
+                                    ResonanceCard(post: post)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 
@@ -79,7 +79,7 @@ struct BehindTheWorkView: View {
     }
 }
 
-struct MoodPostCard: View {
+struct ResonanceCard: View {
     var post: Post
     
     var body: some View {
