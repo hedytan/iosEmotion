@@ -2,15 +2,26 @@ import SwiftUI
 
 struct CreateMomentView: View {
     @Environment(\.dismiss) var dismiss
-    @State private var selectedMood: Post.MoodType = .joy
+    @EnvironmentObject var store: PostStore
+    
+    @State private var selectedPreset: Post.MoodType? = .joy
+    @State private var selectedCustom: CustomMood? = nil
     @State private var quoteText = ""
     @State private var selectedSong: String? = nil
     @State private var showingSongPicker = false
+    @State private var showingDrawSheet = false
     
     let songs = ["稻香", "七里香", "青花瓷", "夜曲", "晴天"]
     
     var isReady: Bool {
-        !quoteText.isEmpty && selectedSong != nil
+        (!quoteText.isEmpty && selectedSong != nil) && (selectedPreset != nil || selectedCustom != nil)
+    }
+    
+    var moodColor: Color {
+        if let custom = selectedCustom {
+            return custom.strokeColor
+        }
+        return selectedPreset?.color ?? Color(hex: "F0A840")
     }
     
     var body: some View {
@@ -46,7 +57,7 @@ struct CreateMomentView: View {
                     
                     Rectangle()
                         .fill(Color.white.opacity(0.04))
-                        .frame(height: 1)
+                    .frame(height: 1)
                 }
                 
                 ScrollView(showsIndicators: false) {
@@ -61,13 +72,45 @@ struct CreateMomentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 14) {
-                                    ForEach(Post.MoodType.allCases, id: \.self) { mood in
-                                        MoodSelectionItem(type: mood, isSelected: selectedMood == mood)
+                                    // Presets
+                                    ForEach(Post.MoodType.allCases.filter { $0 != .custom }, id: \.self) { mood in
+                                        MoodSelectionItem(type: mood, isSelected: selectedPreset == mood)
                                             .onTapGesture {
                                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                    selectedMood = mood
+                                                    selectedPreset = mood
+                                                    selectedCustom = nil
                                                 }
                                             }
+                                    }
+                                    
+                                    // Saved Custom Moods
+                                    ForEach(store.customMoods) { custom in
+                                        CustomMoodSelectionItem(custom: custom, isSelected: selectedCustom?.id == custom.id)
+                                            .onTapGesture {
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                    selectedCustom = custom
+                                                    selectedPreset = nil
+                                                }
+                                            }
+                                    }
+                                    
+                                    // Add Custom Button
+                                    Button(action: { showingDrawSheet = true }) {
+                                        VStack(spacing: 8) {
+                                            ZStack {
+                                                Circle()
+                                                    .stroke(Color.white.opacity(0.18), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                                                    .frame(width: 46, height: 46)
+                                                
+                                                Image(systemName: "plus")
+                                                    .font(.system(size: 14))
+                                                    .foregroundColor(.white.opacity(0.25))
+                                            }
+                                            
+                                            Text("custom")
+                                                .font(.custom("DMMono-Regular", size: 7))
+                                                .foregroundColor(.white.opacity(0.2))
+                                        }
                                     }
                                 }
                             }
@@ -104,13 +147,13 @@ struct CreateMomentView: View {
                                     .background(
                                         ZStack {
                                             Color.white.opacity(0.02)
-                                            RadialGradient(colors: [selectedMood.color.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 100)
+                                            RadialGradient(colors: [moodColor.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 100)
                                         }
                                     )
                                     .cornerRadius(16)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 16)
-                                            .stroke(quoteText.isEmpty ? Color.white.opacity(0.06) : selectedMood.color.opacity(0.26), lineWidth: 1)
+                                            .stroke(quoteText.isEmpty ? Color.white.opacity(0.06) : moodColor.opacity(0.26), lineWidth: 1)
                                     )
                             }
                             
@@ -183,35 +226,40 @@ struct CreateMomentView: View {
                 }
             }
         }
-    }
-}
-
-struct MoodSelectionItem: View {
-    var type: Post.MoodType
-    var isSelected: Bool
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            MoodShapeView(type: type, color: type.color)
-                .frame(width: 52, height: 52)
-                .scaleEffect(isSelected ? 1.1 : 1.0)
-                .background(
-                    MoodShape(type: type)
-                        .fill(type.color.opacity(isSelected ? 0.18 : 0.08))
-                )
-            
-            Text(type.displayName.uppercased())
-                .font(.custom("DMMono-Regular", size: 7.5))
-                .kerning(0.1 * 7.5)
-                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        .fullScreenCover(isPresented: $showingDrawSheet) {
+            DrawMoodSheet()
+                .environmentObject(store)
         }
     }
 }
 
-struct ThinDivider: View {
+struct CustomMoodSelectionItem: View {
+    var custom: CustomMood
+    var isSelected: Bool
+    
     var body: some View {
-        Rectangle()
-            .fill(Color.white.opacity(0.04))
-            .frame(height: 1)
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .fill(custom.strokeColor.opacity(isSelected ? 0.18 : 0.08))
+                    .frame(width: 52, height: 52)
+                
+                Image(uiImage: custom.thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .padding(6)
+            }
+            .scaleEffect(isSelected ? 1.1 : 1.0)
+            .overlay(
+                Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.8 : 0.4), lineWidth: 1)
+                    .frame(width: 52, height: 52)
+            )
+            
+            Text(custom.name.uppercased())
+                .font(.custom("DMMono-Regular", size: 7.5))
+                .kerning(0.1 * 7.5)
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        }
     }
 }
