@@ -90,7 +90,7 @@ struct CreateMomentView: View {
                                     .scrollContentBackground(.hidden)
                                     .background(
                                         ZStack {
-                                            Color.white.opacity(0.02)
+                                            Color(hex: "08070b")
                                             RadialGradient(colors: [moodColor.opacity(0.05), .clear], center: .center, startRadius: 0, endRadius: 100)
                                         }
                                     )

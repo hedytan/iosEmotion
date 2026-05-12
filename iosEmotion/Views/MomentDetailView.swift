@@ -157,7 +157,7 @@ struct ResonanceOptionRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 11)
-        .background(isSelected ? moodColor.opacity(0.04) : Color.white.opacity(0.02))
+        .background(isSelected ? moodColor.opacity(0.04) : Color.clear)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)

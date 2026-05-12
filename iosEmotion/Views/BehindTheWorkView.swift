@@ -41,7 +41,7 @@ struct BehindTheWorkView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 
                                 Rectangle()
-                                    .fill(Color.white.opacity(0.035))
+                                    .fill(Color.white.opacity(0.015))
                                     .frame(height: 1)
                                     .padding(.horizontal, 20)
                             }

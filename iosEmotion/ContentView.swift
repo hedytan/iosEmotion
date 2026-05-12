@@ -28,7 +28,7 @@ struct ContentView: View {
             // Custom Tab Bar for exact styling
             VStack(spacing: 0) {
                 Divider()
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.white.opacity(0.05))
                 
                 HStack {
                     Spacer()
@@ -60,7 +60,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 12)
                 .padding(.bottom, 32)
-                .background(Color(hex: "07060a").opacity(0.95))
+                .background(Color(hex: "07060a"))
             }
         }
         .ignoresSafeArea(.all, edges: .bottom)
