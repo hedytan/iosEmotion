@@ -268,3 +268,64 @@ struct CreateMomentView: View {
         dismiss()
     }
 }
+
+struct MoodSelectionItem: View {
+    var type: Post.MoodType
+    var isSelected: Bool
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            MoodShapeView(type: type, color: type.color)
+                .frame(width: 52, height: 52)
+                .scaleEffect(isSelected ? 1.1 : 1.0)
+                .background(
+                    MoodShape(type: type)
+                        .fill(type.color.opacity(isSelected ? 0.18 : 0.08))
+                )
+            
+            Text(type.displayName.uppercased())
+                .font(.custom("DMMono-Regular", size: 7.5))
+                .kerning(0.1 * 7.5)
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        }
+    }
+}
+
+struct CustomMoodSelectionItem: View {
+    var custom: CustomMood
+    var isSelected: Bool
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .fill(custom.strokeColor.opacity(isSelected ? 0.18 : 0.08))
+                    .frame(width: 52, height: 52)
+                
+                Image(uiImage: custom.thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .padding(6)
+            }
+            .scaleEffect(isSelected ? 1.1 : 1.0)
+            .overlay(
+                Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.8 : 0.4), lineWidth: 1)
+                    .frame(width: 52, height: 52)
+            )
+            
+            Text(custom.name.uppercased())
+                .font(.custom("DMMono-Regular", size: 7.5))
+                .kerning(0.1 * 7.5)
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        }
+    }
+}
+
+struct ThinDivider: View {
+    var body: some View {
+        Rectangle()
+            .fill(Color.white.opacity(0.04))
+            .frame(height: 1)
+    }
+}
