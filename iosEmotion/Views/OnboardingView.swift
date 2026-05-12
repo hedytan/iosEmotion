@@ -19,149 +19,128 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color(hex: "07060a").ignoresSafeArea()
             
-            VStack(spacing: 30) {
-                // Top Navigation Bar
-                HStack {
-                    if step > 1 {
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                step -= 1
-                            }
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "chevron.left")
-                                    .fontWeight(.bold)
-                                Text("Back")
-                                    .fontWeight(.medium)
-                            }
-                            .foregroundColor(Color("AppPurple"))
-                        }
-                        .padding(.leading, 20)
-                    }
-                    
-                    Spacer()
-                }
-                .frame(height: 44)
-                
-                // Progress Indicator
+            VStack(spacing: 40) {
+                // Top Progress Indicator
                 HStack(spacing: 8) {
                     ForEach(1...3, id: \.self) { i in
-                        Capsule()
-                            .fill(step >= i ? Color("AppPurple") : Color.gray.opacity(0.2))
-                            .frame(width: 40, height: 4)
+                        Circle()
+                            .fill(step >= i ? Color(hex: "f0a840") : Color.white.opacity(0.1))
+                            .frame(width: 6, height: 6)
                     }
                 }
                 .padding(.top, 20)
                 
-                Spacer()
-                
-                if step == 1 {
-                    VStack(spacing: 20) {
-                        Text("What is your name?")
-                            .font(.system(size: 30, weight: .black))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(Color("AppPurple"))
-                        
-                        TextField("Enter name...", text: $nameInput)
-                            .font(.title2)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(15)
-                            .padding(.horizontal, 40)
-                    }
-                } else if step == 2 {
-                    VStack(spacing: 20) {
-                        Text("Add a Profile Photo")
-                            .font(.system(size: 30, weight: .black))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(Color("AppPurple"))
-                        
-                        PhotosPicker(selection: $selectedItem, matching: .images) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.gray.opacity(0.1))
-                                    .frame(width: 150, height: 150)
-                                
-                                if let data = selectedAvatarData, let uiImage = UIImage(data: data) {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 150, height: 150)
-                                        .clipShape(Circle())
-                                } else {
-                                    Image(systemName: "camera.fill")
-                                        .font(.system(size: 40))
-                                        .foregroundColor(Color("AppPurple"))
-                                }
-                            }
-                        }
-                        .onChange(of: selectedItem) { newItem in
-                            Task {
-                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                    selectedAvatarData = data
-                                }
-                            }
-                        }
-                        
-                        Text("Tap to upload")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                } else if step == 3 {
-                    VStack(spacing: 20) {
-                        Text("Your Identity")
-                            .font(.system(size: 30, weight: .black))
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(Color("AppPurple"))
-                        
-                        VStack(spacing: 12) {
-                            TextField("Profession (e.g. Producer)", text: $professionInput)
-                                .padding()
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
-                            
-                            TextField("Brief Bio", text: $bioInput)
-                                .padding()
-                                .background(Color.gray.opacity(0.1))
-                                .cornerRadius(12)
-                        }
-                        .padding(.horizontal, 40)
-                    }
-                }
-                
-                Spacer()
-                
-                // Next Button
-                Button(action: {
-                    if step < 3 {
-                        withAnimation { step += 1 }
-                    } else {
-                        completeOnboarding()
-                    }
-                }) {
-                    Text(step == 3 ? "Create Profile" : "Next")
-                        .font(.headline)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("STEP \(step)")
+                        .font(.custom("DMMono-Regular", size: 10))
+                        .foregroundColor(Color(hex: "f0a840"))
+                        .kerning(2)
+                    
+                    Text(stepTitle)
+                        .font(.custom("Lora-Italic", size: 32))
+                        .italic()
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(canProceed ? Color("AppPurple") : Color.gray)
-                        .cornerRadius(30)
-                        .padding(.horizontal, 40)
-                        .padding(.bottom, 40)
                 }
-                .disabled(!canProceed)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 30)
+                
+                // Content Area
+                VStack(spacing: 30) {
+                    if step == 1 {
+                        TextField("Your name...", text: $nameInput)
+                            .font(.custom("Lora-Italic", size: 24))
+                            .italic()
+                            .foregroundColor(.white)
+                            .padding(.bottom, 8)
+                            .overlay(Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1), alignment: .bottom)
+                    } else if step == 2 {
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
+                            if let data = selectedAvatarData, let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 120, height: 120)
+                                    .clipShape(Circle())
+                            } else {
+                                Circle()
+                                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    .frame(width: 120, height: 120)
+                                    .overlay(Image(systemName: "camera").foregroundColor(.white.opacity(0.3)))
+                            }
+                        }
+                    } else {
+                        VStack(spacing: 24) {
+                            TextField("Profession (e.g. Dreamer)", text: $professionInput)
+                                .font(.custom("DMMono-Regular", size: 14))
+                                .foregroundColor(.white)
+                            
+                            TextField("A short bio...", text: $bioInput)
+                                .font(.custom("Lora-Italic", size: 16))
+                                .italic()
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                    }
+                }
+                .padding(.horizontal, 30)
+                
+                Spacer()
+                
+                // Navigation Buttons
+                HStack {
+                    if step > 1 {
+                        Button(action: { withAnimation { step -= 1 } }) {
+                            Text("back")
+                                .font(.custom("DMMono-Regular", size: 12))
+                                .foregroundColor(.white.opacity(0.4))
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        if step < 3 {
+                            withAnimation { step += 1 }
+                        } else {
+                            completeOnboarding()
+                        }
+                    }) {
+                        Text(step == 3 ? "complete" : "next")
+                            .font(.custom("DMMono-Regular", size: 12))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 14)
+                            .background(canProceed ? Color.white : Color.white.opacity(0.1))
+                            .cornerRadius(4)
+                    }
+                    .disabled(!canProceed)
+                }
+                .padding(.horizontal, 30)
+                .padding(.bottom, 40)
             }
+        }
+        .onChange(of: selectedItem) { newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    selectedAvatarData = data
+                }
+            }
+        }
+    }
+    
+    private var stepTitle: String {
+        switch step {
+        case 1: return "What should we call you?"
+        case 2: return "An image of your soul."
+        case 3: return "How do you express?"
+        default: return ""
         }
     }
     
     private var canProceed: Bool {
         if step == 1 { return !nameInput.isEmpty }
-        if step == 2 { return true } // Photo is optional
-        if step == 3 { return !professionInput.isEmpty }
-        return false
+        return true
     }
     
     private func completeOnboarding() {
@@ -172,7 +151,7 @@ struct OnboardingView: View {
         
         withAnimation {
             store.hasCompletedOnboarding = true
-            selectedTab = 3 // Jump to Profile tab
+            selectedTab = 0 // Jump to Feed tab
         }
     }
 }

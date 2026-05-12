@@ -42,12 +42,14 @@ struct UserProfile {
     var handle: String = "@hedy_resonance"
     var bio: String = "Capturing the sonic architecture of midnight. Artist & Dreamer."
     var profession: String = "Vocal Architect"
+    var avatarData: Data? = nil
     var followersCount: Int = 674
     var followingCount: Int = 128
 }
 
 class PostStore: ObservableObject {
     @Published var currentUser = UserProfile()
+    @Published var hasCompletedOnboarding: Bool = false
     @Published var posts: [Post] = [
         Post(artist: "Jay Chou", song: "稻香", mood: "Joy", 
              moodColor: Color(hex: "f0a840"),
