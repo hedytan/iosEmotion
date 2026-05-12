@@ -71,6 +71,7 @@ struct ContentView: View {
             .ignoresSafeArea(.all, edges: .bottom)
             .fullScreenCover(isPresented: $showingExpress) {
                 CreateMomentView()
+                    .environmentObject(store)
             }
         }
     }
