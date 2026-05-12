@@ -89,3 +89,30 @@ struct MomentDetailView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { onResonate(label) }
     }
 }
+
+struct ResonanceRow: View {
+    let label: String
+    let count: String
+    let isSelected: Bool
+    let moodColor: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(label)
+                    .font(.custom("DMMono-Regular", size: 10))
+                    .foregroundColor(.white.opacity(isSelected ? 0.9 : 0.45))
+                
+                Spacer()
+                
+                Text(count)
+                    .font(.custom("DMMono-Regular", size: 9))
+                    .foregroundColor(isSelected ? moodColor : .white.opacity(0.15))
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
+            .background(isSelected ? moodColor.opacity(0.12) : Color.white.opacity(0.02))
+        }
+    }
+}
