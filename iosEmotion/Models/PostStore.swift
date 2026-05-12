@@ -13,7 +13,7 @@ struct Post: Identifiable {
     var isLiked: Bool = false
     
     enum MoodType {
-        case joy, melancholy, tender
+        case joy, melancholy, tender, wonder, urgency, awe
     }
 }
 

@@ -34,24 +34,22 @@ struct MoodShape: Shape {
             return melancholyPath(in: rect)
         case .tender:
             return tenderPath(in: rect)
+        case .wonder:
+            return wonderPath(in: rect)
+        case .urgency:
+            return urgencyPath(in: rect)
+        case .awe:
+            return awePath(in: rect)
         }
     }
     
     private func joyPath(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.width * 0.2, y: rect.height * 0.4))
-        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.1),
-                      control1: CGPoint(x: rect.width * 0.1, y: rect.height * 0.2),
-                      control2: CGPoint(x: rect.width * 0.3, y: rect.height * 0.05))
-        path.addCurve(to: CGPoint(x: rect.width * 0.9, y: rect.height * 0.4),
-                      control1: CGPoint(x: rect.width * 0.7, y: rect.height * 0.15),
-                      control2: CGPoint(x: rect.width * 0.95, y: rect.height * 0.25))
-        path.addCurve(to: CGPoint(x: rect.width * 0.7, y: rect.height * 0.9),
-                      control1: CGPoint(x: rect.width * 0.85, y: rect.height * 0.6),
-                      control2: CGPoint(x: rect.width * 0.9, y: rect.height * 0.85))
-        path.addCurve(to: CGPoint(x: rect.width * 0.2, y: rect.height * 0.4),
-                      control1: CGPoint(x: rect.width * 0.3, y: rect.height * 0.95),
-                      control2: CGPoint(x: rect.width * 0.05, y: rect.height * 0.6))
+        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.1), control1: CGPoint(x: rect.width * 0.1, y: rect.height * 0.2), control2: CGPoint(x: rect.width * 0.3, y: rect.height * 0.05))
+        path.addCurve(to: CGPoint(x: rect.width * 0.9, y: rect.height * 0.4), control1: CGPoint(x: rect.width * 0.7, y: rect.height * 0.15), control2: CGPoint(x: rect.width * 0.95, y: rect.height * 0.25))
+        path.addCurve(to: CGPoint(x: rect.width * 0.7, y: rect.height * 0.9), control1: CGPoint(x: rect.width * 0.85, y: rect.height * 0.6), control2: CGPoint(x: rect.width * 0.9, y: rect.height * 0.85))
+        path.addCurve(to: CGPoint(x: rect.width * 0.2, y: rect.height * 0.4), control1: CGPoint(x: rect.width * 0.3, y: rect.height * 0.95), control2: CGPoint(x: rect.width * 0.05, y: rect.height * 0.6))
         path.closeSubpath()
         return path
     }
@@ -59,26 +57,54 @@ struct MoodShape: Shape {
     private func melancholyPath(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.05))
-        path.addCurve(to: CGPoint(x: rect.width * 0.9, y: rect.height * 0.7),
-                      control1: CGPoint(x: rect.width * 0.6, y: rect.height * 0.1),
-                      control2: CGPoint(x: rect.width * 0.95, y: rect.height * 0.4))
-        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.95),
-                      control1: CGPoint(x: rect.width * 0.85, y: rect.height * 0.9),
-                      control2: CGPoint(x: rect.width * 0.7, y: rect.height * 0.95))
-        path.addCurve(to: CGPoint(x: rect.width * 0.1, y: rect.height * 0.7),
-                      control1: CGPoint(x: rect.width * 0.3, y: rect.height * 0.95),
-                      control2: CGPoint(x: rect.width * 0.15, y: rect.height * 0.9))
-        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.05),
-                      control1: CGPoint(x: rect.width * 0.05, y: rect.height * 0.4),
-                      control2: CGPoint(x: rect.width * 0.4, y: rect.height * 0.1))
+        path.addCurve(to: CGPoint(x: rect.width * 0.9, y: rect.height * 0.7), control1: CGPoint(x: rect.width * 0.6, y: rect.height * 0.1), control2: CGPoint(x: rect.width * 0.95, y: rect.height * 0.4))
+        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.95), control1: CGPoint(x: rect.width * 0.85, y: rect.height * 0.9), control2: CGPoint(x: rect.width * 0.7, y: rect.height * 0.95))
+        path.addCurve(to: CGPoint(x: rect.width * 0.1, y: rect.height * 0.7), control1: CGPoint(x: rect.width * 0.3, y: rect.height * 0.95), control2: CGPoint(x: rect.width * 0.15, y: rect.height * 0.9))
+        path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.05), control1: CGPoint(x: rect.width * 0.05, y: rect.height * 0.4), control2: CGPoint(x: rect.width * 0.4, y: rect.height * 0.1))
         path.closeSubpath()
         return path
     }
     
     private func tenderPath(in rect: CGRect) -> Path {
         var path = Path()
+        path.addArc(center: CGPoint(x: rect.midX, y: rect.midY), radius: rect.width * 0.42, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
+        return path
+    }
+    
+    private func wonderPath(in rect: CGRect) -> Path {
+        var path = Path()
         let center = CGPoint(x: rect.midX, y: rect.midY)
-        path.addArc(center: center, radius: rect.width * 0.42, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
+        let points = 8
+        let innerRadius = rect.width * 0.15
+        let outerRadius = rect.width * 0.45
+        for i in 0..<points * 2 {
+            let angle = CGFloat(i) * .pi / CGFloat(points)
+            let radius = i % 2 == 0 ? outerRadius : innerRadius
+            let x = center.x + cos(angle) * radius
+            let y = center.y + sin(angle) * radius
+            if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+            else { path.addLine(to: CGPoint(x: x, y: y)) }
+        }
+        path.closeSubpath()
+        return path
+    }
+    
+    private func urgencyPath(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.height * 0.1))
+        path.addLine(to: CGPoint(x: rect.width * 0.9, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.height * 0.9))
+        path.addLine(to: CGPoint(x: rect.width * 0.1, y: rect.midY))
+        path.closeSubpath()
+        return path
+    }
+    
+    private func awePath(in rect: CGRect) -> Path {
+        var path = Path()
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        path.addArc(center: center, radius: rect.width * 0.45, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
+        path.addArc(center: center, radius: rect.width * 0.3, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
+        path.addArc(center: center, radius: rect.width * 0.15, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
         return path
     }
 }

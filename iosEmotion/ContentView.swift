@@ -20,14 +20,8 @@ struct ContentView: View {
                 BehindTheWorkView()
                     .tag(0)
                 
-                ZStack {
-                    Color(hex: "07060a").ignoresSafeArea()
-                    Text("Share Idea")
-                        .font(.custom("Lora-Italic", size: 18))
-                        .italic()
-                        .foregroundColor(.white.opacity(0.4))
-                }
-                .tag(1)
+                CreateMomentView()
+                    .tag(1)
             }
             .environmentObject(store)
             
