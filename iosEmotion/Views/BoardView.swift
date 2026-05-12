@@ -121,12 +121,16 @@ struct BoardDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 100)
                 } else {
-                    VStack(spacing: 32) {
+                    VStack(spacing: 0) {
                         ForEach(savedPosts) { post in
-                            PostCardView(post: post)
+                            MoodPostCard(post: post)
+                            
+                            Rectangle()
+                                .fill(Color.white.opacity(0.035))
+                                .frame(height: 1)
+                                .padding(.horizontal, 20)
                         }
                     }
-                    .padding(.horizontal)
                     .padding(.bottom, 40)
                 }
             }
