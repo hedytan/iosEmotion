@@ -72,10 +72,10 @@ class PostStore: ObservableObject {
     
     init() {
         self.posts = [
-            Post(artist: "Jay Chou", song: "稻香", mood: "Joy", moodType: .joy, customMood: nil, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", resonanceCount: "2.4k", year: "2008", daysAgo: 3),
-            Post(artist: "Frank Ocean", song: "Blonde", mood: "Melancholy", moodType: .melancholy, customMood: nil, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", resonanceCount: "8.1k", year: "2016", daysAgo: 5),
-            Post(artist: "Adele", song: "Someone Like You", mood: "Tender", moodType: .tender, customMood: nil, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", resonanceCount: "31k", year: "2011", daysAgo: 1),
-            Post(artist: "Björk", song: "Jóga", mood: "Wonder", moodType: .wonder, customMood: nil, quote: "Standing on a glacier. That was it. That was the whole album right there.", resonanceCount: "12k", year: "1997", daysAgo: 7)
+            Post(artist: "Jay Chou", song: "稻香", mood: "Joy", moodType: .joy, customMood: nil, attachedImage: nil, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", resonanceCount: "2.4k", year: "2008", daysAgo: 3),
+            Post(artist: "Frank Ocean", song: "Blonde", mood: "Melancholy", moodType: .melancholy, customMood: nil, attachedImage: nil, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", resonanceCount: "8.1k", year: "2016", daysAgo: 5),
+            Post(artist: "Adele", song: "Someone Like You", mood: "Tender", moodType: .tender, customMood: nil, attachedImage: nil, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", resonanceCount: "31k", year: "2011", daysAgo: 1),
+            Post(artist: "Björk", song: "Jóga", mood: "Wonder", moodType: .wonder, customMood: nil, attachedImage: nil, quote: "Standing on a glacier. That was it. That was the whole album right there.", resonanceCount: "12k", year: "1997", daysAgo: 7)
         ]
     }
 }
