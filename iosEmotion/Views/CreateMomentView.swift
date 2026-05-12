@@ -161,11 +161,11 @@ struct CreateMomentView: View {
                                 .kerning(1.6)
                                 .foregroundColor(.white.opacity(0.18))
                             
-                            if let attachedImage {
+                            if let image = attachedImage {
                                 // IMAGE ATTACHED STATE
                                 VStack(alignment: .leading, spacing: 12) {
                                     ZStack(alignment: .bottomLeading) {
-                                        Image(uiImage: attachedImage)
+                                        Image(uiImage: image)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(maxWidth: .infinity)
