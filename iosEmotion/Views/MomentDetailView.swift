@@ -99,10 +99,25 @@ struct MomentDetailView: View {
                                 .foregroundColor(.gray)
                             
                             VStack(spacing: 12) {
-                                ResonanceOptionRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == 1, moodColor: post.moodColor)
-                                ResonanceOptionRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == 2, moodColor: post.moodColor)
-                                ResonanceOptionRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == 3, moodColor: post.moodColor)
-                                ResonanceOptionRow(label: "can't explain it", count: "432", isSelected: selectedOption == 4, moodColor: post.moodColor)
+                                NavigationLink(destination: ConnectionView(artistName: post.artist, artistMood: post.mood, artistMoodType: post.moodType, artistMoodColor: post.moodColor, fanFeeling: "felt this in my chest")) {
+                                    ResonanceOptionRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == 1, moodColor: post.moodColor)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                NavigationLink(destination: ConnectionView(artistName: post.artist, artistMood: post.mood, artistMoodType: post.moodType, artistMoodColor: post.moodColor, fanFeeling: "took me somewhere else")) {
+                                    ResonanceOptionRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == 2, moodColor: post.moodColor)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                NavigationLink(destination: ConnectionView(artistName: post.artist, artistMood: post.mood, artistMoodType: post.moodType, artistMoodColor: post.moodColor, fanFeeling: "reminds me of someone")) {
+                                    ResonanceOptionRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == 3, moodColor: post.moodColor)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                NavigationLink(destination: ConnectionView(artistName: post.artist, artistMood: post.mood, artistMoodType: post.moodType, artistMoodColor: post.moodColor, fanFeeling: "can't explain it")) {
+                                    ResonanceOptionRow(label: "can't explain it", count: "432", isSelected: selectedOption == 4, moodColor: post.moodColor)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(.top, 20)
