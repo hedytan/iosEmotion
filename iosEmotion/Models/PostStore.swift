@@ -31,6 +31,10 @@ struct Post: Identifiable, Hashable {
     let year: String
     let daysAgo: Int
     
+    var themeColor: Color {
+        customMood?.strokeColor ?? moodType.color
+    }
+    
     enum MoodType: CaseIterable, Hashable {
         case joy, melancholy, wonder, tender, urgency, awe, custom
         

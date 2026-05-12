@@ -10,11 +10,11 @@ struct MomentDetailView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "07060A").ignoresSafeArea()
+            Color(hex: "08070B").ignoresSafeArea()
             
             // Ambient Background Glow (Top-Left)
             Circle()
-                .fill(post.moodType.color.opacity(0.12))
+                .fill(post.themeColor.opacity(0.12))
                 .frame(width: 300, height: 300)
                 .blur(radius: 70)
                 .offset(x: -120, y: -200)
@@ -23,151 +23,117 @@ struct MomentDetailView: View {
                 // Top Navigation
                 HStack {
                     Button(action: { dismiss() }) {
-                        Text("‹ feed")
-                            .font(.custom("DMMono-Regular", size: 9))
-                            .foregroundColor(.white.opacity(0.25))
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white.opacity(0.4))
                     }
                     Spacer()
+                    Text("moment")
+                        .font(.custom("DMMono-Regular", size: 9))
+                        .kerning(0.2 * 9)
+                        .foregroundColor(.white.opacity(0.3))
+                    Spacer()
+                    Circle().frame(width: 16, height: 16).opacity(0) // Balance
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 10)
+                .padding(.vertical, 16)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        // 1. Artist Row
-                        HStack(spacing: 12) {
-                            Circle()
-                                .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                                .background(Circle().fill(Color.white.opacity(0.04)))
-                                .frame(width: 34, height: 34)
+                    VStack(spacing: 48) {
+                        
+                        // 1. Artist & Song Header
+                        VStack(spacing: 8) {
+                            Text(post.artist)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.white.opacity(0.85))
                             
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(post.artist)
-                                    .font(.system(size: 13, weight: .medium)) // SF Pro
-                                    .foregroundColor(.white.opacity(0.82))
-                                
-                                Text("\(post.daysAgo) days ago · \(post.song)")
-                                    .font(.custom("DMMono-Regular", size: 8))
-                                    .foregroundColor(.white.opacity(0.22))
-                            }
-                            Spacer()
+                            Text(post.song)
+                                .font(.custom("Lora-Italic", size: 12))
+                                .foregroundColor(.white.opacity(0.35))
                         }
                         .padding(.top, 24)
-                        .padding(.bottom, 24)
                         
                         // 2. Large Mood Shape
-                        MoodShapeView(type: post.moodType, color: post.moodType.color, isLarge: true, customMood: post.customMood)
+                        MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, customMood: post.customMood)
                             .frame(width: 120, height: 120)
                             .scaleEffect(isBreathing ? 1.05 : 1.0)
                             .onAppear {
-                                withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
+                                withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
                                     isBreathing = true
                                 }
                             }
-                            .padding(.vertical, 32)
                         
                         // 3. Mood Name
                         Text(post.moodType.displayName.uppercased())
                             .font(.custom("DMMono-Regular", size: 9))
                             .kerning(0.22 * 9)
-                            .foregroundColor(post.moodType.color.opacity(0.45))
-                            .padding(.bottom, 18)
+                            .foregroundColor(post.themeColor.opacity(0.45))
                         
-                        // 4. Quote
-                        Text(post.quote)
-                            .font(.custom("Lora-Italic", size: 16))
+                        // 4. The Quote
+                        Text("“\(post.quote)”")
+                            .font(.custom("Lora-Italic", size: 24))
                             .italic()
-                            .foregroundColor(.white.opacity(0.82))
-                            .lineSpacing(16 * 1.75 - 16)
                             .multilineTextAlignment(.center)
-                            .padding(.bottom, 10)
+                            .foregroundColor(.white.opacity(0.9))
+                            .padding(.horizontal, 40)
+                            .lineSpacing(6)
                         
-                        // 5. Song Name
-                        Text("\(post.song) · \(post.year)")
-                            .font(.custom("DMMono-Regular", size: 9))
-                            .kerning(0.08 * 9)
-                            .foregroundColor(.white.opacity(0.20))
-                            .padding(.bottom, 32)
-                        
-                        // 6. Resonance Section
-                        VStack(spacing: 12) {
-                            Text("how did this feel?")
+                        // 5. Resonance Interaction
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("RESONANCE")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .kerning(0.16 * 8)
-                                .foregroundColor(.white.opacity(0.15))
-                                .padding(.bottom, 12)
+                                .kerning(0.2 * 8)
+                                .foregroundColor(.white.opacity(0.18))
+                                .padding(.horizontal, 24)
                             
-                            VStack(spacing: 8) {
-                                ResonanceRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == "felt this in my chest", moodColor: post.moodType.color) { select("felt this in my chest") }
-                                ResonanceRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == "took me somewhere else", moodColor: post.moodType.color) { select("took me somewhere else") }
-                                ResonanceRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == "reminds me of someone", moodColor: post.moodType.color) { select("reminds me of someone") }
-                                ResonanceRow(label: "can't explain it", count: "432", isSelected: selectedOption == "can't explain it", moodColor: post.moodType.color) { select("can't explain it") }
+                            VStack(spacing: 1) {
+                                ResonanceRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == "felt this in my chest", moodColor: post.themeColor) { select("felt this in my chest") }
+                                ResonanceRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == "took me somewhere else", moodColor: post.themeColor) { select("took me somewhere else") }
+                                ResonanceRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == "reminds me of someone", moodColor: post.themeColor) { select("reminds me of someone") }
+                                ResonanceRow(label: "can't explain it", count: "432", isSelected: selectedOption == "can't explain it", moodColor: post.themeColor) { select("can't explain it") }
                             }
                         }
+                        .padding(.top, 24)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 80)
+                    .padding(.bottom, 60)
                 }
             }
         }
-        .navigationBarHidden(true)
     }
     
-    private func select(_ feeling: String) {
-        selectedOption = feeling
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            onResonate(feeling)
+    private func select(_ label: String) {
+        withAnimation(.spring()) {
+            selectedOption = label
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            onResonate(label)
         }
     }
 }
 
 struct ResonanceRow: View {
-    var label: String
-    var count: String
-    var isSelected: Bool
-    var moodColor: Color
-    var action: () -> Void
+    let label: String
+    let count: String
+    let isSelected: Bool
+    let moodColor: Color
+    let action: () -> Void
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
-                // Dot
-                Circle()
-                    .fill(isSelected ? moodColor : Color.white.opacity(0.10))
-                    .frame(width: 7, height: 7)
-                
+            HStack {
                 Text(label)
-                    .font(.custom("Lora-Italic", size: 12.5))
-                    .italic()
-                    .foregroundColor(.white.opacity(isSelected ? 0.80 : 0.38))
+                    .font(.custom("DMMono-Regular", size: 10))
+                    .foregroundColor(.white.opacity(isSelected ? 0.9 : 0.45))
                 
                 Spacer()
                 
                 Text(count)
-                    .font(.custom("DMMono-Regular", size: 8.5))
-                    .foregroundColor(.white.opacity(isSelected ? 0.60 : 0.15))
-                    .foregroundColor(isSelected ? moodColor : .white)
+                    .font(.custom("DMMono-Regular", size: 9))
+                    .foregroundColor(isSelected ? moodColor : .white.opacity(0.15))
             }
-            .padding(.vertical, 13)
-            .padding(.horizontal, 16)
-            .background(isSelected ? moodColor.opacity(0.04) : Color.white.opacity(0.02))
-            .cornerRadius(14)
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSelected ? moodColor.opacity(0.50) : Color.white.opacity(0.06), lineWidth: 1)
-            )
-            .overlay(
-                HStack {
-                    if isSelected {
-                        Rectangle()
-                            .fill(moodColor)
-                            .frame(width: 2.5)
-                            .padding(.vertical, 14)
-                    }
-                    Spacer()
-                }
-            )
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
+            .background(isSelected ? moodColor.opacity(0.12) : Color.white.opacity(0.02))
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
