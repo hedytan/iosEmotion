@@ -48,6 +48,8 @@ struct MoodShape: Shape {
             return urgencyPath(in: rect)
         case .awe:
             return awePath(in: rect)
+        case .custom:
+            return Path() // Custom moods are rendered via UIImage thumbnails
         }
     }
     
