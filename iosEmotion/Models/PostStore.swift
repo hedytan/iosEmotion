@@ -1,8 +1,8 @@
 import SwiftUI
 import Combine
 
-struct Post: Identifiable {
-    let id = UUID()
+struct Post: Identifiable, Hashable {
+    let id: UUID = UUID()
     let artist: String
     let song: String
     let mood: String

@@ -2,9 +2,16 @@ import SwiftUI
 
 struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
+    @State private var path = NavigationPath()
+    
+    enum NavDestination: Hashable {
+        case detail(Post)
+        case connection(Post, String)
+        case create
+    }
     
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $path) {
             ZStack {
                 Color(hex: "07060a").ignoresSafeArea()
                 
@@ -18,7 +25,7 @@ struct BehindTheWorkView: View {
                         
                         Spacer()
                         
-                        Button(action: {}) {
+                        Button(action: { path.append(NavDestination.create) }) {
                             Image(systemName: "plus")
                                 .font(.system(size: 14))
                                 .foregroundColor(.white)
@@ -35,7 +42,7 @@ struct BehindTheWorkView: View {
                     ScrollView {
                         VStack(spacing: 0) {
                             ForEach(store.posts) { post in
-                                NavigationLink(destination: MomentDetailView(post: post)) {
+                                Button(action: { path.append(NavDestination.detail(post)) }) {
                                     MoodPostCard(post: post)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -49,24 +56,44 @@ struct BehindTheWorkView: View {
                     }
                 }
             }
+            .navigationDestination(for: NavDestination.self) { destination in
+                switch destination {
+                case .detail(let post):
+                    MomentDetailView(post: post, onResonate: { feeling in
+                        path.append(NavDestination.connection(post, feeling))
+                    })
+                    .transition(.opacity)
+                case .connection(let post, let feeling):
+                    ConnectionView(
+                        artistName: post.artist,
+                        artistMood: post.mood,
+                        artistMoodType: post.moodType,
+                        artistMoodColor: post.moodColor,
+                        fanFeeling: feeling
+                    )
+                    .transition(.opacity)
+                case .create:
+                    CreateMomentView()
+                        .transition(.opacity)
+                }
+            }
             .navigationBarHidden(true)
         }
     }
 }
 
+// Update MoodPostCard to be internal to this view or shared
 struct MoodPostCard: View {
     var post: Post
     
     var body: some View {
         HStack(spacing: 0) {
-            // Left Edge Color Stripe
             Rectangle()
                 .fill(post.moodColor)
                 .frame(width: 2)
                 .padding(.vertical, 12)
             
             VStack(alignment: .leading, spacing: 16) {
-                // Top Row: Shape + Artist + Mood + Song
                 HStack(spacing: 12) {
                     MoodShapeView(type: post.moodType, color: post.moodColor)
                     
@@ -87,7 +114,6 @@ struct MoodPostCard: View {
                     }
                 }
                 
-                // Middle Row: Quote (Italic Serif)
                 Text(post.quote)
                     .font(.custom("Lora-Italic", size: 12.5))
                     .italic()
@@ -95,7 +121,6 @@ struct MoodPostCard: View {
                     .lineSpacing(6)
                     .padding(.trailing, 20)
                 
-                // Bottom Row: Resonance + Action
                 HStack {
                     Text("\(post.resonanceCount) resonated")
                         .font(.custom("DMMono-Regular", size: 7.5))
