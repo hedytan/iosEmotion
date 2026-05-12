@@ -10,10 +10,6 @@ struct ContentView: View {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = UIColor(red: 0.027, green: 0.023, blue: 0.039, alpha: 0.95)
         
-        // Blur effect
-        let blurEffect = UIBlurEffect(style: .dark)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -24,9 +20,14 @@ struct ContentView: View {
                 BehindTheWorkView()
                     .tag(0)
                 
-                Text("Share Screen")
-                    .foregroundColor(.white)
-                    .tag(1)
+                ZStack {
+                    Color(hex: "07060a").ignoresSafeArea()
+                    Text("Share Idea")
+                        .font(.custom("Lora-Italic", size: 18))
+                        .italic()
+                        .foregroundColor(.white.opacity(0.4))
+                }
+                .tag(1)
             }
             .environmentObject(store)
             
@@ -66,7 +67,6 @@ struct ContentView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 32)
                 .background(Color(hex: "07060a").opacity(0.95))
-                .blur(radius: 0.5)
             }
         }
         .ignoresSafeArea(.all, edges: .bottom)
