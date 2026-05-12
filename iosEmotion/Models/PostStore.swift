@@ -1,169 +1,60 @@
-import Foundation
-import Combine
 import SwiftUI
 
-struct BoardItem: Identifiable {
+struct Post: Identifiable {
     let id = UUID()
-    var title: String
-    var tag: String
-    var color: Color
-    var coverPhoto: String? // Added for artistic cover images
-    var postIDs: [UUID] = [] // Store the IDs of saved posts
-}
-
-struct Artist: Identifiable {
-    let id = UUID()
-    var name: String
-    var identity: String
-    var avatarImage: String?
-    var isFollowing: Bool = false
-}
-
-struct UserProfile {
-    var name: String = ""
-    var handle: String = ""
-    var bio: String = ""
-    var profession: String = "Artist"
-    var avatarData: Data? = nil // Circular profile photo
-    var followersCount: Int = 674  // Updated for that niche authority feel
-    var followingCount: Int = 128
+    let artist: String
+    let song: String
+    let mood: String
+    let moodColor: Color
+    let quote: String
+    let resonanceCount: String
+    let moodType: MoodType
+    var isLiked: Bool = false
+    
+    enum MoodType {
+        case joy, melancholy, tender
+    }
 }
 
 class PostStore: ObservableObject {
-    @Published var currentUser = UserProfile()
-    @Published var hasCompletedOnboarding: Bool = false
     @Published var posts: [Post] = [
-        Post(username: "HYBS", tag: "RESONANCE", title: "LIMBO",
-             description: "The sonic architecture of a dream state. A lone session in the heart of the midnight noir.",
-             likes: 24100, imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/midnight_echoes_cover_1778405740695.png",
-             emotion: "🌙 Midnight Solitude",
-             isAudio: true, 
-             comments: ["This is incredible", "The production is top notch!", "Can't wait for the full release"]),
-        Post(username: "Babychair", tag: "FRAGMENT", title: "The Geometry of Noise",
-             description: "Capturing the earthy resonance of the desert. This fragment feels like a long-lost memory.",
-             likes: 12400, 
-             imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png",
-             emotion: "🌊 Nostalgic Drift",
-             comments: ["I feel this", "Pure art"]),
-        Post(username: "Phum Viphurit", tag: "FRAGMENT", title: "Studio Session 01",
-             description: "3am and the textures finally made sense. Feeling the velvet distortion.",
-             likes: 8200, imagePath: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/velvet_distortion_cover_1778405783107.png",
-             emotion: "🕯️ Creative Intimacy",
-             isAudio: true, 
-             comments: ["Relatable", "3am sessions are the best"])
-    ]
-
-    @Published var boards: [BoardItem] = [
-        BoardItem(title: "Midnight Echoes", tag: "MOOD · NOIR", color: Color(red: 0.1, green: 0.1, blue: 0.15), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/midnight_echoes_cover_1778405740695.png"),
-        BoardItem(title: "Velvet Distortion", tag: "TEXTURE · WARM", color: Color(red: 0.3, green: 0.1, blue: 0.05), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/velvet_distortion_cover_1778405783107.png"),
-        BoardItem(title: "Dune Rhythm", tag: "BEAT · EARTH", color: Color(red: 0.35, green: 0.2, blue: 0.1), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png"),
-        BoardItem(title: "Static Pulse", tag: "ENERGY · ELECTRIC", color: Color(red: 0.1, green: 0.1, blue: 0.3), coverPhoto: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/static_pulse_cover_1778405966946.png")
-    ]
-
-    @Published var discoveredArtists: [Artist] = [
-        Artist(name: "Ariel Blue", identity: "Dream Pop Vocalist", avatarImage: "neon"),
-        Artist(name: "Kaelo", identity: "Neo-Soul Producer", avatarImage: "file:///Users/hedy/.gemini/antigravity/brain/c701732b-1506-4db1-adac-c15d300b51aa/dune_rhythm_cover_1778405831642.png"),
-        Artist(name: "Sora", identity: "Ambient Soundscapes", avatarImage: "quiet"),
-        Artist(name: "Juno", identity: "Indie Electronica", avatarImage: "bw"),
-        Artist(name: "Lumi", identity: "Vocal Architect", avatarImage: "colorful")
-    ]
-
-    func toggleFollowArtist(id: UUID) {
-        if let index = discoveredArtists.firstIndex(where: { $0.id == id }) {
-            discoveredArtists[index].isFollowing.toggle()
-            
-            // Sync with profile following count
-            if discoveredArtists[index].isFollowing {
-                currentUser.followingCount += 1
-            } else {
-                currentUser.followingCount -= 1
-            }
-        }
-    }
-
-    func simulateNewFollower() {
-        let newFollowerName = randomUsers.randomElement() ?? "A New Artist"
-        currentUser.followersCount += 1
-        addNotification(type: .like, message: "\(newFollowerName) started following you.")
-    }
-
-    @Published var notifications: [AppNotification] = []
-
-    var unreadCount: Int {
-        notifications.filter { !$0.isRead }.count
-    }
-
-    private let randomUsers = ["Artist_Muse", "SonicExplorer", "Visionary", "PureVibe", "DigitalSoul", "Echo_Writer"]
-
-    func createBoard(title: String, tag: String) {
-        let colors: [Color] = [.purple, .blue, .orange, .pink, .gray]
-        let newBoard = BoardItem(title: title, tag: tag, color: colors.randomElement() ?? .purple)
-        boards.append(newBoard)
-    }
-    
-    func savePost(postID: UUID, toBoardID boardID: UUID) {
-        if let index = boards.firstIndex(where: { $0.id == boardID }) {
-            if !boards[index].postIDs.contains(postID) {
-                boards[index].postIDs.append(postID)
-            }
-        }
+        Post(artist: "Jay Chou", song: "稻香", mood: "Joy", 
+             moodColor: Color(hex: "f0a840"),
+             quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.",
+             resonanceCount: "2.4k", moodType: .joy),
         
-        // Mark the post as saved globally
-        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
-            posts[postIndex].isSaved = true
-        }
-    }
+        Post(artist: "Frank Ocean", song: "Blonde", mood: "Melancholy", 
+             moodColor: Color(hex: "6888b8"),
+             quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.",
+             resonanceCount: "8.1k", moodType: .melancholy),
+        
+        Post(artist: "Adele", song: "Someone Like You", mood: "Tender", 
+             moodColor: Color(hex: "d890b8"),
+             quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.",
+             resonanceCount: "31k", moodType: .tender)
+    ]
     
-    func getPosts(for board: BoardItem) -> [Post] {
-        return posts.filter { board.postIDs.contains($0.id) }
-    }
-
-    func toggleLike(for postID: UUID) {
-        if let index = posts.firstIndex(where: { $0.id == postID }) {
+    func toggleLike(for id: UUID) {
+        if let index = posts.firstIndex(where: { $0.id == id }) {
             posts[index].isLiked.toggle()
-            if posts[index].isLiked {
-                posts[index].likes += 1
-                let user = randomUsers.randomElement() ?? "Someone"
-                addNotification(type: .like, message: "\(user) liked your photo: \(posts[index].title)")
-            } else {
-                posts[index].likes -= 1
-            }
         }
     }
+}
 
-    func addNotification(type: AppNotification.NotificationType, message: String) {
-        let newNotif = AppNotification(type: type, message: message)
-        notifications.insert(newNotif, at: 0)
-    }
-    
-    func markAllAsRead() {
-        for i in 0..<notifications.count {
-            notifications[i].isRead = true
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
         }
-    }
-
-    func toggleSave(for postID: UUID) {
-        if let index = posts.firstIndex(where: { $0.id == postID }) {
-            posts[index].isSaved.toggle()
-        }
-    }
-    
-    func setReaction(for postID: UUID, reaction: String) {
-        if let index = posts.firstIndex(where: { $0.id == postID }) {
-            posts[index].reaction = reaction
-        }
-    }
-    
-    func addPost(username: String = "You", userAvatarData: Data? = nil, userProfession: String? = nil, tag: String, title: String, description: String, imageData: Data? = nil, imagePath: String? = nil, emotion: String? = nil, isAudio: Bool = false) {
-        let newPost = Post(username: username, userAvatarData: userAvatarData, userProfession: userProfession, tag: tag, title: title, description: description, likes: 0, imageData: imageData, imagePath: imagePath, emotion: emotion, isAudio: isAudio)
-        posts.insert(newPost, at: 0)
-    }
-    
-    func addComment(to postID: UUID, text: String) {
-        if let index = posts.firstIndex(where: { $0.id == postID }) {
-            posts[index].comments.append(text)
-            let user = randomUsers.randomElement() ?? "Someone"
-            addNotification(type: .comment, message: "\(user) commented: \"\(text)\"")
-        }
+        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
     }
 }

@@ -1,55 +1,78 @@
-//
-//  ContentView.swift
-//  iosEmotion
-//
-//  Created by Hedy on 3/5/2026.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var store: PostStore
-    @State private var selectedTab: Int = 0
+    @StateObject var store = PostStore()
+    @State private var selectedTab = 0
+    
+    init() {
+        // Transparent Tab Bar styling
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = UIColor(red: 0.027, green: 0.023, blue: 0.039, alpha: 0.95)
+        
+        // Blur effect
+        let blurEffect = UIBlurEffect(style: .dark)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     var body: some View {
-        if !store.hasCompletedOnboarding {
-            OnboardingView(selectedTab: $selectedTab)
-        } else {
+        ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
                 BehindTheWorkView()
-                    .tabItem {
-                        Image(systemName: "safari")
-                        Text("EXPLORE")
-                    }
                     .tag(0)
                 
-                CreateView(selectedTab: $selectedTab)
-                    .tabItem {
-                        Image(systemName: "plus.circle")
-                        Text("CREATE")
-                    }
+                Text("Share Screen")
+                    .foregroundColor(.white)
                     .tag(1)
-                
-                ExploreView()
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("SEARCH")
-                    }
-                    .tag(2)
-                
-                ProfileView()
-                    .tabItem {
-                        Image(systemName: "person")
-                        Text("PROFILE")
-                    }
-                    .tag(3)
             }
-            .tint(Color("AppPurple"))
+            .environmentObject(store)
+            
+            // Custom Tab Bar for exact styling
+            VStack(spacing: 0) {
+                Divider()
+                    .background(Color.white.opacity(0.1))
+                
+                HStack {
+                    Spacer()
+                    
+                    Button(action: { selectedTab = 0 }) {
+                        VStack(spacing: 4) {
+                            Image(systemName: selectedTab == 0 ? "circle.inset.filled" : "circle")
+                                .font(.system(size: 20))
+                            Text("Feed")
+                                .font(.custom("DMMono-Regular", size: 10))
+                        }
+                        .foregroundColor(.white.opacity(selectedTab == 0 ? 1.0 : 0.22))
+                    }
+                    
+                    Spacer()
+                    Spacer()
+                    
+                    Button(action: { selectedTab = 1 }) {
+                        VStack(spacing: 4) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20))
+                            Text("Share")
+                                .font(.custom("DMMono-Regular", size: 10))
+                        }
+                        .foregroundColor(.white.opacity(selectedTab == 1 ? 1.0 : 0.22))
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 12)
+                .padding(.bottom, 32)
+                .background(Color(hex: "07060a").opacity(0.95))
+                .blur(radius: 0.5)
+            }
         }
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(PostStore())
 }
