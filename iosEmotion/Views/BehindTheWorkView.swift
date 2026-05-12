@@ -99,7 +99,7 @@ struct ResonanceCard: View {
                             .fill(post.themeColor)
                             .frame(width: 5, height: 5)
                         
-                        Text(post.moodType.displayName)
+                        Text(post.mood)
                             .font(.custom("DMMono-Regular", size: 8.5))
                             .foregroundColor(post.themeColor)
                             .font(.custom("DMMono-Regular", size: 8.5))

@@ -64,7 +64,7 @@ struct MomentDetailView: View {
                             }
                         
                         // 3. Mood Name
-                        Text(post.moodType.displayName.uppercased())
+                        Text(post.mood.uppercased())
                             .font(.custom("DMMono-Regular", size: 9))
                             .kerning(0.22 * 9)
                             .foregroundColor(post.themeColor.opacity(0.45))
