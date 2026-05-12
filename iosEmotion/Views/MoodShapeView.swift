@@ -7,36 +7,37 @@ struct MoodShapeView: View {
     var body: some View {
         ZStack {
             // Radial Background Glow (12% opacity)
-            shapePath()
+            MoodShape(type: type)
                 .fill(RadialGradient(colors: [color.opacity(0.12), .clear], center: .center, startRadius: 5, endRadius: 30))
             
             // Outer Stroke (55% opacity, 0.9pt)
-            shapePath()
+            MoodShape(type: type)
                 .stroke(color.opacity(0.55), lineWidth: 0.9)
             
             // Inner Dashed Ring (15% opacity)
-            shapePath()
+            MoodShape(type: type)
                 .scale(0.7)
                 .stroke(color.opacity(0.15), style: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
         }
         .frame(width: 44, height: 44)
     }
-    
-    @ViewBuilder
-    func shapePath() -> some Shape {
-        switch type {
-        case .joy:
-            JoyShape()
-        case .melancholy:
-            MelancholyShape()
-        case .tender:
-            TenderShape()
-        }
-    }
 }
 
-struct JoyShape: Shape {
+struct MoodShape: Shape {
+    var type: Post.MoodType
+    
     func path(in rect: CGRect) -> Path {
+        switch type {
+        case .joy:
+            return joyPath(in: rect)
+        case .melancholy:
+            return melancholyPath(in: rect)
+        case .tender:
+            return tenderPath(in: rect)
+        }
+    }
+    
+    private func joyPath(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.width * 0.2, y: rect.height * 0.4))
         path.addCurve(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.1),
@@ -54,10 +55,8 @@ struct JoyShape: Shape {
         path.closeSubpath()
         return path
     }
-}
-
-struct MelancholyShape: Shape {
-    func path(in rect: CGRect) -> Path {
+    
+    private func melancholyPath(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.width * 0.5, y: rect.height * 0.05))
         path.addCurve(to: CGPoint(x: rect.width * 0.9, y: rect.height * 0.7),
@@ -75,17 +74,11 @@ struct MelancholyShape: Shape {
         path.closeSubpath()
         return path
     }
-}
-
-struct TenderShape: Shape {
-    func path(in rect: CGRect) -> Path {
+    
+    private func tenderPath(in rect: CGRect) -> Path {
         var path = Path()
         let center = CGPoint(x: rect.midX, y: rect.midY)
         path.addArc(center: center, radius: rect.width * 0.42, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: false)
-        // Soft indent
-        path.move(to: CGPoint(x: rect.width * 0.8, y: rect.height * 0.2))
-        path.addQuadCurve(to: CGPoint(x: rect.width * 0.7, y: rect.height * 0.3),
-                          control: CGPoint(x: rect.width * 0.75, y: rect.height * 0.22))
         return path
     }
 }
