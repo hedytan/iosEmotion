@@ -13,6 +13,7 @@ struct Post: Identifiable {
     let moodType: MoodType
     var isLiked: Bool = false
     var isSaved: Bool = false
+    var comments: [String] = []
     
     enum MoodType {
         case joy, melancholy, tender
@@ -90,6 +91,12 @@ class PostStore: ObservableObject {
     
     func getPosts(for board: BoardItem) -> [Post] {
         return posts.filter { board.postIDs.contains($0.id) }
+    }
+    
+    func addComment(to id: UUID, text: String) {
+        if let index = posts.firstIndex(where: { $0.id == id }) {
+            posts[index].comments.append(text)
+        }
     }
 }
 
