@@ -3,7 +3,6 @@ import SwiftUI
 struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
     @State private var path = NavigationPath()
-    @State private var showingExpress = false
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -11,51 +10,33 @@ struct BehindTheWorkView: View {
                 Color(hex: "08070B").ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Top Navigation Bar
-                    VStack(spacing: 0) {
-                        HStack {
-                            Text("resonance")
-                                .font(.custom("Lora-Italic", size: 19))
-                                .italic()
-                                .foregroundColor(.white.opacity(0.75))
-                            
-                            Spacer()
-                            
-                            Button(action: {}) {
-                                Text("all moods")
-                                    .font(.custom("DMMono-Regular", size: 8))
-                                    .foregroundColor(.white.opacity(0.20))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4)
-                                    .overlay(
-                                        Capsule().stroke(Color.white.opacity(0.07), lineWidth: 1)
-                                    )
-                            }
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 16)
-                        .padding(.bottom, 16)
+                    // Header
+                    HStack(alignment: .lastTextBaseline) {
+                        Text("resonance")
+                            .font(.custom("Lora-Italic", size: 24))
+                            .foregroundColor(.white)
                         
-                        Rectangle()
-                            .fill(Color.white.opacity(0.04))
-                            .frame(height: 1)
+                        Spacer()
+                        
+                        Text("v.01")
+                            .font(.custom("DMMono-Regular", size: 9))
+                            .foregroundColor(.white.opacity(0.15))
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
                     
                     // Feed List
-                    ScrollView {
-                        VStack(spacing: 0) {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 16) {
                             ForEach(store.posts) { post in
                                 Button(action: { path.append(post) }) {
                                     ResonanceCard(post: post)
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.04))
-                                    .frame(height: 1)
-                                    .padding(.horizontal, 24)
                             }
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 100)
                     }
                 }
             }
@@ -65,16 +46,12 @@ struct BehindTheWorkView: View {
                 }
             }
             .navigationDestination(for: String.self) { feeling in
-                // Find the post that triggered this connection (hacky for prototype but works)
-                if let lastPost = store.posts.first(where: { post in 
-                    // This is a bit complex for a simple path, 
-                    // usually we'd pass a struct with post + feeling
-                    return true 
-                }) {
-                    ConnectionView(post: lastPost, feeling: feeling)
+                // Find the post associated with this connection (simplified for prototype)
+                if let post = store.posts.first {
+                    ConnectionView(post: post, feeling: feeling)
+                        .navigationBarBackButtonHidden(true)
                 }
             }
-            .navigationBarHidden(true)
         }
     }
 }
@@ -83,16 +60,16 @@ struct ResonanceCard: View {
     var post: Post
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // TOP ROW
+        VStack(alignment: .leading, spacing: 20) {
+            // TOP ROW: Mood & Artist
             HStack(spacing: 16) {
                 MoodShapeView(type: post.moodType, color: post.themeColor, customMood: post.customMood)
                     .frame(width: 48, height: 48)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(post.artist)
-                        .font(.system(size: 14, weight: .medium)) // SF Pro Medium
-                        .foregroundColor(.white.opacity(0.82))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white.opacity(0.85))
                     
                     HStack(spacing: 6) {
                         Circle()
@@ -102,41 +79,59 @@ struct ResonanceCard: View {
                         Text(post.mood)
                             .font(.custom("DMMono-Regular", size: 8.5))
                             .foregroundColor(post.themeColor)
+                        
+                        Text("·")
                             .font(.custom("DMMono-Regular", size: 8.5))
-                            .foregroundColor(.white.opacity(0.22))
+                            .foregroundColor(.white.opacity(0.15))
                         
                         Text(post.song)
                             .font(.custom("DMMono-Regular", size: 8.5))
-                            .foregroundColor(.white.opacity(0.22))
+                            .foregroundColor(.white.opacity(0.4))
                     }
                 }
                 Spacer()
             }
             
-            // QUOTE
-            Text(post.quote)
-                .font(.custom("Lora-Italic", size: 13.5))
-                .italic()
-                .foregroundColor(.white.opacity(0.62))
-                .lineSpacing(1.65 * 13.5 - 13.5) // Approximate line height
-                .lineLimit(2)
-                .truncationMode(.tail)
-                .padding(.top, 4)
+            // THE QUOTE
+            Text("“\(post.quote)”")
+                .font(.custom("Lora-Italic", size: 18))
+                .foregroundColor(.white.opacity(0.9))
+                .lineSpacing(4)
+                .multilineTextAlignment(.leading)
             
-            // BOTTOM ROW
+            // FOOTER: Metrics (Minimal)
             HStack {
                 Text("\(post.resonanceCount) resonated")
-                    .font(.custom("DMMono-Regular", size: 8))
-                    .foregroundColor(.white.opacity(0.18))
+                    .font(.custom("DMMono-Regular", size: 8.5))
+                    .foregroundColor(.white.opacity(0.12))
                 
                 Spacer()
                 
-                Text("feel this →")
-                    .font(.custom("DMMono-Regular", size: 8))
-                    .foregroundColor(.white.opacity(0.18))
+                Text("\(post.daysAgo)d ago")
+                    .font(.custom("DMMono-Regular", size: 8.5))
+                    .foregroundColor(.white.opacity(0.12))
             }
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 20)
+        .padding(24)
+        .background(
+            ZStack {
+                if let image = post.attachedImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .overlay(post.themeColor.opacity(0.28)) // THE MOOD TINT
+                        .opacity(0.5) // Subtler in the feed
+                }
+                Color.white.opacity(0.02)
+                RadialGradient(colors: [post.themeColor.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 150)
+            }
+        )
+        .cornerRadius(24)
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
     }
 }

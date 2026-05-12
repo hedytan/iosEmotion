@@ -26,6 +26,7 @@ struct Post: Identifiable, Hashable {
     let mood: String
     let moodType: MoodType
     let customMood: CustomMood? // Support for custom hand-drawn moods
+    let attachedImage: UIImage? // Support for optional photo attachment
     let quote: String
     let resonanceCount: String
     let year: String
