@@ -4,6 +4,7 @@ import PhotosUI
 struct CreateMomentView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var store: PostStore
+    @Binding var selectedTab: Int // Added to allow switching to feed after post
     
     @State private var selectedPreset: Post.MoodType? = .joy
     @State private var selectedCustom: CustomMood? = nil
@@ -16,7 +17,8 @@ struct CreateMomentView: View {
     @State private var showingDrawSheet = false
     @State private var pickerItem: PhotosPickerItem? = nil
     
-    let songs = ["稻香", "七里香", "青花瓷", "夜曲", "晴天"]
+    // MEN I TRUST LIBRARY
+    let songs = ["Show Me How", "Lauren", "Tailwhip", "Sugar", "Tree Among Shrubs", "Seven", "Humming"]
     
     var isReady: Bool {
         !quoteText.isEmpty && selectedSong != nil && (selectedPreset != nil || selectedCustom != nil)
@@ -172,16 +174,14 @@ struct CreateMomentView: View {
                                             .frame(height: 220)
                                             .clipped()
                                             .cornerRadius(18)
-                                            .overlay(moodColor.opacity(tintOpacity)) // ADJUSTABLE TINT
+                                            .overlay(moodColor.opacity(tintOpacity))
                                         
-                                        // Mood Name (Bottom Left)
                                         Text(moodName.uppercased())
                                             .font(.custom("DMMono-Regular", size: 9))
                                             .kerning(2)
                                             .foregroundColor(.white.opacity(0.8))
                                             .padding(16)
                                         
-                                        // Mood Shape Watermark (Bottom Right)
                                         HStack {
                                             Spacer()
                                             MoodShapeView(type: selectedPreset ?? .custom, color: .white, customMood: selectedCustom)
@@ -191,7 +191,6 @@ struct CreateMomentView: View {
                                         }
                                     }
                                     
-                                    // Controls
                                     HStack(spacing: 16) {
                                         PhotosPicker(selection: $pickerItem, matching: .images) {
                                             Label("change photo", systemImage: "arrow.triangle.2.circlepath")
@@ -218,7 +217,6 @@ struct CreateMomentView: View {
                                     }
                                 }
                             } else {
-                                // EMPTY STATE
                                 PhotosPicker(selection: $pickerItem, matching: .images) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 14)
@@ -254,7 +252,7 @@ struct CreateMomentView: View {
                         
                         ThinDivider().padding(.vertical, 28)
                         
-                        // STEP 04: WHICH SONG?
+                        // STEP 04: WHICH SONG? (MEN I TRUST)
                         VStack(alignment: .leading, spacing: 14) {
                             Text("04 · which song?")
                                 .font(.custom("DMMono-Regular", size: 8))
@@ -298,7 +296,7 @@ struct CreateMomentView: View {
     
     private func publishMoment() {
         let newPost = Post(
-            artist: "You",
+            artist: "Hedy (me)",
             song: selectedSong ?? "Unknown",
             mood: moodName,
             moodType: selectedPreset ?? .custom,
@@ -316,6 +314,9 @@ struct CreateMomentView: View {
             daysAgo: 0
         )
         withAnimation { store.posts.insert(newPost, at: 0) }
+        
+        // SWITCH TO FEED AND DISMISS
+        selectedTab = 0 
         dismiss()
     }
 }
