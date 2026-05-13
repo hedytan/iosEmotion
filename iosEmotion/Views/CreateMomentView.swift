@@ -307,10 +307,10 @@ struct CreateMomentView: View {
             quote: quoteText,
             resonanceCount: 0,
             resonanceOptions: [
-                ResonanceOption(label: "felt this in my chest", count: 0),
-                ResonanceOption(label: "took me somewhere else", count: 0),
-                ResonanceOption(label: "reminds me of someone", count: 0),
-                ResonanceOption(label: "can't explain it", count: 0)
+                ResonanceOption(label: "felt this in my chest", count: 0, mood: .joy),
+                ResonanceOption(label: "took me somewhere else", count: 0, mood: .melancholy),
+                ResonanceOption(label: "reminds me of someone", count: 0, mood: .tender),
+                ResonanceOption(label: "can't explain it", count: 0, mood: .wonder)
             ],
             year: "2026",
             daysAgo: 0
