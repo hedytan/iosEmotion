@@ -3,17 +3,13 @@ import Combine
 import PencilKit
 
 struct CustomMood: Identifiable, Hashable {
-    let id: UUID = UUID()
+    let id = UUID()
     let name: String
     let drawing: PKDrawing
     let strokeColor: Color
     let thumbnail: UIImage
     
-    // Conforming to Hashable for PKDrawing and UIImagestruct ResonanceConnection: Hashable {
-    let post: Post
-    let feeling: String
-    let userMood: Post.MoodType
-}
+    // Conforming to Hashable manually for non-conforming types
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
@@ -24,7 +20,7 @@ struct CustomMood: Identifiable, Hashable {
 }
 
 struct Post: Identifiable, Hashable {
-    let id: UUID = UUID()
+    let id = UUID()
     let artist: String
     let song: String
     let mood: String
@@ -43,18 +39,6 @@ struct Post: Identifiable, Hashable {
     enum MoodType: CaseIterable, Hashable {
         case joy, melancholy, wonder, tender, urgency, awe, custom
         
-        var color: Color {
-            switch self {
-            case .joy: return Color(hex: "F0A840")
-            case .melancholy: return Color(hex: "6888B8")
-            case .wonder: return Color(hex: "40B8C8")
-            case .tender: return Color(hex: "D890B8")
-            case .urgency: return Color(hex: "E05040")
-            case .awe: return Color(hex: "7090D0")
-            case .custom: return Color.white.opacity(0.8)
-            }
-        }
-        
         var displayName: String {
             switch self {
             case .joy: return "Joy"
@@ -66,7 +50,25 @@ struct Post: Identifiable, Hashable {
             case .custom: return "Custom"
             }
         }
+        
+        var color: Color {
+            switch self {
+            case .joy: return Color(hex: "F0A840")
+            case .melancholy: return Color(hex: "6888B0")
+            case .wonder: return Color(hex: "88B080")
+            case .tender: return Color(hex: "D890B8")
+            case .urgency: return Color(hex: "B06060")
+            case .awe: return Color(hex: "A080C0")
+            case .custom: return Color.white.opacity(0.8)
+            }
+        }
     }
+}
+
+struct ResonanceConnection: Hashable {
+    let post: Post
+    let feeling: String
+    let userMood: Post.MoodType
 }
 
 class PostStore: ObservableObject {
