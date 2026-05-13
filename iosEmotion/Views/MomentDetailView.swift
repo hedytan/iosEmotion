@@ -146,8 +146,9 @@ struct MomentDetailView: View {
     
     private func selectPreset(_ label: String) {
         withAnimation(.spring()) { selectedOption = label }
+        let connection = ResonanceConnection(post: post, feeling: label, userMood: .tender)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            onResonate(label)
+            onResonate(connection)
         }
     }
     
