@@ -26,35 +26,49 @@ struct ContentView: View {
                     }
                     .tag(0)
                 
-                ExploreView()
-                    .environmentObject(store)
-                    .tabItem {
-                        Label("Explore", systemImage: "sparkles")
-                    }
-                    .tag(1)
-                
+                // The Express experience is triggered via the custom button, 
+                // but we keep a tagged placeholder to manage the warp logic.
                 Color.clear
                     .tabItem {
                         Label("Express", systemImage: "plus")
                     }
-                    .tag(2)
+                    .tag(1)
             }
             .tint(Color(hex: "F0A840"))
             
-            // Custom Center Button Overlay
-            Button(action: { showingCreate = true }) {
-                ZStack {
-                    Circle()
-                        .fill(Color.white.opacity(0.05))
-                        .frame(width: 44, height: 44)
-                        .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 1))
-                    
-                    Image(systemName: "plus")
-                        .font(.system(size: 18, weight: .light))
-                        .foregroundColor(.white.opacity(0.6))
+            // CUSTOM CENTERED 2-PILLAR BUTTONS
+            HStack(spacing: 60) {
+                // Feed Indicator/Button
+                Button(action: { selectedTab = 0 }) {
+                    VStack(spacing: 4) {
+                        Image(systemName: "circle.circle")
+                            .font(.system(size: 20))
+                        Text("Feed")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.3))
+                }
+                
+                // Express Button
+                Button(action: { showingCreate = true }) {
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.05))
+                                .frame(width: 40, height: 40)
+                                .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 1))
+                            
+                            Image(systemName: "plus")
+                                .font(.system(size: 18, weight: .light))
+                        }
+                        Text("Express")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.white.opacity(selectedTab == 1 ? 0.6 : 0.3))
                 }
             }
-            .offset(y: -12)
+            .padding(.bottom, 20)
+            .ignoresSafeArea()
         }
         .fullScreenCover(isPresented: $showingCreate) {
             CreateMomentView(selectedTab: $selectedTab)
@@ -63,7 +77,6 @@ struct ContentView: View {
     }
 }
 
-// RESTORING UICOLOR HEX SUPPORT
 extension UIColor {
     convenience init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
@@ -78,8 +91,4 @@ extension UIColor {
         }
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
-}
-
-#Preview {
-    ContentView()
 }
