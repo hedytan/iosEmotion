@@ -5,70 +5,67 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var showingCreate = false
     
+    init() {
+        // Hide standard tab bar to use custom one
+        UITabBar.appearance().isHidden = true
+    }
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             Color(hex: "08070B").ignoresSafeArea()
             
-            // VIEW SWITCHER
-            Group {
-                if selectedTab == 0 {
-                    BehindTheWorkView()
-                        .environmentObject(store)
-                        .transition(.opacity)
-                } else {
-                    BehindTheWorkView()
-                        .environmentObject(store)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            // HIGH-FIDELITY GLASS PILL TAB BAR
-            HStack(spacing: 0) {
-                // Feed Tab
-                Button(action: { 
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        selectedTab = 0 
-                    }
-                }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "circle.circle")
-                            .font(.system(size: 20, weight: selectedTab == 0 ? .semibold : .regular))
-                        Text("Feed")
-                            .font(.system(size: 13, weight: .medium))
-                    }
-                    .padding(.vertical, 14)
-                    .padding(.horizontal, 24)
-                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.4))
-                    .background(
-                        Capsule()
-                            .fill(selectedTab == 0 ? Color.black.opacity(0.25) : Color.clear)
-                    )
-                }
-                .padding(4)
+            // MAIN CONTENT SWITCHER
+            TabView(selection: $selectedTab) {
+                BehindTheWorkView()
+                    .environmentObject(store)
+                    .tag(0)
                 
-                // Express Tab
-                Button(action: { showingCreate = true }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 20, weight: .regular))
-                        Text("Express")
-                            .font(.system(size: 13, weight: .medium))
-                    }
-                    .padding(.vertical, 14)
-                    .padding(.horizontal, 24)
-                    .foregroundColor(.white.opacity(0.4))
-                    .background(Capsule().fill(Color.clear))
-                }
-                .padding(4)
+                // Placeholder for Express tab
+                Color.clear
+                    .tag(1)
             }
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
-                    .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
-            )
-            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
-            .padding(.bottom, 34)
+            
+            // HIGH-FIDELITY CUSTOM TAB BAR
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color.white.opacity(0.04))
+                    .frame(height: 1)
+                
+                HStack(spacing: 0) {
+                    // Feed Tab
+                    Button(action: { selectedTab = 0 }) {
+                        VStack(spacing: 6) {
+                            Image(systemName: "circle.circle")
+                                .font(.system(size: 22))
+                            Text("Feed")
+                                .font(.custom("DMMono-Regular", size: 9))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(.white)
+                        .opacity(selectedTab == 0 ? 1.0 : 0.22)
+                    }
+                    
+                    // Express Tab
+                    Button(action: { showingCreate = true }) {
+                        VStack(spacing: 6) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 22))
+                            Text("Express")
+                                .font(.custom("DMMono-Regular", size: 9))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(.white)
+                        .opacity(selectedTab == 1 ? 1.0 : 0.22)
+                    }
+                }
+                .padding(.top, 12)
+                .frame(height: 76, alignment: .top)
+                .background(
+                    Color(hex: "08070B").opacity(0.97)
+                        .background(.ultraThinMaterial)
+                )
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
         .fullScreenCover(isPresented: $showingCreate) {
             CreateMomentView(selectedTab: $selectedTab)
@@ -77,18 +74,35 @@ struct ContentView: View {
     }
 }
 
-extension UIColor {
-    convenience init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default: (a, r, g, b) = (1, 1, 1, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+// Global modifiers for animations
+struct PulseModifier: ViewModifier {
+    @State private var scale: CGFloat = 1.0
+    @State private var opacity: Double = 0.5
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    scale = 2.2
+                    opacity = 0
+                }
+            }
+    }
+}
+
+struct FloaterModifier: ViewModifier {
+    @State private var offset: CGFloat = 0
+    @State private var opacity: Double = 1.0
+    func body(content: Content) -> some View {
+        content
+            .offset(y: offset)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.8)) {
+                    offset = -30
+                    opacity = 0
+                }
+            }
     }
 }

@@ -2,55 +2,43 @@ import SwiftUI
 import Combine
 import PencilKit
 
+// MARK: - Models
+
 struct CustomMood: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let drawing: PKDrawing
     let strokeColor: Color
-    let thumbnail: UIImage
+    var thumbnail: UIImage
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: CustomMood, rhs: CustomMood) -> Bool {
-        lhs.id == rhs.id
-    }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    static func == (lhs: CustomMood, rhs: CustomMood) -> Bool { lhs.id == rhs.id }
 }
 
 struct ResonanceOption: Identifiable, Hashable {
     let id = UUID()
-    let label: String
-    var count: Int
-    var isSelectedByCurrentUser: Bool = false
-    var mood: Post.MoodType // Pre-assigned mood for this option
-}
-
-struct CustomResonance: Identifiable, Hashable {
-    let id = UUID()
     let text: String
     let mood: Post.MoodType
-    let authorIsCurrentUser: Bool
+    var count: Int
+    var isSelectedByUser: Bool = false
+    let isCustom: Bool
 }
 
 struct Post: Identifiable, Hashable {
     let id = UUID()
     let artist: String
-    let song: String
-    let mood: String
     let moodType: MoodType
-    let customMood: CustomMood?
-    let attachedImage: UIImage?
     let quote: String
-    var resonanceCount: Int
-    var resonanceOptions: [ResonanceOption]
-    var customResonances: [CustomResonance] = []
+    let song: String
     let year: String
-    let daysAgo: Int
+    var resonanceCount: Int
+    let timestamp: Date = Date()
+    var attachedImage: UIImage?
+    var customShape: PKDrawing?
+    var customShapeName: String?
     
-    var themeColor: Color {
-        customMood?.strokeColor ?? moodType.color
-    }
+    var themeColor: Color { moodType.color }
+    var mood: String { moodType.displayName }
     
     enum MoodType: CaseIterable, Hashable {
         case joy, melancholy, wonder, tender, urgency, awe, custom
@@ -87,47 +75,98 @@ struct ResonanceConnection: Hashable {
     let userMood: Post.MoodType
 }
 
+// MARK: - Mood Shapes (Organic Paths)
+
+struct JoyShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width, h = rect.height
+        path.move(to: CGPoint(x: w*0.2, y: h*0.4))
+        path.addCurve(to: CGPoint(x: w*0.8, y: h*0.2), control1: CGPoint(x: w*0.1, y: h*0.1), control2: CGPoint(x: w*0.5, y: 0))
+        path.addCurve(to: CGPoint(x: w*0.9, y: h*0.7), control1: CGPoint(x: w, y: h*0.3), control2: CGPoint(x: w*1.1, y: h*0.6))
+        path.addCurve(to: CGPoint(x: w*0.4, y: h*0.9), control1: CGPoint(x: w*0.7, y: h*0.9), control2: CGPoint(x: w*0.6, y: h))
+        path.addCurve(to: CGPoint(x: w*0.2, y: h*0.4), control1: CGPoint(x: w*0.1, y: h*0.8), control2: CGPoint(x: 0, y: h*0.5))
+        return path
+    }
+}
+
+struct MelancholyShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width, h = rect.height
+        path.move(to: CGPoint(x: w*0.5, y: 0))
+        path.addCurve(to: CGPoint(x: w*0.5, y: h), control1: CGPoint(x: w*0.2, y: h*0.3), control2: CGPoint(x: 0, y: h*0.7))
+        path.addCurve(to: CGPoint(x: w*0.5, y: 0), control1: CGPoint(x: w, y: h*0.7), control2: CGPoint(x: w*0.8, y: h*0.3))
+        return path
+    }
+}
+
+struct WonderShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width, h = rect.height, cx = w/2, cy = h/2
+        let points = 8
+        for i in 0..<points*2 {
+            let angle = CGFloat(i) * .pi / CGFloat(points)
+            let r = i % 2 == 0 ? w/2 : w/6
+            let x = cx + r * cos(angle)
+            let y = cy + r * sin(angle)
+            if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+            else { path.addLine(to: CGPoint(x: x, y: y)) }
+        }
+        path.closeSubpath()
+        return path
+    }
+}
+
+struct TenderShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path(ellipseIn: rect.insetBy(dx: rect.width*0.05, dy: rect.height*0.05))
+    }
+}
+
+struct UrgencyShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width, h = rect.height
+        path.move(to: CGPoint(x: w/2, y: 0))
+        path.addLine(to: CGPoint(x: w, y: h/2))
+        path.addLine(to: CGPoint(x: w/2, y: h))
+        path.addLine(to: CGPoint(x: 0, y: h/2))
+        path.closeSubpath()
+        return path
+    }
+}
+
+struct AweShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let w = rect.width, h = rect.height, cx = w/2, cy = h/2
+        for i in 0..<3 {
+            let r = (w/2) * CGFloat(3-i)/3
+            path.addEllipse(in: CGRect(x: cx-r, y: cy-r, width: r*2, height: r*2))
+        }
+        return path
+    }
+}
+
+// MARK: - PostStore
+
 class PostStore: ObservableObject {
     @Published var posts: [Post] = []
     @Published var customMoods: [CustomMood] = []
-    @Published var hasCompletedOnboarding: Bool = false
     
     init() {
         self.posts = [
-            Post(artist: "Jay Chou", song: "稻香", mood: "Joy", moodType: .joy, customMood: nil, attachedImage: nil, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", resonanceCount: 2400, resonanceOptions: [
-                ResonanceOption(label: "felt this in my chest", count: 1247, mood: .joy),
-                ResonanceOption(label: "took me somewhere else", count: 890, mood: .melancholy),
-                ResonanceOption(label: "reminds me of someone", count: 654, mood: .tender),
-                ResonanceOption(label: "can't explain it", count: 432, mood: .wonder),
-                ResonanceOption(label: "held my breath", count: 156, mood: .awe)
-            ], year: "2008", daysAgo: 3),
-            Post(artist: "Frank Ocean", song: "Blonde", mood: "Melancholy", moodType: .melancholy, customMood: nil, attachedImage: nil, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", resonanceCount: 8100, resonanceOptions: [
-                ResonanceOption(label: "felt this in my chest", count: 4100, mood: .joy),
-                ResonanceOption(label: "took me somewhere else", count: 2100, mood: .melancholy),
-                ResonanceOption(label: "reminds me of someone", count: 1540, mood: .tender),
-                ResonanceOption(label: "can't explain it", count: 820, mood: .wonder),
-                ResonanceOption(label: "held my breath", count: 250, mood: .awe)
-            ], year: "2016", daysAgo: 5)
+            Post(artist: "Jay Chou", moodType: .joy, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", song: "稻香", year: "2008", resonanceCount: 2418),
+            Post(artist: "Frank Ocean", moodType: .melancholy, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", song: "Blonde", year: "2016", resonanceCount: 8103),
+            Post(artist: "Adele", moodType: .tender, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", song: "Someone Like You", year: "2011", resonanceCount: 31204),
+            Post(artist: "Björk", moodType: .wonder, quote: "Standing on a glacier. That was it. That was the whole album right there.", song: "Jóga", year: "1997", resonanceCount: 12088)
         ]
     }
     
-    func toggleResonance(for postID: UUID, optionID: UUID) {
-        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
-            if let optionIndex = posts[postIndex].resonanceOptions.firstIndex(where: { $0.id == optionID }) {
-                let isNowSelected = !posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser
-                posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser = isNowSelected
-                posts[postIndex].resonanceOptions[optionIndex].count += (isNowSelected ? 1 : -1)
-                posts[postIndex].resonanceCount += (isNowSelected ? 1 : -1)
-            }
-        }
-    }
-    
-    func addCustomResonance(for postID: UUID, text: String, mood: Post.MoodType) {
-        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
-            let newRes = CustomResonance(text: text, mood: mood, authorIsCurrentUser: true)
-            posts[postIndex].customResonances.append(newRes)
-            posts[postIndex].resonanceCount += 1
-        }
+    func addPost(_ post: Post) {
+        posts.insert(post, at: 0)
     }
 }
 
