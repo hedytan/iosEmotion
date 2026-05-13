@@ -9,7 +9,11 @@ struct CustomMood: Identifiable, Hashable {
     let strokeColor: Color
     let thumbnail: UIImage
     
-    // Conforming to Hashable for PKDrawing and UIImage
+    // Conforming to Hashable for PKDrawing and UIImagestruct ResonanceConnection: Hashable {
+    let post: Post
+    let feeling: String
+    let userMood: Post.MoodType
+}
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

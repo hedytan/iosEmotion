@@ -41,11 +41,16 @@ struct BehindTheWorkView: View {
                 }
             }
             .navigationDestination(for: Post.self) { post in
-                MomentDetailView(post: post) { feeling in
-                    path.append(feeling)
+                MomentDetailView(post: post) { connection in
+                    path.append(connection)
                 }
             }
+            .navigationDestination(for: ResonanceConnection.self) { connection in
+                ConnectionView(post: connection.post, feeling: connection.feeling, userMood: connection.userMood)
+                    .navigationBarBackButtonHidden(true)
+            }
             .navigationDestination(for: String.self) { feeling in
+                // Fallback for preset strings
                 if let post = store.posts.first {
                     ConnectionView(post: post, feeling: feeling)
                         .navigationBarBackButtonHidden(true)
