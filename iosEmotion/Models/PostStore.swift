@@ -20,7 +20,7 @@ struct ResonanceOption: Identifiable, Hashable {
     let text: String
     let mood: Post.MoodType
     var count: Int
-    var isSelectedByUser: Bool = false
+    var isSelectedByCurrentUser: Bool = false
     let isCustom: Bool
 }
 
@@ -36,6 +36,9 @@ struct Post: Identifiable, Hashable {
     var attachedImage: UIImage?
     var customShape: PKDrawing?
     var customShapeName: String?
+    
+    var resonanceOptions: [ResonanceOption] = []
+    var customResonances: [ResonanceOption] = []
     
     var themeColor: Color { moodType.color }
     var mood: String { moodType.displayName }
@@ -157,21 +160,47 @@ class PostStore: ObservableObject {
     @Published var customMoods: [CustomMood] = []
     
     init() {
+        let presets = [
+            ResonanceOption(text: "felt this in my chest", mood: .joy, count: 1247, isCustom: false),
+            ResonanceOption(text: "took me somewhere else", mood: .melancholy, count: 890, isCustom: false),
+            ResonanceOption(text: "reminds me of someone", mood: .tender, count: 654, isCustom: false),
+            ResonanceOption(text: "can't explain it", mood: .wonder, count: 432, isCustom: false),
+            ResonanceOption(text: "held my breath", mood: .awe, count: 156, isCustom: false)
+        ]
+        
         self.posts = [
-            Post(artist: "Jay Chou", moodType: .joy, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", song: "稻香", year: "2008", resonanceCount: 2418),
-            Post(artist: "Frank Ocean", moodType: .melancholy, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", song: "Blonde", year: "2016", resonanceCount: 8103),
-            Post(artist: "Adele", moodType: .tender, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", song: "Someone Like You", year: "2011", resonanceCount: 31204),
-            Post(artist: "Björk", moodType: .wonder, quote: "Standing on a glacier. That was it. That was the whole album right there.", song: "Jóga", year: "1997", resonanceCount: 12088)
+            Post(artist: "Jay Chou", moodType: .joy, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", song: "稻香", year: "2008", resonanceCount: 2418, resonanceOptions: presets),
+            Post(artist: "Frank Ocean", moodType: .melancholy, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", song: "Blonde", year: "2016", resonanceCount: 8103, resonanceOptions: presets),
+            Post(artist: "Adele", moodType: .tender, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", song: "Someone Like You", year: "2011", resonanceCount: 31204, resonanceOptions: presets),
+            Post(artist: "Björk", moodType: .wonder, quote: "Standing on a glacier. That was it. That was the whole album right there.", song: "Jóga", year: "1997", resonanceCount: 12088, resonanceOptions: presets)
         ]
     }
     
     func addPost(_ post: Post) {
         posts.insert(post, at: 0)
     }
+    
+    func toggleResonance(for postID: UUID, optionID: UUID) {
+        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
+            if let optionIndex = posts[postIndex].resonanceOptions.firstIndex(where: { $0.id == optionID }) {
+                posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser.toggle()
+                posts[postIndex].resonanceOptions[optionIndex].count += posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser ? 1 : -1
+                posts[postIndex].resonanceCount += posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser ? 1 : -1
+            }
+        }
+    }
+    
+    func addCustomResonance(for postID: UUID, text: String, mood: Post.MoodType) {
+        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
+            let newRes = ResonanceOption(text: text, mood: mood, count: 1, isSelectedByCurrentUser: true, isCustom: true)
+            posts[postIndex].customResonances.insert(newRes, at: 0)
+            posts[postIndex].resonanceCount += 1
+        }
+    }
 }
 
 extension Color {
-    init(hex: String) {
+    static init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)

@@ -21,39 +21,19 @@ struct MoodShapeView: View {
                 }
             } else {
                 // Preset Organic Shape
-                Group {
-                    switch type {
-                    case .joy: JoyShape()
-                    case .melancholy: MelancholyShape()
-                    case .wonder: WonderShape()
-                    case .tender: TenderShape()
-                    case .urgency: UrgencyShape()
-                    case .awe: AweShape()
-                    case .custom: Circle() // Fallback
-                    }
-                }
-                .fill(
-                    RadialGradient(
-                        colors: [color.opacity(0.16), .clear],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: isLarge ? 60 : 24
+                MoodShape(type: type)
+                    .fill(
+                        RadialGradient(
+                            colors: [color.opacity(0.16), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: isLarge ? 60 : 24
+                        )
                     )
-                )
-                .overlay(
-                    Group {
-                        switch type {
-                        case .joy: JoyShape()
-                        case .melancholy: MelancholyShape()
-                        case .wonder: WonderShape()
-                        case .tender: TenderShape()
-                        case .urgency: UrgencyShape()
-                        case .awe: AweShape()
-                        case .custom: Circle()
-                        }
-                    }
-                    .stroke(color.opacity(0.5), lineWidth: 1)
-                )
+                    .overlay(
+                        MoodShape(type: type)
+                            .stroke(color.opacity(0.5), lineWidth: 1)
+                    )
             }
         }
     }

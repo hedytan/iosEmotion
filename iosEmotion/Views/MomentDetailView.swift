@@ -162,7 +162,7 @@ struct MomentDetailView: View {
                                             triggerPulse(for: option.id)
                                             store.toggleResonance(for: post.id, optionID: option.id)
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                                onResonate(ResonanceConnection(post: post, feeling: option.label, userMood: option.mood))
+                                                onResonate(ResonanceConnection(post: post, feeling: option.text, userMood: option.mood))
                                             }
                                         }
                                         
@@ -212,7 +212,7 @@ struct ResonanceListRow: View {
                 Rectangle().fill(option.isSelectedByCurrentUser ? option.mood.color : Color.clear).frame(width: 2.5)
                 HStack(spacing: 12) {
                     Circle().fill(option.isSelectedByCurrentUser ? option.mood.color : Color.white.opacity(0.1)).frame(width: 6, height: 6).scaleEffect(option.isSelectedByCurrentUser ? 1.2 : 1.0)
-                    Text(option.label).font(.custom("Lora-Italic", size: 12)).foregroundColor(.white.opacity(option.isSelectedByCurrentUser ? 0.78 : 0.35)).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(option.text).font(.custom("Lora-Italic", size: 12)).foregroundColor(.white.opacity(option.isSelectedByCurrentUser ? 0.78 : 0.35)).frame(maxWidth: .infinity, alignment: .leading)
                     MoodShapeView(type: option.mood, color: option.mood.color).frame(width: 18, height: 18).opacity(option.isSelectedByCurrentUser ? 1 : 0)
                     Text("\(option.count)").font(.custom("DMMono-Regular", size: 8.5)).foregroundColor(option.isSelectedByCurrentUser ? option.mood.color.opacity(0.6) : .white.opacity(0.18))
                 }
