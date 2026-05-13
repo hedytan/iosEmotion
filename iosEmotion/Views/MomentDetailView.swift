@@ -2,11 +2,12 @@ import SwiftUI
 
 struct MomentDetailView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var store: PostStore
     var post: Post
     var onResonate: (AnyHashable) -> Void
     
     @State private var isBreathing = false
-    @State private var selectedOption: String? = nil
+    @State private var selectedOptionID: UUID? = nil
     
     // Custom Echo States
     @State private var isWritingEcho = false
@@ -77,11 +78,17 @@ struct MomentDetailView: View {
                             Text("RESONANCE").font(.custom("DMMono-Regular", size: 8)).kerning(1.6).foregroundColor(.white.opacity(0.18)).padding(.horizontal, 24)
                             
                             VStack(spacing: 1) {
-                                // Preset Options
-                                ResonanceRow(label: "felt this in my chest", count: "1.2k", isSelected: selectedOption == "felt this in my chest", moodColor: post.themeColor) { selectPreset("felt this in my chest") }
-                                ResonanceRow(label: "took me somewhere else", count: "890", isSelected: selectedOption == "took me somewhere else", moodColor: post.themeColor) { selectPreset("took me somewhere else") }
-                                ResonanceRow(label: "reminds me of someone", count: "654", isSelected: selectedOption == "reminds me of someone", moodColor: post.themeColor) { selectPreset("reminds me of someone") }
-                                ResonanceRow(label: "can't explain it", count: "432", isSelected: selectedOption == "can't explain it", moodColor: post.themeColor) { selectPreset("can't explain it") }
+                                // Dynamic Preset Options
+                                ForEach(post.resonanceOptions) { option in
+                                    ResonanceRow(
+                                        label: option.label,
+                                        count: formatCount(option.count),
+                                        isSelected: selectedOptionID == option.id,
+                                        moodColor: post.themeColor
+                                    ) {
+                                        selectPreset(option)
+                                    }
+                                }
                                 
                                 // THE ECHO COMPOSER
                                 if !isWritingEcho {
@@ -144,10 +151,21 @@ struct MomentDetailView: View {
         }
     }
     
-    private func selectPreset(_ label: String) {
-        withAnimation(.spring()) { selectedOption = label }
-        let connection = ResonanceConnection(post: post, feeling: label, userMood: .tender)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+    private func formatCount(_ count: Int) -> String {
+        if count >= 1000 {
+            return String(format: "%.1fk", Double(count) / 1000.0)
+        }
+        return "\(count)"
+    }
+    
+    private func selectPreset(_ option: ResonanceOption) {
+        withAnimation(.spring()) { selectedOptionID = option.id }
+        
+        // INCREMENT IN STORE
+        store.incrementResonance(for: post.id, optionID: option.id)
+        
+        let connection = ResonanceConnection(post: post, feeling: option.label, userMood: .tender)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             onResonate(connection)
         }
     }
