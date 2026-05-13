@@ -9,71 +9,65 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             Color(hex: "08070B").ignoresSafeArea()
             
-            // VIEW SWITCHER (Replaces Native TabView)
+            // VIEW SWITCHER
             Group {
                 if selectedTab == 0 {
                     BehindTheWorkView()
                         .environmentObject(store)
                         .transition(.opacity)
                 } else {
-                    // We stay on Feed but show Express as a cover
                     BehindTheWorkView()
                         .environmentObject(store)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            // CUSTOM PILL TAB BAR
+            // HIGH-FIDELITY GLASS PILL TAB BAR
             HStack(spacing: 0) {
                 // Feed Tab
                 Button(action: { 
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         selectedTab = 0 
                     }
                 }) {
-                    VStack(spacing: 4) {
+                    HStack(spacing: 10) {
                         Image(systemName: "circle.circle")
-                            .font(.system(size: 20, weight: selectedTab == 0 ? .medium : .light))
+                            .font(.system(size: 20, weight: selectedTab == 0 ? .semibold : .regular))
                         Text("Feed")
-                            .font(.system(size: 10))
+                            .font(.system(size: 13, weight: .medium))
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.3))
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.4))
+                    .background(
+                        Capsule()
+                            .fill(selectedTab == 0 ? Color.black.opacity(0.25) : Color.clear)
+                    )
                 }
-                .background(
-                    Capsule()
-                        .fill(Color.white.opacity(selectedTab == 0 ? 0.08 : 0))
-                        .padding(4)
-                )
+                .padding(4)
                 
-                // Express Tab (Button)
+                // Express Tab
                 Button(action: { showingCreate = true }) {
-                    VStack(spacing: 4) {
+                    HStack(spacing: 10) {
                         Image(systemName: "plus")
-                            .font(.system(size: 20, weight: .light))
+                            .font(.system(size: 20, weight: .regular))
                         Text("Express")
-                            .font(.system(size: 10))
+                            .font(.system(size: 13, weight: .medium))
                     }
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.white.opacity(0.3))
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .foregroundColor(.white.opacity(0.4))
+                    .background(Capsule().fill(Color.clear))
                 }
-                .background(
-                    Capsule()
-                        .fill(Color.white.opacity(0))
-                        .padding(4)
-                )
+                .padding(4)
             }
-            .frame(width: 240)
-            .padding(8)
             .background(
                 Capsule()
-                    .fill(Color(hex: "1A191D").opacity(0.9))
-                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
             )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-            )
+            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
             .padding(.bottom, 34)
         }
         .fullScreenCover(isPresented: $showingCreate) {
