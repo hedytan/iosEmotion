@@ -2,125 +2,182 @@ import SwiftUI
 
 struct ConnectionView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var store: PostStore
     var post: Post
     var feeling: String
-    var userMood: Post.MoodType = .tender // Defaulting to tender, but now customizable
+    var userMood: Post.MoodType
     
-    @State private var isBreathing = false
     @State private var dotPosition: CGFloat = 0.0
-    @State private var flashOpacity: Double = 0.0
-    @State private var floatOffset: CGFloat = 0.0
+    @State private var isBreathing = false
+    @State private var textOpacity: Double = 0.0
+    
+    var moodsMatch: Bool { post.moodType == userMood }
     
     var body: some View {
         ZStack {
             Color(hex: "07060A").ignoresSafeArea()
             
-            // AMBIENT GLOW (Centered & Pulsing)
-            ZStack {
-                RadialGradient(
-                    stops: [
-                        .init(color: post.themeColor.opacity(isBreathing ? 0.12 : 0.07), location: 0),
-                        .init(color: userMood.color.opacity(isBreathing ? 0.08 : 0.04), location: 0.6),
-                        .init(color: .clear, location: 1.0)
-                    ],
-                    center: .center,
-                    startRadius: 0,
-                    endRadius: isBreathing ? 160 : 140
-                )
-                .frame(width: 320, height: 320)
-                .blur(radius: 30)
-                
-                // THE RESONANCE FLASH
-                Circle()
-                    .fill(Color.white.opacity(flashOpacity))
-                    .frame(width: 200, height: 200)
-                    .blur(radius: 40)
-            }
+            // AMBIENT GLOW
+            RadialGradient(
+                stops: [
+                    .init(color: post.themeColor.opacity(0.18), location: 0),
+                    .init(color: userMood.color.opacity(0.08), location: 0.5),
+                    .init(color: .clear, location: 1.0)
+                ],
+                center: .center,
+                startRadius: 0,
+                endRadius: 140
+            )
+            .frame(width: 280, height: 280)
+            .blur(radius: 40)
             
             VStack(spacing: 0) {
                 Spacer()
                 
-                VStack(spacing: 60) {
-                    // THE CONNECTION BRIDGE
+                // SHAPE VISUALIZATION
+                VStack(spacing: 20) {
                     HStack(spacing: 0) {
-                        // LEFT — Artist shape
+                        // Left - Artist
                         VStack(spacing: 12) {
                             MoodShapeView(type: post.moodType, color: post.themeColor, customMood: post.customMood)
-                                .frame(width: 68, height: 68)
+                                .frame(width: 64, height: 64)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
-                                .offset(y: floatOffset)
                             
                             Text(post.artist)
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.3))
+                                .foregroundColor(.white.opacity(0.2))
                         }
                         
-                        // CENTER — The Bridge
+                        // Center - Bridge
                         ZStack {
                             Rectangle()
-                                .fill(Color.white.opacity(0.06))
-                                .frame(height: 1)
-                                .frame(width: 100)
-                            
-                            Circle()
                                 .fill(
-                                    LinearGradient(colors: [post.themeColor, userMood.color], startPoint: .leading, endPoint: .trailing)
+                                    LinearGradient(
+                                        colors: [post.themeColor.opacity(0.5), Color.white.opacity(0.05), userMood.color.opacity(0.5)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                                .frame(width: 4, height: 4)
-                                .offset(x: -50 + (100 * dotPosition))
+                                .frame(height: 1)
+                                .frame(maxWidth: .infinity)
+                            
+                            // Travelling Dot
+                            Circle()
+                                .fill(Color.white.opacity(0.5))
+                                .frame(width: 7, height: 7)
                                 .blur(radius: 1)
+                                .offset(x: -50 + (100 * dotPosition))
+                                .opacity(dotPosition > 0.08 && dotPosition < 0.92 ? 1 : 0)
                         }
+                        .frame(width: 100)
+                        .padding(.horizontal, 10)
                         
-                        // RIGHT — You shape (NOW DYNAMIC)
+                        // Right - You
                         VStack(spacing: 12) {
                             MoodShapeView(type: userMood, color: userMood.color)
-                                .frame(width: 68, height: 68)
+                                .frame(width: 64, height: 64)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
-                                .offset(y: -floatOffset)
+                                .offset(y: 2)
                             
                             Text("You")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.3))
+                                .foregroundColor(.white.opacity(0.2))
                         }
                     }
                     
-                    // STATUS TEXT
-                    VStack(spacing: 12) {
-                        Text("resonance established")
-                            .font(.custom("Lora-Italic", size: 18))
-                            .foregroundColor(.white.opacity(0.9))
+                    // Meet Labels
+                    HStack(spacing: 8) {
+                        Text(post.mood.uppercased())
+                            .font(.custom("DMMono-Regular", size: 8))
+                            .foregroundColor(post.themeColor.opacity(0.5))
                         
-                        Text(feeling)
-                            .font(.custom("DMMono-Regular", size: 9))
-                            .kerning(1.8)
-                            .foregroundColor(post.themeColor.opacity(0.6))
+                        Text("meets")
+                            .font(.custom("DMMono-Regular", size: 7))
+                            .foregroundColor(.white.opacity(0.1))
+                        
+                        Text(userMood.displayName.uppercased())
+                            .font(.custom("DMMono-Regular", size: 8))
+                            .foregroundColor(userMood.color.opacity(0.5))
                     }
                 }
+                .padding(.bottom, 60)
+                
+                // CONNECTION TEXT
+                VStack(spacing: 32) {
+                    VStack(spacing: 12) {
+                        Text("\(post.artist) shared \(post.mood).")
+                            .font(.custom("Lora-Italic", size: 12.5))
+                            .foregroundColor(.white.opacity(0.42))
+                        
+                        Text("You felt something \(moodsMatch ? "similar" : "different") —")
+                            .font(.custom("Lora-Italic", size: 12.5))
+                            .foregroundColor(.white.opacity(0.42))
+                        
+                        Text("“\(feeling)”")
+                            .font(.custom("Lora-Italic", size: 18))
+                            .foregroundColor(.white.opacity(0.88))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 230)
+                            .padding(.top, 10)
+                    }
+                    
+                    VStack(spacing: 16) {
+                        Text("you + \(post.resonanceCount) others felt something \(userMood.displayName) here")
+                            .font(.custom("DMMono-Regular", size: 8))
+                            .kerning(0.8)
+                            .foregroundColor(.white.opacity(0.18))
+                        
+                        Rectangle()
+                            .fill(Color.white.opacity(0.06))
+                            .frame(width: 36, height: 1)
+                        
+                        VStack(spacing: 8) {
+                            Text("a moment between you")
+                                .font(.custom("DMMono-Regular", size: 7.5))
+                                .kerning(1)
+                                .textCase(.uppercase)
+                                .foregroundColor(.white.opacity(0.14))
+                            
+                            Text(moodsMatch ? "You both felt \(userMood.displayName). You're not alone." : "His \(post.mood) unlocked your \(userMood.displayName). That's a real connection.")
+                                .font(.custom("Lora-Italic", size: 12))
+                                .foregroundColor(.white.opacity(0.26))
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: 190)
+                        }
+                    }
+                }
+                .opacity(textOpacity)
                 
                 Spacer()
                 
+                // Back Button
                 Button(action: { dismiss() }) {
-                    Text("return to void")
-                        .font(.custom("DMMono-Regular", size: 10))
-                        .foregroundColor(.white.opacity(0.4))
-                        .padding(.horizontal, 30)
-                        .padding(.vertical, 14)
-                        .background(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
+                    Text("← back to feed")
+                        .font(.custom("DMMono-Regular", size: 9))
+                        .foregroundColor(.white.opacity(0.25))
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                        .background(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 1))
                 }
                 .padding(.bottom, 40)
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.6)) { flashOpacity = 0.6 }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.easeIn(duration: 1.2)) { flashOpacity = 0.0 }
-            }
-            withAnimation(.easeInOut(duration: 3).repeatForever(autoreverses: true)) {
+            withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
                 isBreathing = true
-                floatOffset = 8
             }
-            withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
+            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) {
                 dotPosition = 1.0
+            }
+            withAnimation(.easeIn(duration: 0.8).delay(0.4)) {
+                textOpacity = 1.0
+            }
+            // Continuous dot animation
+            Timer.scheduledTimer(withTimeInterval: 2.6, repeats: true) { _ in
+                dotPosition = 0.0
+                withAnimation(.easeInOut(duration: 2.4)) {
+                    dotPosition = 1.0
+                }
             }
         }
     }

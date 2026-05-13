@@ -22,6 +22,15 @@ struct ResonanceOption: Identifiable, Hashable {
     let id = UUID()
     let label: String
     var count: Int
+    var isSelectedByCurrentUser: Bool = false
+    var mood: Post.MoodType // Pre-assigned mood for this option
+}
+
+struct CustomResonance: Identifiable, Hashable {
+    let id = UUID()
+    let text: String
+    let mood: Post.MoodType
+    let authorIsCurrentUser: Bool
 }
 
 struct Post: Identifiable, Hashable {
@@ -35,6 +44,7 @@ struct Post: Identifiable, Hashable {
     let quote: String
     var resonanceCount: Int
     var resonanceOptions: [ResonanceOption]
+    var customResonances: [CustomResonance] = []
     let year: String
     let daysAgo: Int
     
@@ -60,11 +70,11 @@ struct Post: Identifiable, Hashable {
         var color: Color {
             switch self {
             case .joy: return Color(hex: "F0A840")
-            case .melancholy: return Color(hex: "6888B0")
-            case .wonder: return Color(hex: "88B080")
+            case .melancholy: return Color(hex: "6888B8")
+            case .wonder: return Color(hex: "40B8C8")
             case .tender: return Color(hex: "D890B8")
-            case .urgency: return Color(hex: "B06060")
-            case .awe: return Color(hex: "A080C0")
+            case .urgency: return Color(hex: "E05040")
+            case .awe: return Color(hex: "7090D0")
             case .custom: return Color.white.opacity(0.8)
             }
         }
@@ -85,26 +95,38 @@ class PostStore: ObservableObject {
     init() {
         self.posts = [
             Post(artist: "Jay Chou", song: "稻香", mood: "Joy", moodType: .joy, customMood: nil, attachedImage: nil, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", resonanceCount: 2400, resonanceOptions: [
-                ResonanceOption(label: "felt this in my chest", count: 1200),
-                ResonanceOption(label: "took me somewhere else", count: 890),
-                ResonanceOption(label: "reminds me of someone", count: 654),
-                ResonanceOption(label: "can't explain it", count: 432)
+                ResonanceOption(label: "felt this in my chest", count: 1247, mood: .joy),
+                ResonanceOption(label: "took me somewhere else", count: 890, mood: .melancholy),
+                ResonanceOption(label: "reminds me of someone", count: 654, mood: .tender),
+                ResonanceOption(label: "can't explain it", count: 432, mood: .wonder),
+                ResonanceOption(label: "held my breath", count: 156, mood: .awe)
             ], year: "2008", daysAgo: 3),
             Post(artist: "Frank Ocean", song: "Blonde", mood: "Melancholy", moodType: .melancholy, customMood: nil, attachedImage: nil, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", resonanceCount: 8100, resonanceOptions: [
-                ResonanceOption(label: "felt this in my chest", count: 4100),
-                ResonanceOption(label: "took me somewhere else", count: 2100),
-                ResonanceOption(label: "reminds me of someone", count: 1540),
-                ResonanceOption(label: "can't explain it", count: 820)
+                ResonanceOption(label: "felt this in my chest", count: 4100, mood: .joy),
+                ResonanceOption(label: "took me somewhere else", count: 2100, mood: .melancholy),
+                ResonanceOption(label: "reminds me of someone", count: 1540, mood: .tender),
+                ResonanceOption(label: "can't explain it", count: 820, mood: .wonder),
+                ResonanceOption(label: "held my breath", count: 250, mood: .awe)
             ], year: "2016", daysAgo: 5)
         ]
     }
     
-    func incrementResonance(for postID: UUID, optionID: UUID) {
+    func toggleResonance(for postID: UUID, optionID: UUID) {
         if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
             if let optionIndex = posts[postIndex].resonanceOptions.firstIndex(where: { $0.id == optionID }) {
-                posts[postIndex].resonanceOptions[optionIndex].count += 1
-                posts[postIndex].resonanceCount += 1
+                let isNowSelected = !posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser
+                posts[postIndex].resonanceOptions[optionIndex].isSelectedByCurrentUser = isNowSelected
+                posts[postIndex].resonanceOptions[optionIndex].count += (isNowSelected ? 1 : -1)
+                posts[postIndex].resonanceCount += (isNowSelected ? 1 : -1)
             }
+        }
+    }
+    
+    func addCustomResonance(for postID: UUID, text: String, mood: Post.MoodType) {
+        if let postIndex = posts.firstIndex(where: { $0.id == postID }) {
+            let newRes = CustomResonance(text: text, mood: mood, authorIsCurrentUser: true)
+            posts[postIndex].customResonances.append(newRes)
+            posts[postIndex].resonanceCount += 1
         }
     }
 }
