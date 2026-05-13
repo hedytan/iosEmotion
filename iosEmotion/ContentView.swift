@@ -5,70 +5,76 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var showingCreate = false
     
-    init() {
-        // Customize Tab Bar appearance
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(hex: "08070B")
-        appearance.shadowColor = .clear
-        
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    
     var body: some View {
         ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                BehindTheWorkView()
-                    .environmentObject(store)
-                    .tabItem {
-                        Label("Feed", systemImage: "circle.circle")
-                    }
-                    .tag(0)
-                
-                // The Express experience is triggered via the custom button, 
-                // but we keep a tagged placeholder to manage the warp logic.
-                Color.clear
-                    .tabItem {
-                        Label("Express", systemImage: "plus")
-                    }
-                    .tag(1)
-            }
-            .tint(Color(hex: "F0A840"))
+            Color(hex: "08070B").ignoresSafeArea()
             
-            // CUSTOM CENTERED 2-PILLAR BUTTONS
-            HStack(spacing: 60) {
-                // Feed Indicator/Button
-                Button(action: { selectedTab = 0 }) {
+            // VIEW SWITCHER (Replaces Native TabView)
+            Group {
+                if selectedTab == 0 {
+                    BehindTheWorkView()
+                        .environmentObject(store)
+                        .transition(.opacity)
+                } else {
+                    // We stay on Feed but show Express as a cover
+                    BehindTheWorkView()
+                        .environmentObject(store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            // CUSTOM PILL TAB BAR
+            HStack(spacing: 0) {
+                // Feed Tab
+                Button(action: { 
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        selectedTab = 0 
+                    }
+                }) {
                     VStack(spacing: 4) {
                         Image(systemName: "circle.circle")
-                            .font(.system(size: 20))
+                            .font(.system(size: 20, weight: selectedTab == 0 ? .medium : .light))
                         Text("Feed")
                             .font(.system(size: 10))
                     }
+                    .frame(maxWidth: .infinity)
                     .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.3))
                 }
+                .background(
+                    Capsule()
+                        .fill(Color.white.opacity(selectedTab == 0 ? 0.08 : 0))
+                        .padding(4)
+                )
                 
-                // Express Button
+                // Express Tab (Button)
                 Button(action: { showingCreate = true }) {
                     VStack(spacing: 4) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.white.opacity(0.05))
-                                .frame(width: 40, height: 40)
-                                .overlay(Circle().stroke(Color.white.opacity(0.1), lineWidth: 1))
-                            
-                            Image(systemName: "plus")
-                                .font(.system(size: 18, weight: .light))
-                        }
+                        Image(systemName: "plus")
+                            .font(.system(size: 20, weight: .light))
                         Text("Express")
                             .font(.system(size: 10))
                     }
-                    .foregroundColor(.white.opacity(selectedTab == 1 ? 0.6 : 0.3))
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(.white.opacity(0.3))
                 }
+                .background(
+                    Capsule()
+                        .fill(Color.white.opacity(0))
+                        .padding(4)
+                )
             }
-            .padding(.bottom, 20)
-            .ignoresSafeArea()
+            .frame(width: 240)
+            .padding(8)
+            .background(
+                Capsule()
+                    .fill(Color(hex: "1A191D").opacity(0.9))
+                    .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
+            .padding(.bottom, 34)
         }
         .fullScreenCover(isPresented: $showingCreate) {
             CreateMomentView(selectedTab: $selectedTab)
