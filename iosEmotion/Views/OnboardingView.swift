@@ -29,9 +29,9 @@ struct OnboardingView: View {
                     ZStack {
                         ForEach(0..<phrases.count, id: \.self) { index in
                             Text(phrases[index])
-                                .font(.custom("DMMono-Regular", size: 11))
+                                .font(.custom("DMMono-Regular", size: 13))
                                 .kerning(1.5)
-                                .foregroundColor(.white.opacity(0.18))
+                                .foregroundColor(.white.opacity(0.38))
                                 .offset(y: -160) // Slightly larger orbit
                                 .rotationEffect(.degrees(Double(index) * (360.0 / Double(phrases.count))))
                         }
@@ -46,9 +46,9 @@ struct OnboardingView: View {
                     // CENTRAL WELCOME
                     VStack(spacing: 12) {
                         Text("welcome")
-                            .font(.custom("Lora-Italic", size: 22))
+                            .font(.custom("Lora-Italic", size: 24))
                             .italic()
-                            .foregroundColor(.white.opacity(0.45))
+                            .foregroundColor(.white.opacity(0.65))
                         
                         Text("resonance")
                             .font(.custom("Lora-Italic", size: 52))
@@ -80,8 +80,8 @@ struct OnboardingView: View {
                             )
                         
                         Text("tap to enter the void")
-                            .font(.custom("DMMono-Regular", size: 9.5))
-                            .foregroundColor(.white.opacity(0.15))
+                            .font(.custom("DMMono-Regular", size: 11))
+                            .foregroundColor(.white.opacity(0.35))
                     }
                 }
                 .padding(.bottom, 60)
