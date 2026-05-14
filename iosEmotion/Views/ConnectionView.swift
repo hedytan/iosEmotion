@@ -10,6 +10,8 @@ struct ConnectionView: View {
     @State private var dotPosition: CGFloat = 0.0
     @State private var isBreathing = false
     @State private var textOpacity: Double = 0.0
+    @State private var electricPulse: Bool = false
+    @State private var sparkOffset: CGFloat = 0
     
     var moodsMatch: Bool { post.moodType == userMood }
     let randomOthers = Int.random(in: 300...1000)
@@ -44,13 +46,14 @@ struct ConnectionView: View {
                             MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
                                 .frame(width: 64, height: 64)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
+                                .offset(x: electricPulse ? CGFloat.random(in: -1...1) : 0, y: electricPulse ? CGFloat.random(in: -1...1) : 0)
                             
                             Text(post.artist)
                                 .font(.custom("DMMono-Regular", size: 8))
                                 .foregroundColor(.white.opacity(0.2))
                         }
                         
-                        // Bridge Line
+                        // Bridge Line with Electric Arcs
                         ZStack {
                             Rectangle()
                                 .fill(
@@ -62,6 +65,20 @@ struct ConnectionView: View {
                                 )
                                 .frame(height: 1)
                                 .frame(maxWidth: .infinity)
+                            
+                            // ELECTRIC SPARK (Arcing effect)
+                            if electricPulse {
+                                Path { path in
+                                    path.move(to: CGPoint(x: 0, y: 0))
+                                    for i in 1...10 {
+                                        path.addLine(to: CGPoint(x: CGFloat(i) * 10, y: CGFloat.random(in: -3...3)))
+                                    }
+                                }
+                                .stroke(Color.white.opacity(0.6), lineWidth: 0.5)
+                                .frame(width: 100, height: 1)
+                                .offset(x: sparkOffset)
+                                .transition(.opacity)
+                            }
                             
                             // Travelling Dot
                             Circle()
@@ -77,6 +94,7 @@ struct ConnectionView: View {
                             MoodShapeView(type: userMood, color: userMood.color, isLarge: true)
                                 .frame(width: 64, height: 64)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
+                                .offset(x: electricPulse ? CGFloat.random(in: -1...1) : 0, y: electricPulse ? CGFloat.random(in: -1...1) : 0)
                                 .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true).delay(0.5), value: isBreathing)
                             
                             Text("You")
@@ -139,7 +157,7 @@ struct ConnectionView: View {
                 
                 Spacer()
                 
-                // Back Button
+                // Back Button (Repositioned Higher)
                 Button(action: { dismiss() }) {
                     Text("← back to feed")
                         .font(.custom("DMMono-Regular", size: 9))
@@ -147,13 +165,22 @@ struct ConnectionView: View {
                         .padding(.horizontal, 24).padding(.vertical, 10)
                         .background(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 1))
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 120) // Elevated above the tab bar
             }
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) { isBreathing = true }
             withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) { dotPosition = 1.0 }
             withAnimation(.easeIn(duration: 0.8).delay(0.4)) { textOpacity = 1.0 }
+            
+            // Electric Arc Timer
+            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                if Double.random(in: 0...1) > 0.8 {
+                    electricPulse = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { electricPulse = false }
+                }
+            }
+            
             // Dot Reset Loop
             Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { _ in
                 dotPosition = 0.0
