@@ -256,3 +256,38 @@ struct CreateMomentView: View {
         dismiss()
     }
 }
+
+// RESTORING HELPER COMPONENTS
+struct MoodSelectionItem: View {
+    var type: Post.MoodType
+    var isSelected: Bool
+    var body: some View {
+        VStack(spacing: 8) {
+            MoodShape(type: type)
+                .fill(type.color.opacity(isSelected ? 0.3 : 0.05))
+                .overlay(MoodShape(type: type).stroke(type.color.opacity(isSelected ? 0.8 : 0.2), lineWidth: 1.2))
+                .frame(width: 50, height: 50)
+                .scaleEffect(isSelected ? 1.12 : 1.0)
+            Text(type.displayName.uppercased()).font(.custom("DMMono-Regular", size: 7)).foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        }
+    }
+}
+
+struct CustomMoodSelectionItem: View {
+    var custom: CustomMood
+    var isSelected: Bool
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(uiImage: custom.thumbnail)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 50, height: 50)
+                .padding(8)
+                .background(Circle().fill(custom.strokeColor.opacity(isSelected ? 0.2 : 0.05)))
+                .overlay(Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.8 : 0.2), lineWidth: 1.2))
+                .scaleEffect(isSelected ? 1.12 : 1.0)
+            
+            Text(custom.name.uppercased()).font(.custom("DMMono-Regular", size: 7)).foregroundColor(.white.opacity(isSelected ? 0.65 : 0.20))
+        }
+    }
+}
