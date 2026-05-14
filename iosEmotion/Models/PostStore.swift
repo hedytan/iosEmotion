@@ -36,12 +36,16 @@ struct Post: Identifiable, Hashable {
     var attachedImage: UIImage?
     var customShape: PKDrawing?
     var customShapeName: String?
+    var customColor: Color?
     
     var resonanceOptions: [ResonanceOption] = []
     var customResonances: [ResonanceOption] = []
     
-    var themeColor: Color { moodType.color }
-    var mood: String { moodType.displayName }
+    var themeColor: Color { 
+        if moodType == .custom, let color = customColor { return color }
+        return moodType.color 
+    }
+    var mood: String { customShapeName ?? moodType.displayName }
     
     // Manual Hashable to avoid issues with UIImage and PKDrawing
     func hash(into hasher: inout Hasher) { hasher.combine(id) }

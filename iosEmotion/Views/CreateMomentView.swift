@@ -237,6 +237,7 @@ struct CreateMomentView: View {
         if let custom = selectedCustomMood {
             newPost.customShape = custom.drawing
             newPost.customShapeName = custom.name
+            newPost.customColor = custom.strokeColor
         }
         
         if let img = attachedImage { newPost.attachedImage = img }
