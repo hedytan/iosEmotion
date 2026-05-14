@@ -133,23 +133,27 @@ struct ConnectionView: View {
                 Spacer()
             }
             
-            // CIRCULAR GLASS BACK BUTTON
+            // GLASS CAPSULE BACK BUTTON
             Button(action: { dismiss() }) {
-                ZStack {
-                    Circle()
-                        .fill(.ultraThinMaterial)
-                    Circle()
-                        .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                HStack(spacing: 6) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.82))
-                        .offset(x: -1) // optical center
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.white.opacity(0.7))
+                    
+                    Text("feed")
+                        .font(.custom("DMMono-Regular", size: 10))
+                        .kerning(0.8)
+                        .foregroundColor(.white.opacity(0.6))
                 }
-                .frame(width: 36, height: 36)
-                .shadow(color: .black.opacity(0.3), radius: 12)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .background(.ultraThinMaterial)
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1))
+                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 2)
             }
-            .padding(.leading, 20)
-            .padding(.top, 62)
+            .padding(.leading, 16)
+            .padding(.top, 54)
         }
         .ignoresSafeArea()
     }
