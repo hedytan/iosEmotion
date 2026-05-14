@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import Combine
 
 class MusicManager: ObservableObject {
     static let shared = MusicManager()
