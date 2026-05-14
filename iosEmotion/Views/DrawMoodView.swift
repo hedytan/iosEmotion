@@ -98,24 +98,18 @@ struct DrawMoodView: View {
                 
                 // NAME INPUT
                 VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("name this mood")
-                            .font(.custom("DMMono-Regular", size: 11))
-                            .kerning(1.5)
-                            .textCase(.uppercase)
-                            .foregroundColor(.white.opacity(0.45))
-                        
-                        Text("Capture the frequency in a single word")
-                            .font(.custom("Lora-Italic", size: 13))
-                            .foregroundColor(.white.opacity(0.25))
-                    }
+                    Text("name this mood")
+                        .font(.custom("DMMono-Regular", size: 11)) // Boosted from 8
+                        .kerning(1.5)
+                        .textCase(.uppercase)
+                        .foregroundColor(.white.opacity(0.45)) // Boosted from 0.2
                     
                     HStack(spacing: 16) {
                         Image(systemName: "circle.circle")
                             .font(.system(size: 18))
                             .foregroundColor(selectedColor.opacity(0.6))
                         
-                        TextField("resonance...", text: $moodName)
+                        TextField("_your mood", text: $moodName)
                             .font(.custom("Lora-Italic", size: 18)) // Boosted from 16
                             .foregroundColor(.white.opacity(0.85)) // Boosted from 0.7
                     }
