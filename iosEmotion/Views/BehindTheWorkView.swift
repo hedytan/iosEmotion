@@ -68,21 +68,9 @@ struct FeedPostCard: View {
                     Text(post.artist)
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(.white.opacity(0.85))
-                    
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(post.themeColor)
-                            .frame(width: 6, height: 6)
-                        Text(post.mood)
-                            .font(.custom("DMMono-Regular", size: 10.5))
-                            .foregroundColor(post.themeColor)
-                        Text("·")
-                            .font(.custom("DMMono-Regular", size: 10.5))
-                            .foregroundColor(.white.opacity(0.2))
-                        Text(post.song)
-                            .font(.custom("DMMono-Regular", size: 10.5))
-                            .foregroundColor(.white.opacity(0.35))
-                    }
+                    Text("now · \(post.song)")
+                        .font(.custom("DMMono-Regular", size: 10.5))
+                        .foregroundColor(.white.opacity(0.25))
                 }
                 Spacer()
             }

@@ -28,22 +28,15 @@ struct MomentDetailView: View {
                     VStack(alignment: .leading, spacing: 44) {
                         
                         // ARTIST & SONG
-                        HStack(spacing: 16) {
-                            Circle()
-                                .fill(Color.white.opacity(0.08))
-                                .frame(width: 44, height: 44)
-                                .overlay(Image(systemName: "music.note").font(.system(size: 14)).foregroundColor(.white.opacity(0.2)))
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(post.artist)
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.85))
-                                Text("now · \(post.song)")
-                                    .font(.custom("DMMono-Regular", size: 11.5))
-                                    .foregroundColor(.white.opacity(0.3))
-                            }
-                            Spacer()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(post.artist)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white.opacity(0.85))
+                            Text("now · \(post.song)")
+                                .font(.custom("DMMono-Regular", size: 11.5))
+                                .foregroundColor(.white.opacity(0.3))
                         }
+                        Spacer()
                         
                         // LARGE MOOD SHAPE
                         HStack {
