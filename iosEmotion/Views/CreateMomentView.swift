@@ -31,19 +31,19 @@ struct CreateMomentView: View {
                 VStack(spacing: 16) {
                     HStack {
                         Button("cancel") { dismiss() }
-                            .font(.custom("DMMono-Regular", size: 10))
-                            .foregroundColor(.white.opacity(0.3))
+                            .font(.custom("DMMono-Regular", size: 13)) // Boosted from 10
+                            .foregroundColor(.white.opacity(0.35))
                         
                         Spacer()
                         
                         Text("a moment")
-                            .font(.custom("Lora-Italic", size: 16))
-                            .foregroundColor(.white.opacity(0.75))
+                            .font(.custom("Lora-Italic", size: 18)) // Boosted from 16
+                            .foregroundColor(.white.opacity(0.8))
                         
                         Spacer()
                         
                         Button("publish") { if isReady { publishMoment() } }
-                            .font(.custom("DMMono-Regular", size: 10))
+                            .font(.custom("DMMono-Regular", size: 13)) // Boosted from 10
                             .foregroundColor(isReady ? .white.opacity(0.7) : .white.opacity(0.15))
                             .disabled(!isReady)
                     }
@@ -61,9 +61,9 @@ struct CreateMomentView: View {
                         // 01 — HOW DOES IT FEEL?
                         VStack(alignment: .leading, spacing: 24) {
                             Text("01 · HOW DOES IT FEEL?")
-                                .font(.custom("DMMono-Regular", size: 7.5))
+                                .font(.custom("DMMono-Regular", size: 11)) // Boosted from 7.5
                                 .kerning(1.5)
-                                .foregroundColor(.white.opacity(0.18))
+                                .foregroundColor(.white.opacity(0.22))
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 28) {
@@ -86,19 +86,19 @@ struct CreateMomentView: View {
                         // 02 — SAY IT IN ONE THOUGHT
                         VStack(alignment: .leading, spacing: 18) {
                             Text("02 · SAY IT IN ONE THOUGHT")
-                                .font(.custom("DMMono-Regular", size: 7.5))
+                                .font(.custom("DMMono-Regular", size: 11)) // Boosted from 7.5
                                 .kerning(1.5)
-                                .foregroundColor(.white.opacity(0.18))
+                                .foregroundColor(.white.opacity(0.22))
                             
                             ZStack(alignment: .topLeading) {
                                 if quoteText.isEmpty {
                                     Text("say it how it was...")
-                                        .font(.custom("Lora-Italic", size: 15))
-                                        .foregroundColor(.white.opacity(0.12))
+                                        .font(.custom("Lora-Italic", size: 16)) // Boosted from 15
+                                        .foregroundColor(.white.opacity(0.14))
                                         .padding(.top, 24).padding(.leading, 24)
                                 }
                                 TextEditor(text: $quoteText)
-                                    .font(.custom("Lora-Italic", size: 15))
+                                    .font(.custom("Lora-Italic", size: 16)) // Boosted from 15
                                     .foregroundColor(.white.opacity(0.75))
                                     .scrollContentBackground(.hidden)
                                     .background(Color.white.opacity(0.015))
@@ -111,8 +111,8 @@ struct CreateMomentView: View {
                             HStack {
                                 Spacer()
                                 Text("\(quoteText.count) / 200")
-                                    .font(.custom("DMMono-Regular", size: 7))
-                                    .foregroundColor(.white.opacity(0.1))
+                                    .font(.custom("DMMono-Regular", size: 10)) // Boosted from 7
+                                    .foregroundColor(.white.opacity(0.12))
                             }
                         }
                         
@@ -122,12 +122,12 @@ struct CreateMomentView: View {
                         VStack(alignment: .leading, spacing: 18) {
                             HStack {
                                 Text("03 · ADD AN IMAGE")
-                                    .font(.custom("DMMono-Regular", size: 7.5))
+                                    .font(.custom("DMMono-Regular", size: 11)) // Boosted from 7.5
                                     .kerning(1.5)
-                                    .foregroundColor(.white.opacity(0.18))
+                                    .foregroundColor(.white.opacity(0.22))
                                 Text("OPTIONAL")
-                                    .font(.custom("DMMono-Regular", size: 7))
-                                    .foregroundColor(.white.opacity(0.06))
+                                    .font(.custom("DMMono-Regular", size: 9)) // Boosted from 7
+                                    .foregroundColor(.white.opacity(0.08))
                             }
                             
                             PhotosPicker(selection: $pickerItem, matching: .images) {
@@ -138,16 +138,16 @@ struct CreateMomentView: View {
                                     
                                     HStack(spacing: 12) {
                                         Image(systemName: attachedImage == nil ? "photo" : "checkmark.circle.fill")
-                                            .font(.system(size: 14))
-                                            .foregroundColor(.white.opacity(0.2))
+                                            .font(.system(size: 16))
+                                            .foregroundColor(.white.opacity(0.25))
                                         
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(attachedImage == nil ? "attach a photo" : "photo attached")
-                                                .font(.custom("Lora-Italic", size: 14))
-                                                .foregroundColor(.white.opacity(attachedImage == nil ? 0.3 : 0.6))
+                                                .font(.custom("Lora-Italic", size: 15)) // Boosted from 14
+                                                .foregroundColor(.white.opacity(attachedImage == nil ? 0.35 : 0.65))
                                             Text("camera roll · take photo")
-                                                .font(.custom("DMMono-Regular", size: 7.5))
-                                                .foregroundColor(.white.opacity(0.12))
+                                                .font(.custom("DMMono-Regular", size: 10)) // Boosted from 7.5
+                                                .foregroundColor(.white.opacity(0.14))
                                         }
                                     }
                                 }
@@ -167,12 +167,12 @@ struct CreateMomentView: View {
                         VStack(alignment: .leading, spacing: 18) {
                             HStack {
                                 Text("04 · DRAW YOUR MOOD")
-                                    .font(.custom("DMMono-Regular", size: 7.5))
+                                    .font(.custom("DMMono-Regular", size: 11)) // Boosted from 7.5
                                     .kerning(1.5)
-                                    .foregroundColor(.white.opacity(0.18))
+                                    .foregroundColor(.white.opacity(0.22))
                                 Text("OPTIONAL")
-                                    .font(.custom("DMMono-Regular", size: 7))
-                                    .foregroundColor(.white.opacity(0.06))
+                                    .font(.custom("DMMono-Regular", size: 9)) // Boosted from 7
+                                    .foregroundColor(.white.opacity(0.08))
                             }
                             
                             if !store.customMoods.isEmpty {
@@ -194,14 +194,14 @@ struct CreateMomentView: View {
                                 HStack {
                                     Image(systemName: "pencil.and.outline")
                                     Text("let your hand speak")
-                                        .font(.custom("Lora-Italic", size: 13))
+                                        .font(.custom("Lora-Italic", size: 15)) // Boosted from 13
                                 }
                                 .padding(.vertical, 14).padding(.horizontal, 16)
                                 .frame(maxWidth: .infinity)
                                 .background(Color.white.opacity(0.02))
                                 .cornerRadius(12)
                                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.08), lineWidth: 1))
-                                .foregroundColor(.white.opacity(0.4))
+                                .foregroundColor(.white.opacity(0.45))
                             }
                         }
                         
@@ -210,16 +210,16 @@ struct CreateMomentView: View {
                         // 05 — THE SOUNDTRACK
                         VStack(alignment: .leading, spacing: 18) {
                             Text("05 · THE SOUNDTRACK")
-                                .font(.custom("DMMono-Regular", size: 7.5))
+                                .font(.custom("DMMono-Regular", size: 11)) // Boosted from 7.5
                                 .kerning(1.5)
-                                .foregroundColor(.white.opacity(0.18))
+                                .foregroundColor(.white.opacity(0.22))
                             
                             Button(action: { showingSongPicker = true }) {
                                 HStack {
-                                    Image(systemName: "music.note").font(.system(size: 10)).foregroundColor(.white.opacity(0.25))
-                                    Text(selectedSong ?? "link a song").font(.custom("Lora-Italic", size: 14)).foregroundColor(.white.opacity(selectedSong == nil ? 0.2 : 0.6))
+                                    Image(systemName: "music.note").font(.system(size: 11)).foregroundColor(.white.opacity(0.3))
+                                    Text(selectedSong ?? "link a song").font(.custom("Lora-Italic", size: 16)).foregroundColor(.white.opacity(selectedSong == nil ? 0.25 : 0.65))
                                     Spacer()
-                                    Image(systemName: selectedSong == nil ? "chevron.right" : "checkmark").font(.system(size: 10)).foregroundColor(.white.opacity(0.2))
+                                    Image(systemName: selectedSong == nil ? "chevron.right" : "checkmark").font(.system(size: 11)).foregroundColor(.white.opacity(0.25))
                                 }
                                 .padding(.vertical, 14).padding(.horizontal, 18)
                                 .background(Color.white.opacity(0.015))
@@ -272,7 +272,6 @@ struct CreateMomentView: View {
     }
 }
 
-// RESTORING HELPER COMPONENTS WITH NEW AESTHETICS
 struct MoodSelectionItem: View {
     var type: Post.MoodType
     var isSelected: Bool
@@ -290,15 +289,15 @@ struct MoodSelectionItem: View {
                     )
                 
                 MoodShape(type: type)
-                    .stroke(type.color.opacity(isSelected ? 0.7 : 0.2), lineWidth: 1.1)
+                    .stroke(type.color.opacity(isSelected ? 0.75 : 0.25), lineWidth: 1.1)
             }
             .frame(width: 52, height: 52)
             .scaleEffect(isSelected ? 1.15 : 1.0)
             
             Text(type.displayName.uppercased())
-                .font(.custom("DMMono-Regular", size: 6.5))
+                .font(.custom("DMMono-Regular", size: 9)) // Boosted from 6.5
                 .kerning(1.2)
-                .foregroundColor(.white.opacity(isSelected ? 0.6 : 0.18))
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.22))
         }
     }
 }
@@ -313,14 +312,14 @@ struct CustomMoodSelectionItem: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 52, height: 52)
                 .padding(8)
-                .background(Circle().fill(custom.strokeColor.opacity(isSelected ? 0.2 : 0.05)))
-                .overlay(Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.8 : 0.2), lineWidth: 1.1))
+                .background(Circle().fill(custom.strokeColor.opacity(isSelected ? 0.25 : 0.08)))
+                .overlay(Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.85 : 0.3), lineWidth: 1.1))
                 .scaleEffect(isSelected ? 1.15 : 1.0)
             
             Text(custom.name.uppercased())
-                .font(.custom("DMMono-Regular", size: 6.5))
+                .font(.custom("DMMono-Regular", size: 9)) // Boosted from 6.5
                 .kerning(1.2)
-                .foregroundColor(.white.opacity(isSelected ? 0.6 : 0.18))
+                .foregroundColor(.white.opacity(isSelected ? 0.65 : 0.22))
         }
     }
 }
