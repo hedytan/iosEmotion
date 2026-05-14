@@ -18,6 +18,10 @@ struct MoodShapeView: View {
                     Image(uiImage: thumb)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                } else {
+                    // Fallback for custom without drawing
+                    Circle()
+                        .stroke(color.opacity(0.5), lineWidth: 1)
                 }
             } else {
                 // Preset Organic Shape
@@ -45,7 +49,18 @@ struct CustomDrawingView: View {
     
     var body: some View {
         Canvas { context, size in
-            // Rendering the drawing with the theme color
+            // Calculate scale to fit the canvas
+            let drawingBounds = drawing.bounds
+            if drawingBounds.width > 0 && drawingBounds.height > 0 {
+                let scaleX = size.width / drawingBounds.width
+                let scaleY = size.height / drawingBounds.height
+                let scale = min(scaleX, scaleY) * 0.8 // 80% fit
+                
+                context.translateBy(x: size.width/2, y: size.height/2)
+                context.scaleBy(x: scale, y: scale)
+                context.translateBy(x: -drawingBounds.midX, y: -drawingBounds.midY)
+            }
+            
             for stroke in drawing.strokes {
                 var path = Path()
                 let points = stroke.path.map { $0.location }
@@ -55,23 +70,8 @@ struct CustomDrawingView: View {
                         path.addLine(to: point)
                     }
                 }
-                context.stroke(path, with: .color(color.opacity(0.8)), lineWidth: 1.5)
+                context.stroke(path, with: .color(color.opacity(0.9)), lineWidth: 2.0)
             }
-        }
-    }
-}
-
-struct MoodShape: Shape {
-    var type: Post.MoodType
-    func path(in rect: CGRect) -> Path {
-        switch type {
-        case .joy: return JoyShape().path(in: rect)
-        case .melancholy: return MelancholyShape().path(in: rect)
-        case .wonder: return WonderShape().path(in: rect)
-        case .tender: return TenderShape().path(in: rect)
-        case .urgency: return UrgencyShape().path(in: rect)
-        case .awe: return AweShape().path(in: rect)
-        case .custom: return Circle().path(in: rect)
         }
     }
 }
