@@ -22,10 +22,10 @@ struct MomentDetailView: View {
                 HStack {
                     Spacer()
                 }
-                .padding(.horizontal, 24).padding(.top, 66)
+                .padding(.horizontal, 24).padding(.top, 24)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 44) {
+                    VStack(alignment: .leading, spacing: 24) {
                         
                         // ARTIST & SONG
                         VStack(alignment: .leading, spacing: 4) {
