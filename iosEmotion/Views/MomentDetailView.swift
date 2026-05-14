@@ -179,6 +179,12 @@ struct MomentDetailView: View {
             .padding(.top, 16)
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            MusicManager.shared.playSong(named: post.song)
+        }
+        .onDisappear {
+            MusicManager.shared.stop()
+        }
         .sheet(isPresented: $showWriteSheet) {
             WriteResonanceSheet(post: post) { feeling, moodType in
                 store.addCustomResonance(for: post.id, text: feeling, mood: moodType)

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		87D7BC372F95FC1A00E3066F /* iosEmotion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosEmotion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		87D7BC372F95FC1A00E3066F /* iosEmotion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = iosEmotion.app; path = Resonance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
