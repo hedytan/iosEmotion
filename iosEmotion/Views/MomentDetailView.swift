@@ -36,7 +36,6 @@ struct MomentDetailView: View {
                                 .font(.custom("DMMono-Regular", size: 11.5))
                                 .foregroundColor(.white.opacity(0.3))
                         }
-                        Spacer()
                         
                         // LARGE MOOD SHAPE
                         HStack {
@@ -94,9 +93,12 @@ struct MomentDetailView: View {
                                         Image(systemName: "sparkles")
                                             .font(.system(size: 14))
                                         Text("express it in your own words...")
-                                            .font(.custom("Lora-Italic", size: 14))
+                                            .font(.custom("Lora-Italic", size: 16))
+                                            .foregroundColor(.white.opacity(0.65))
                                         Spacer()
-                                        Image(systemName: "chevron.right").font(.system(size: 10))
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.white.opacity(0.3))
                                     }
                                     .padding(20)
                                     .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.03)))
@@ -114,7 +116,8 @@ struct MomentDetailView: View {
                                                 .fill(option.mood.color.opacity(0.8))
                                                 .frame(width: 6, height: 6)
                                             Text(option.text)
-                                                .font(.custom("Lora-Italic", size: 14))
+                                                .font(.custom("Lora-Italic", size: 16))
+                                                .foregroundColor(.white.opacity(0.85))
                                             Spacer()
                                             Text(option.count > 0 ? "\(option.count)" : "")
                                                 .font(.custom("DMMono-Regular", size: 11))
@@ -137,7 +140,8 @@ struct MomentDetailView: View {
                                                 .fill(option.mood.color.opacity(0.8))
                                                 .frame(width: 6, height: 6)
                                             Text(option.text)
-                                                .font(.custom("Lora-Italic", size: 14))
+                                                .font(.custom("Lora-Italic", size: 16))
+                                                .foregroundColor(.white.opacity(0.85))
                                             Spacer()
                                             Text(option.count > 0 ? "\(option.count)" : "")
                                                 .font(.custom("DMMono-Regular", size: 11))
