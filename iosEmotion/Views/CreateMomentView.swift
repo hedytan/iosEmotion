@@ -58,24 +58,12 @@ struct CreateMomentView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 44) {
                         
-                        // 01 — HOW DOES IT FEEL? (With + button)
+                        // 01 — HOW DOES IT FEEL?
                         VStack(alignment: .leading, spacing: 24) {
-                            HStack {
-                                Text("01 · HOW DOES IT FEEL?")
-                                    .font(.custom("DMMono-Regular", size: 11))
-                                    .kerning(1.5)
-                                    .foregroundColor(.white.opacity(0.45))
-                                
-                                Spacer()
-                                
-                                Button(action: { showingDrawSheet = true }) {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 14, weight: .light))
-                                        .foregroundColor(.white.opacity(0.35))
-                                        .padding(8)
-                                        .background(Circle().fill(Color.white.opacity(0.04)))
-                                }
-                            }
+                            Text("01 · HOW DOES IT FEEL?")
+                                .font(.custom("DMMono-Regular", size: 11))
+                                .kerning(1.5)
+                                .foregroundColor(.white.opacity(0.45))
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 28) {
@@ -87,8 +75,24 @@ struct CreateMomentView: View {
                                             MoodSelectionItem(type: mood, isSelected: selectedPreset == mood)
                                         }
                                     }
+                                    
+                                    // ADD NEW MOOD BUTTON AT THE END
+                                    Button(action: { showingDrawSheet = true }) {
+                                        VStack(spacing: 12) {
+                                            ZStack {
+                                                Circle()
+                                                    .stroke(Color.white.opacity(0.15), lineWidth: 1.1)
+                                                    .frame(width: 52, height: 52)
+                                                Image(systemName: "plus")
+                                                    .font(.system(size: 14, weight: .light))
+                                                    .foregroundColor(.white.opacity(0.35))
+                                            }
+                                            Text("CREATE").font(.custom("DMMono-Regular", size: 9)).foregroundColor(.white.opacity(0.2))
+                                        }
+                                    }
                                 }
                                 .padding(.leading, 4)
+                                .padding(.trailing, 24)
                             }
                         }
                         .padding(.top, 32)
@@ -114,6 +118,7 @@ struct CreateMomentView: View {
                                             }
                                         }
                                     }
+                                    .padding(.trailing, 24)
                                 }
                             }
                             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
