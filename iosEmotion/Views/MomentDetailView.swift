@@ -164,8 +164,8 @@ struct MomentDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showWriteSheet) {
-            WriteResonanceSheet(post: post) { feeling in
-                let connection = ResonanceConnection(post: post, feeling: feeling, userMood: post.moodType)
+            WriteResonanceSheet(post: post) { feeling, moodType in
+                let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
                 onResonate(connection)
             }
         }
