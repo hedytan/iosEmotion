@@ -23,7 +23,7 @@ struct CreateMomentView: View {
     }
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) { // ANCHOR EVERYTHING TO TOP
             Color(hex: "07060A").ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -42,8 +42,8 @@ struct CreateMomentView: View {
                     Color.clear.frame(width: 14)
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 20)
-                .padding(.bottom, 32)
+                .padding(.top, 16)
+                .padding(.bottom, 24)
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 32) {
@@ -83,7 +83,7 @@ struct CreateMomentView: View {
                             }
                         }
                         
-                        // STEP 02 — YOUR DRAWINGS (Only if they exist)
+                        // STEP 02 — YOUR DRAWINGS
                         if !store.customMoods.isEmpty {
                             Rectangle().fill(Color.white.opacity(0.04)).frame(height: 1)
                             
@@ -221,6 +221,8 @@ struct CreateMomentView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 60)
                 }
+                
+                Spacer() // PUSH EVERYTHING UP
             }
         }
         .fullScreenCover(isPresented: $showingDrawSheet) {
@@ -257,7 +259,7 @@ struct CreateMomentView: View {
     }
 }
 
-// RESTORING HELPER COMPONENTS
+// Helpers
 struct MoodSelectionItem: View {
     var type: Post.MoodType
     var isSelected: Bool
