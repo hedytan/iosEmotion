@@ -53,7 +53,7 @@ struct FeedPostCard: View {
         VStack(alignment: .leading, spacing: 0) {
             // TOP ROW
             HStack(spacing: 16) {
-                MoodShapeView(type: post.moodType, color: post.themeColor)
+                MoodShapeView(type: post.moodType, color: post.themeColor, drawing: post.customShape)
                     .frame(width: 48, height: 48)
                 
                 VStack(alignment: .leading, spacing: 4) {
