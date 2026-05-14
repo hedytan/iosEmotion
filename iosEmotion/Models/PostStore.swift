@@ -43,6 +43,10 @@ struct Post: Identifiable, Hashable {
     var themeColor: Color { moodType.color }
     var mood: String { moodType.displayName }
     
+    // Manual Hashable to avoid issues with UIImage and PKDrawing
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    static func == (lhs: Post, rhs: Post) -> Bool { lhs.id == rhs.id }
+    
     enum MoodType: CaseIterable, Hashable {
         case joy, melancholy, wonder, tender, urgency, awe, custom
         
@@ -200,7 +204,7 @@ class PostStore: ObservableObject {
 }
 
 extension Color {
-    static init(hex: String) {
+    init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
