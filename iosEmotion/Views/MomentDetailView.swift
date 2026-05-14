@@ -21,12 +21,8 @@ struct MomentDetailView: View {
                 // TOP BAR (Metadata only now)
                 HStack {
                     Spacer()
-                    Text(post.mood.uppercased())
-                        .font(.custom("DMMono-Regular", size: 11))
-                        .kerning(1.5)
-                        .foregroundColor(post.themeColor.opacity(0.7))
                 }
-                .padding(.horizontal, 24).padding(.top, 66) // Lowered to clear the floating button
+                .padding(.horizontal, 24).padding(.top, 66)
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 44) {
@@ -68,9 +64,9 @@ struct MomentDetailView: View {
                         // QUOTE
                         VStack(alignment: .center, spacing: 16) {
                             Text(post.mood.uppercased())
-                                .font(.custom("DMMono-Regular", size: 9))
+                                .font(.custom("DMMono-Regular", size: 11))
                                 .kerning(2)
-                                .foregroundColor(.white.opacity(0.2))
+                                .foregroundColor(post.themeColor.opacity(0.7))
                             
                             Text("“\(post.quote)”")
                                 .font(.custom("Lora-Italic", size: 22))
