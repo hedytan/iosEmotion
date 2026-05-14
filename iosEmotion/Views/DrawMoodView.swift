@@ -134,16 +134,16 @@ struct CanvasRepresentable: UIViewRepresentable {
     func makeUIView(context: Context) -> PKCanvasView {
         canvasView.backgroundColor = .clear
         canvasView.isOpaque = false
-        canvasView.drawingPolicy = .anyInput // ALLOWS FINGER DRAWING
+        canvasView.drawingPolicy = .anyInput
         
-        let ink = PKInk(.pen, color: UIColor(color))
-        canvasView.tool = PKInkingTool(ink.type, color: ink.color, width: 2)
+        // Corrected PKInkingTool initialization
+        canvasView.tool = PKInkingTool(.pen, color: UIColor(color), width: 2)
         
         return canvasView
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
-        let ink = PKInk(.pen, color: UIColor(color))
-        uiView.tool = PKInkingTool(ink.type, color: ink.color, width: 2)
+        // Update tool color when selectedColor changes
+        uiView.tool = PKInkingTool(.pen, color: UIColor(color), width: 2)
     }
 }
