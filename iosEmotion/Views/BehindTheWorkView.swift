@@ -15,6 +15,7 @@ struct BehindTheWorkView: View {
                             .font(.custom("Lora-Italic", size: 19))
                             .foregroundColor(.white.opacity(0.75))
                         
+                        Spacer()
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
