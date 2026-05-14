@@ -41,11 +41,11 @@ struct MomentDetailView: View {
                         // LARGE MOOD SHAPE
                         HStack {
                             Spacer()
-                            MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
+                            MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, drawing: post.customShape)
                                 .frame(width: 180, height: 180)
                                 .blur(radius: 1)
                                 .overlay(
-                                    MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
+                                    MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, drawing: post.customShape)
                                         .frame(width: 180, height: 180)
                                         .opacity(0.4)
                                         .blur(radius: 20)
@@ -56,7 +56,7 @@ struct MomentDetailView: View {
                         
                         // QUOTE
                         VStack(alignment: .center, spacing: 16) {
-                            Text(post.mood.uppercased())
+                            Text((post.customShapeName ?? post.mood).uppercased())
                                 .font(.custom("DMMono-Regular", size: 11))
                                 .kerning(2)
                                 .foregroundColor(post.themeColor.opacity(0.7))
