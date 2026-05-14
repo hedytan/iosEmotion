@@ -149,7 +149,7 @@ struct MomentDetailView: View {
                 .shadow(color: .black.opacity(0.3), radius: 12)
             }
             .padding(.leading, 20)
-            .padding(.top, 62)
+            .padding(.top, 16)
         }
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showWriteSheet) {
