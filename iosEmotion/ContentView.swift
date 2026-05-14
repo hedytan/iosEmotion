@@ -11,6 +11,30 @@ struct ContentView: View {
     }
     
     var body: some View {
+        ZStack {
+            if !store.hasCompletedOnboarding {
+                OnboardingView(selectedTab: $selectedTab)
+                    .environmentObject(store)
+                    .transition(.opacity)
+            } else {
+                MainAppView(selectedTab: $selectedTab, showingCreate: $showingCreate)
+                    .environmentObject(store)
+                    .transition(.opacity)
+            }
+        }
+        .fullScreenCover(isPresented: $showingCreate) {
+            CreateMomentView(selectedTab: $selectedTab)
+                .environmentObject(store)
+        }
+    }
+}
+
+struct MainAppView: View {
+    @EnvironmentObject var store: PostStore
+    @Binding var selectedTab: Int
+    @Binding var showingCreate: Bool
+    
+    var body: some View {
         ZStack(alignment: .bottom) {
             Color(hex: "08070B").ignoresSafeArea()
             
@@ -25,51 +49,53 @@ struct ContentView: View {
                     .tag(1)
             }
             
-            // HIGH-FIDELITY CUSTOM TAB BAR
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color.white.opacity(0.04))
-                    .frame(height: 1)
-                
-                HStack(spacing: 0) {
-                    // Feed Tab
-                    Button(action: { selectedTab = 0 }) {
-                        VStack(spacing: 6) {
-                            Image(systemName: "circle.circle")
-                                .font(.system(size: 22))
-                            Text("Feed")
-                                .font(.custom("DMMono-Regular", size: 9))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
-                        .opacity(selectedTab == 0 ? 1.0 : 0.22)
+            // HIGH-FIDELITY GLASS PILL TAB BAR
+            HStack(spacing: 0) {
+                // Feed Tab
+                Button(action: { 
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        selectedTab = 0 
                     }
-                    
-                    // Express Tab
-                    Button(action: { showingCreate = true }) {
-                        VStack(spacing: 6) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 22))
-                            Text("Express")
-                                .font(.custom("DMMono-Regular", size: 9))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
-                        .opacity(selectedTab == 1 ? 1.0 : 0.22)
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "circle.circle")
+                            .font(.system(size: 20, weight: selectedTab == 0 ? .semibold : .regular))
+                        Text("Feed")
+                            .font(.system(size: 13, weight: .medium))
                     }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.4))
+                    .background(
+                        Capsule()
+                            .fill(selectedTab == 0 ? Color.black.opacity(0.25) : Color.clear)
+                    )
                 }
-                .padding(.top, 12)
-                .frame(height: 76, alignment: .top)
-                .background(
-                    Color(hex: "08070B").opacity(0.97)
-                        .background(.ultraThinMaterial)
-                )
+                .padding(4)
+                
+                // Express Tab
+                Button(action: { showingCreate = true }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 20, weight: .regular))
+                        Text("Express")
+                            .font(.system(size: 13, weight: .medium))
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .foregroundColor(.white.opacity(0.4))
+                    .background(Capsule().fill(Color.clear))
+                }
+                .padding(4)
             }
-            .ignoresSafeArea(edges: .bottom)
-        }
-        .fullScreenCover(isPresented: $showingCreate) {
-            CreateMomentView(selectedTab: $selectedTab)
-                .environmentObject(store)
+            .background(
+                Capsule()
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
+                    .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
+            )
+            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+            .padding(.bottom, 34)
         }
     }
 }

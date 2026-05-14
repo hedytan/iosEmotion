@@ -162,6 +162,7 @@ struct AweShape: Shape {
 class PostStore: ObservableObject {
     @Published var posts: [Post] = []
     @Published var customMoods: [CustomMood] = []
+    @Published var hasCompletedOnboarding: Bool = false
     
     init() {
         let presets = [
