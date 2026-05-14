@@ -258,6 +258,10 @@ class PostStore: ObservableObject {
             posts[postIndex].resonanceCount += 1
         }
     }
+    
+    func addCustomMood(_ mood: CustomMood) {
+        customMoods.insert(mood, at: 0)
+    }
 }
 
 extension Color {

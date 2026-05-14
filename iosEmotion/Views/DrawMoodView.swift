@@ -130,8 +130,8 @@ struct DrawMoodView: View {
         let newCustomMood = CustomMood(
             name: moodName,
             drawing: canvasView.drawing,
-            thumbnail: image,
-            strokeColor: selectedColor
+            strokeColor: selectedColor,
+            thumbnail: image
         )
         store.addCustomMood(newCustomMood)
         dismiss()
