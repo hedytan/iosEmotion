@@ -58,7 +58,7 @@ struct CreateMomentView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 44) {
                         
-                        // 01 — HOW DOES IT FEEL?
+                        // 01 — HOW DOES IT FEEL? (Unified Palette)
                         VStack(alignment: .leading, spacing: 24) {
                             Text("01 · HOW DOES IT FEEL?")
                                 .font(.custom("DMMono-Regular", size: 11))
@@ -67,6 +67,7 @@ struct CreateMomentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 28) {
+                                    // 1. Presets
                                     ForEach(presets, id: \.self) { mood in
                                         Button(action: { 
                                             selectedPreset = mood
@@ -76,7 +77,17 @@ struct CreateMomentView: View {
                                         }
                                     }
                                     
-                                    // ADD NEW MOOD BUTTON AT THE END
+                                    // 2. Custom Moods (Living in the same line)
+                                    ForEach(store.customMoods) { custom in
+                                        Button(action: {
+                                            selectedCustomMood = custom
+                                            selectedPreset = nil
+                                        }) {
+                                            CustomMoodSelectionItem(custom: custom, isSelected: selectedCustomMood == custom)
+                                        }
+                                    }
+                                    
+                                    // 3. Create Button
                                     Button(action: { showingDrawSheet = true }) {
                                         VStack(spacing: 12) {
                                             ZStack {
@@ -99,32 +110,7 @@ struct CreateMomentView: View {
                         
                         Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
                         
-                        // 02 — YOUR CUSTOM MOODS (Shows only if exists)
-                        if !store.customMoods.isEmpty {
-                            VStack(alignment: .leading, spacing: 24) {
-                                Text("YOUR CUSTOM MOODS")
-                                    .font(.custom("DMMono-Regular", size: 11))
-                                    .kerning(1.5)
-                                    .foregroundColor(.white.opacity(0.45))
-                                
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 20) {
-                                        ForEach(store.customMoods) { custom in
-                                            Button(action: {
-                                                selectedCustomMood = custom
-                                                selectedPreset = nil
-                                            }) {
-                                                CustomMoodSelectionItem(custom: custom, isSelected: selectedCustomMood == custom)
-                                            }
-                                        }
-                                    }
-                                    .padding(.trailing, 24)
-                                }
-                            }
-                            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
-                        }
-                        
-                        // 03 — SAY IT IN ONE THOUGHT
+                        // 02 — SAY IT IN ONE THOUGHT
                         VStack(alignment: .leading, spacing: 18) {
                             Text("02 · SAY IT IN ONE THOUGHT")
                                 .font(.custom("DMMono-Regular", size: 11))
@@ -159,7 +145,7 @@ struct CreateMomentView: View {
                         
                         Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
                         
-                        // 04 — ADD AN IMAGE
+                        // 03 — ADD AN IMAGE
                         VStack(alignment: .leading, spacing: 18) {
                             HStack {
                                 Text("03 · ADD AN IMAGE")
@@ -204,7 +190,7 @@ struct CreateMomentView: View {
                         
                         Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
                         
-                        // 05 — THE SOUNDTRACK
+                        // 04 — THE SOUNDTRACK
                         VStack(alignment: .leading, spacing: 18) {
                             Text("04 · THE SOUNDTRACK")
                                 .font(.custom("DMMono-Regular", size: 11))
