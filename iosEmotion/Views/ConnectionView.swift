@@ -7,11 +7,6 @@ struct ConnectionView: View {
     var feeling: String
     var userMood: Post.MoodType
     
-    @State private var dotPosition: CGFloat = 0.0
-    @State private var textOpacity: Double = 0.0
-    @State private var electricPulse: Bool = false
-    @State private var shakeOffset: CGSize = .zero
-    
     var moodsMatch: Bool { post.moodType == userMood }
     let randomOthers = Int.random(in: 300...1000)
     
@@ -19,7 +14,7 @@ struct ConnectionView: View {
         ZStack {
             Color(hex: "07060A").ignoresSafeArea()
             
-            // AMBIENT GLOW
+            // AMBIENT GLOW (Completely Static)
             RadialGradient(
                 stops: [
                     .init(color: post.themeColor.opacity(0.22), location: 0),
@@ -34,7 +29,7 @@ struct ConnectionView: View {
             .blur(radius: 60)
             
             VStack(spacing: 0) {
-                // TOP BAR
+                // TOP BAR (Instant)
                 HStack {
                     VStack(alignment: .leading, spacing: 12) {
                         Button(action: { dismiss() }) {
@@ -62,21 +57,20 @@ struct ConnectionView: View {
                 
                 Spacer()
                 
-                // SHAPE VISUALIZATION
+                // SHAPE VISUALIZATION (Completely Static)
                 VStack(spacing: 24) {
                     HStack(spacing: 0) {
                         // Artist Shape
                         VStack(spacing: 12) {
                             MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
                                 .frame(width: 72, height: 72)
-                                .offset(electricPulse ? CGSize(width: CGFloat.random(in: -1...1), height: CGFloat.random(in: -1...1)) : .zero)
                             
                             Text(post.artist)
                                 .font(.custom("DMMono-Regular", size: 8))
                                 .foregroundColor(.white.opacity(0.22))
                         }
                         
-                        // Bridge Line with Jagged Lightning
+                        // Bridge Line (Pure Horizon)
                         ZStack {
                             Rectangle()
                                 .fill(
@@ -89,28 +83,10 @@ struct ConnectionView: View {
                                 .frame(height: 1)
                                 .frame(maxWidth: .infinity)
                             
-                            // JAGGED LIGHTNING BOLT
-                            if electricPulse {
-                                Path { path in
-                                    path.move(to: CGPoint(x: 0, y: 0))
-                                    for i in 1...12 {
-                                        let x = CGFloat(i) * 10
-                                        let y = CGFloat.random(in: -6...6)
-                                        path.addLine(to: CGPoint(x: x, y: y))
-                                    }
-                                }
-                                .stroke(Color.white.opacity(0.85), lineWidth: 0.8)
-                                .frame(width: 120, height: 1)
-                                .shadow(color: Color.white.opacity(0.5), radius: 1)
-                                .shadow(color: Color.white.opacity(0.3), radius: 2)
-                            }
-                            
-                            // Travelling Dot
+                            // Static Connection Point (Centered)
                             Circle()
                                 .fill(Color.white.opacity(0.6))
                                 .frame(width: 8, height: 8)
-                                .offset(x: -60 + (120 * dotPosition))
-                                .opacity(dotPosition > 0.05 && dotPosition < 0.95 ? 1 : 0)
                         }
                         .frame(width: 120).padding(.horizontal, 10)
                         
@@ -118,7 +94,6 @@ struct ConnectionView: View {
                         VStack(spacing: 12) {
                             MoodShapeView(type: userMood, color: userMood.color, isLarge: true)
                                 .frame(width: 72, height: 72)
-                                .offset(electricPulse ? CGSize(width: CGFloat.random(in: -1...1), height: CGFloat.random(in: -1...1)) : .zero)
                             
                             Text("You")
                                 .font(.custom("DMMono-Regular", size: 8))
@@ -146,7 +121,7 @@ struct ConnectionView: View {
                 }
                 .padding(.bottom, 40)
                 
-                // CONNECTION TEXT
+                // CONNECTION TEXT (Instant Appearance)
                 VStack(spacing: 36) {
                     VStack(spacing: 14) {
                         Text("\(post.artist) shared \(post.mood).\nYou felt \(moodsMatch ? "the same" : "something different") —")
@@ -178,44 +153,9 @@ struct ConnectionView: View {
                             .frame(maxWidth: 210)
                     }
                 }
-                .opacity(textOpacity)
                 
                 Spacer()
                 Spacer()
-            }
-        }
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) { dotPosition = 1.0 }
-            withAnimation(.easeIn(duration: 0.8).delay(0.4)) { textOpacity = 1.0 }
-            
-            // ELECTRIC SHOCK TIMER (Jagged snap effect + Reactive Jitter)
-            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                if Double.random(in: 0...1) > 0.88 {
-                    withAnimation(.none) {
-                        electricPulse = true
-                    }
-                    
-                    // snapping effect duration
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.04) { 
-                        electricPulse = false 
-                    }
-                    
-                    // potential double strike
-                    if Double.random(in: 0...1) > 0.6 {
-                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { 
-                             electricPulse = true
-                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { 
-                                 electricPulse = false 
-                             }
-                         }
-                    }
-                }
-            }
-            
-            // Dot Reset Loop
-            Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { _ in
-                dotPosition = 0.0
-                withAnimation(.easeInOut(duration: 2.4)) { dotPosition = 1.0 }
             }
         }
     }
