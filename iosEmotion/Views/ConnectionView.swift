@@ -101,7 +101,8 @@ struct ConnectionView: View {
                                 }
                                 .stroke(Color.white.opacity(0.85), lineWidth: 0.8)
                                 .frame(width: 120, height: 1)
-                                .glow(color: .white, radius: 2)
+                                .shadow(color: Color.white.opacity(0.5), radius: 1)
+                                .shadow(color: Color.white.opacity(0.3), radius: 2)
                             }
                             
                             // Travelling Dot
