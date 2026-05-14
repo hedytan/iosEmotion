@@ -41,8 +41,8 @@ struct ConnectionView: View {
                                 .frame(width: 72, height: 72)
                             
                             Text(post.artist)
-                                .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.22))
+                                .font(.custom("DMMono-Regular", size: 10))
+                                .foregroundColor(.white.opacity(0.25))
                         }
                         
                         // Bridge Line (Pure Horizon)
@@ -71,26 +71,26 @@ struct ConnectionView: View {
                                 .frame(width: 72, height: 72)
                             
                             Text("You")
-                                .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.22))
+                                .font(.custom("DMMono-Regular", size: 10))
+                                .foregroundColor(.white.opacity(0.25))
                         }
                     }
                     
                     // Meet Labels
                     HStack {
                         Text(post.mood.uppercased())
-                            .font(.custom("DMMono-Regular", size: 8))
+                            .font(.custom("DMMono-Regular", size: 10))
                             .kerning(1.2)
-                            .foregroundColor(post.themeColor.opacity(0.55))
+                            .foregroundColor(post.themeColor.opacity(0.6))
                         Spacer()
                         Text("meets")
-                            .font(.custom("DMMono-Regular", size: 7))
-                            .foregroundColor(.white.opacity(0.15))
+                            .font(.custom("DMMono-Regular", size: 9))
+                            .foregroundColor(.white.opacity(0.2))
                         Spacer()
                         Text(userMood.displayName.uppercased())
-                            .font(.custom("DMMono-Regular", size: 8))
+                            .font(.custom("DMMono-Regular", size: 10))
                             .kerning(1.2)
-                            .foregroundColor(userMood.color.opacity(0.55))
+                            .foregroundColor(userMood.color.opacity(0.6))
                     }
                     .frame(width: 260)
                 }
@@ -113,9 +113,9 @@ struct ConnectionView: View {
                             .padding(.top, 6)
                         
                         Text("you + \(randomOthers) others felt something \(userMood.displayName) here")
-                            .font(.custom("DMMono-Regular", size: 8.5))
+                            .font(.custom("DMMono-Regular", size: 10.5))
                             .kerning(0.8)
-                            .foregroundColor(.white.opacity(0.2))
+                            .foregroundColor(.white.opacity(0.25))
                     }
                     
                     VStack(spacing: 18) {

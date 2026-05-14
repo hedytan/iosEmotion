@@ -32,16 +32,16 @@ struct CreateMomentView: View {
                 VStack(spacing: 0) {
                     HStack {
                         Button("cancel") { dismiss() }
-                            .font(.custom("DMMono-Regular", size: 9.5))
-                            .foregroundColor(.white.opacity(0.28))
+                            .font(.custom("DMMono-Regular", size: 12))
+                            .foregroundColor(.white.opacity(0.4))
                         Spacer()
                         Text("a moment")
-                            .font(.custom("Lora-Italic", size: 14))
-                            .foregroundColor(.white.opacity(0.5))
+                            .font(.custom("Lora-Italic", size: 16))
+                            .foregroundColor(.white.opacity(0.6))
                         Spacer()
                         Button("publish") { if isReady { publishMoment() } }
-                            .font(.custom("DMMono-Regular", size: 9.5))
-                            .foregroundColor(isReady ? .white.opacity(0.7) : .white.opacity(0.2))
+                            .font(.custom("DMMono-Regular", size: 12))
+                            .foregroundColor(isReady ? .white.opacity(0.85) : .white.opacity(0.2))
                             .disabled(!isReady)
                     }
                     .padding(.horizontal, 24).padding(.vertical, 16)
@@ -54,8 +54,8 @@ struct CreateMomentView: View {
                         // STEP 01 — MOOD
                         VStack(alignment: .leading, spacing: 14) {
                             Text("01 · how does it feel?")
-                                .font(.custom("DMMono-Regular", size: 7.5))
-                                .kerning(1.5).textCase(.uppercase).foregroundColor(.white.opacity(0.18))
+                                .font(.custom("DMMono-Regular", size: 12))
+                                .kerning(1.8).textCase(.uppercase).foregroundColor(.white.opacity(0.3))
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 12) {
@@ -70,9 +70,9 @@ struct CreateMomentView: View {
                                     // DRAW BUTTON
                                     Button(action: { showingDrawSheet = true }) {
                                         VStack(spacing: 8) {
-                                            Circle().stroke(Color.white.opacity(0.16), style: StrokeStyle(lineWidth: 1, dash: [4, 4])).frame(width: 50, height: 50)
-                                                .overlay(Image(systemName: "plus").font(.system(size: 18)).foregroundColor(.white.opacity(0.22)))
-                                            Text("draw").font(.custom("DMMono-Regular", size: 7)).foregroundColor(.white.opacity(0.2))
+                                            Circle().stroke(Color.white.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [4, 4])).frame(width: 50, height: 50)
+                                                .overlay(Image(systemName: "plus").font(.system(size: 18)).foregroundColor(.white.opacity(0.35)))
+                                            Text("draw").font(.custom("DMMono-Regular", size: 11)).foregroundColor(.white.opacity(0.3))
                                         }
                                     }
                                 }
@@ -85,8 +85,8 @@ struct CreateMomentView: View {
                         // STEP 02 — WRITE
                         VStack(alignment: .leading, spacing: 14) {
                             Text("02 · say it in one thought")
-                                .font(.custom("DMMono-Regular", size: 7.5))
-                                .kerning(1.5).textCase(.uppercase).foregroundColor(.white.opacity(0.18))
+                                .font(.custom("DMMono-Regular", size: 12))
+                                .kerning(1.8).textCase(.uppercase).foregroundColor(.white.opacity(0.3))
                             
                             VStack(alignment: .trailing, spacing: 8) {
                                 ZStack(alignment: .topLeading) {

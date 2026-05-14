@@ -27,13 +27,14 @@ struct MomentDetailView: View {
                 HStack {
                     Button(action: { dismiss() }) {
                         Text("‹ feed")
-                            .font(.custom("DMMono-Regular", size: 9))
+                            .font(.custom("DMMono-Regular", size: 11.5))
                             .foregroundColor(.white.opacity(0.28))
                     }
                     Spacer()
-                    Text("···")
-                        .font(.custom("DMMono-Regular", size: 9))
-                        .foregroundColor(.white.opacity(0.2))
+                    Text(post.mood.uppercased())
+                        .font(.custom("DMMono-Regular", size: 11))
+                        .kerning(1.5)
+                        .foregroundColor(post.themeColor.opacity(0.7))
                 }
                 .padding(.horizontal, 24).padding(.vertical, 16)
                 
@@ -54,8 +55,8 @@ struct MomentDetailView: View {
                                     .font(.system(size: 13, weight: .medium))
                                     .foregroundColor(.white.opacity(0.8))
                                 Text("now · \(post.song)")
-                                    .font(.custom("DMMono-Regular", size: 8))
-                                    .foregroundColor(.white.opacity(0.22))
+                                    .font(.custom("DMMono-Regular", size: 11.5))
+                                    .foregroundColor(.white.opacity(0.3))
                             }
                             Spacer()
                         }

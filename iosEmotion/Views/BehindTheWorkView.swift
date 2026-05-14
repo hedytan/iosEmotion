@@ -19,11 +19,11 @@ struct BehindTheWorkView: View {
                         
                         // "all moods" pill
                         Text("all moods")
-                            .font(.custom("DMMono-Regular", size: 8))
-                            .foregroundColor(.white.opacity(0.2))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Capsule().stroke(Color.white.opacity(0.07), lineWidth: 1))
+                            .font(.custom("DMMono-Regular", size: 10))
+                            .foregroundColor(.white.opacity(0.3))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
@@ -66,22 +66,22 @@ struct FeedPostCard: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(post.artist)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white.opacity(0.82))
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white.opacity(0.85))
                     
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
                         Circle()
                             .fill(post.themeColor)
-                            .frame(width: 5, height: 5)
+                            .frame(width: 6, height: 6)
                         Text(post.mood)
-                            .font(.custom("DMMono-Regular", size: 8.5))
+                            .font(.custom("DMMono-Regular", size: 10.5))
                             .foregroundColor(post.themeColor)
                         Text("·")
-                            .font(.custom("DMMono-Regular", size: 8.5))
-                            .foregroundColor(.white.opacity(0.15))
+                            .font(.custom("DMMono-Regular", size: 10.5))
+                            .foregroundColor(.white.opacity(0.2))
                         Text(post.song)
-                            .font(.custom("DMMono-Regular", size: 8.5))
-                            .foregroundColor(.white.opacity(0.22))
+                            .font(.custom("DMMono-Regular", size: 10.5))
+                            .foregroundColor(.white.opacity(0.35))
                     }
                 }
                 Spacer()
@@ -99,13 +99,15 @@ struct FeedPostCard: View {
             
             // BOTTOM ROW
             HStack {
-                Text("\(formatCount(post.resonanceCount)) resonated")
-                    .font(.custom("DMMono-Regular", size: 8))
-                    .foregroundColor(.white.opacity(0.18))
+                Text("\(post.resonanceCount) resonated")
+                    .font(.custom("DMMono-Regular", size: 10.5))
+                    .foregroundColor(.white.opacity(0.25))
+                
                 Spacer()
+                
                 Text("feel this →")
-                    .font(.custom("DMMono-Regular", size: 8))
-                    .foregroundColor(.white.opacity(0.18))
+                    .font(.custom("DMMono-Regular", size: 10.5))
+                    .foregroundColor(.white.opacity(0.25))
             }
             
             Rectangle()
