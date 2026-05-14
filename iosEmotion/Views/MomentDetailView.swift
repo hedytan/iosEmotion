@@ -1,4 +1,5 @@
 import SwiftUI
+import MusicKit
 
 struct MomentDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -180,7 +181,7 @@ struct MomentDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            MusicManager.shared.playSong(named: post.song)
+            MusicManager.shared.playSong(song: post.song, artist: post.artist)
         }
         .onDisappear {
             MusicManager.shared.stop()

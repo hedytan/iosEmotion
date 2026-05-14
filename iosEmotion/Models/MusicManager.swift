@@ -1,33 +1,66 @@
 import Foundation
 import AVFoundation
 import Combine
+import MusicKit
 
+@MainActor
 class MusicManager: ObservableObject {
     static let shared = MusicManager()
-    private var player: AVPlayer?
-    
+
     @Published var isPlaying = false
     @Published var currentSong: String?
-    
-    func playSong(named: String) {
-        // In a real app, this would search MusicKit or a local library.
-        // For now, we'll simulate the "vibe" of loading a track.
-        print("MusicManager: Now playing \(named)")
-        self.currentSong = named
-        self.isPlaying = true
-        
-        // Mock implementation: If you add .mp3 files to your project later,
-        // this code will find them and play them automatically.
-        if let url = Bundle.main.url(forResource: named.lowercased(), withExtension: "mp3") {
-            let item = AVPlayerItem(url: url)
-            player = AVPlayer(playerItem: item)
-            player?.play()
+    @Published var authorizationStatus: MusicAuthorization.Status = .notDetermined
+
+    private init() {}
+
+    // MARK: - Authorization
+    func requestAuthorization() async {
+        let status = await MusicAuthorization.request()
+        authorizationStatus = status
+    }
+
+    // MARK: - Play song by name + artist
+    func playSong(song: String, artist: String) {
+        Task {
+            // Request authorization first
+            if authorizationStatus == .notDetermined {
+                await requestAuthorization()
+            }
+
+            guard authorizationStatus == .authorized else {
+                print("MusicKit: Not authorized")
+                return
+            }
+
+            do {
+                // Search Apple Music for the exact song
+                var request = MusicCatalogSearchRequest(term: "\(song) \(artist)", types: [Song.self])
+                request.limit = 1
+                let response = try await request.response()
+
+                guard let foundSong = response.songs.first else {
+                    print("MusicKit: Song '\(song)' by \(artist) not found")
+                    return
+                }
+
+                // Play the song via SystemMusicPlayer
+                ApplicationMusicPlayer.shared.queue = [foundSong]
+                try await ApplicationMusicPlayer.shared.play()
+
+                currentSong = foundSong.title
+                isPlaying = true
+                print("MusicKit: Now playing \(foundSong.title) by \(foundSong.artistName)")
+
+            } catch {
+                print("MusicKit error: \(error)")
+            }
         }
     }
-    
+
+    // MARK: - Stop
     func stop() {
-        player?.pause()
-        self.isPlaying = false
-        self.currentSong = nil
+        ApplicationMusicPlayer.shared.stop()
+        isPlaying = false
+        currentSong = nil
     }
 }
