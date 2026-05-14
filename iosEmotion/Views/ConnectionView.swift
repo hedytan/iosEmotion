@@ -20,7 +20,7 @@ struct ConnectionView: View {
         ZStack {
             Color(hex: "07060A").ignoresSafeArea()
             
-            // AMBIENT GLOW
+            // AMBIENT GLOW (Centered with content)
             RadialGradient(
                 stops: [
                     .init(color: post.themeColor.opacity(0.22), location: 0),
@@ -29,28 +29,46 @@ struct ConnectionView: View {
                 ],
                 center: .center,
                 startRadius: 0,
-                endRadius: 140
+                endRadius: 180
             )
-            .frame(width: 280, height: 280)
-            .blur(radius: 40)
-            .offset(y: -UIScreen.main.bounds.height/6)
+            .frame(width: 320, height: 320)
+            .blur(radius: 60)
             
             VStack(spacing: 0) {
+                // TOP BAR
+                HStack {
+                    Button(action: { dismiss() }) {
+                        HStack(spacing: 6) {
+                            Text("←")
+                                .font(.system(size: 16))
+                            Text("back")
+                                .font(.custom("DMMono-Regular", size: 9.5))
+                        }
+                        .foregroundColor(.white.opacity(0.25))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Capsule().stroke(Color.white.opacity(0.06), lineWidth: 1))
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                
                 Spacer()
                 
                 // SHAPE VISUALIZATION
-                VStack(spacing: 20) {
+                VStack(spacing: 24) {
                     HStack(spacing: 0) {
                         // Artist Shape
                         VStack(spacing: 12) {
                             MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
-                                .frame(width: 64, height: 64)
+                                .frame(width: 72, height: 72)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
-                                .offset(x: electricPulse ? CGFloat.random(in: -1...1) : 0, y: electricPulse ? CGFloat.random(in: -1...1) : 0)
+                                .offset(x: electricPulse ? CGFloat.random(in: -1.5...1.5) : 0, y: electricPulse ? CGFloat.random(in: -1.5...1.5) : 0)
                             
                             Text(post.artist)
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.2))
+                                .foregroundColor(.white.opacity(0.22))
                         }
                         
                         // Bridge Line with Electric Arcs
@@ -71,35 +89,34 @@ struct ConnectionView: View {
                                 Path { path in
                                     path.move(to: CGPoint(x: 0, y: 0))
                                     for i in 1...10 {
-                                        path.addLine(to: CGPoint(x: CGFloat(i) * 10, y: CGFloat.random(in: -3...3)))
+                                        path.addLine(to: CGPoint(x: CGFloat(i) * 12, y: CGFloat.random(in: -4...4)))
                                     }
                                 }
-                                .stroke(Color.white.opacity(0.6), lineWidth: 0.5)
-                                .frame(width: 100, height: 1)
-                                .offset(x: sparkOffset)
+                                .stroke(Color.white.opacity(0.7), lineWidth: 0.6)
+                                .frame(width: 120, height: 1)
                                 .transition(.opacity)
                             }
                             
                             // Travelling Dot
                             Circle()
-                                .fill(Color.white.opacity(0.5))
-                                .frame(width: 7, height: 7)
-                                .offset(x: -50 + (100 * dotPosition))
-                                .opacity(dotPosition > 0.1 && dotPosition < 0.9 ? 1 : 0)
+                                .fill(Color.white.opacity(0.6))
+                                .frame(width: 8, height: 8)
+                                .offset(x: -60 + (120 * dotPosition))
+                                .opacity(dotPosition > 0.05 && dotPosition < 0.95 ? 1 : 0)
                         }
-                        .frame(width: 100).padding(.horizontal, 10)
+                        .frame(width: 120).padding(.horizontal, 10)
                         
                         // Fan Shape
                         VStack(spacing: 12) {
                             MoodShapeView(type: userMood, color: userMood.color, isLarge: true)
-                                .frame(width: 64, height: 64)
+                                .frame(width: 72, height: 72)
                                 .scaleEffect(isBreathing ? 1.05 : 1.0)
-                                .offset(x: electricPulse ? CGFloat.random(in: -1...1) : 0, y: electricPulse ? CGFloat.random(in: -1...1) : 0)
+                                .offset(x: electricPulse ? CGFloat.random(in: -1.5...1.5) : 0, y: electricPulse ? CGFloat.random(in: -1.5...1.5) : 0)
                                 .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true).delay(0.5), value: isBreathing)
                             
                             Text("You")
                                 .font(.custom("DMMono-Regular", size: 8))
-                                .foregroundColor(.white.opacity(0.2))
+                                .foregroundColor(.white.opacity(0.22))
                         }
                     }
                     
@@ -107,65 +124,58 @@ struct ConnectionView: View {
                     HStack {
                         Text(post.mood.uppercased())
                             .font(.custom("DMMono-Regular", size: 8))
-                            .foregroundColor(post.themeColor.opacity(0.5))
+                            .kerning(1.2)
+                            .foregroundColor(post.themeColor.opacity(0.55))
                         Spacer()
                         Text("meets")
                             .font(.custom("DMMono-Regular", size: 7))
-                            .foregroundColor(.white.opacity(0.1))
+                            .foregroundColor(.white.opacity(0.15))
                         Spacer()
                         Text(userMood.displayName.uppercased())
                             .font(.custom("DMMono-Regular", size: 8))
-                            .foregroundColor(userMood.color.opacity(0.5))
+                            .kerning(1.2)
+                            .foregroundColor(userMood.color.opacity(0.55))
                     }
-                    .frame(width: 240).padding(.bottom, 18)
+                    .frame(width: 260)
                 }
+                .padding(.bottom, 40)
                 
                 // CONNECTION TEXT
-                VStack(spacing: 32) {
-                    VStack(spacing: 12) {
+                VStack(spacing: 36) {
+                    VStack(spacing: 14) {
                         Text("\(post.artist) shared \(post.mood).\nYou felt \(moodsMatch ? "the same" : "something different") —")
-                            .font(.custom("Lora-Italic", size: 13))
-                            .foregroundColor(.white.opacity(0.42))
+                            .font(.custom("Lora-Italic", size: 13.5))
+                            .foregroundColor(.white.opacity(0.45))
                             .multilineTextAlignment(.center)
-                            .lineSpacing(4)
+                            .lineSpacing(5)
                         
                         Text("“\(feeling)”")
-                            .font(.custom("Lora-Italic", size: 18))
-                            .foregroundColor(.white.opacity(0.88))
+                            .font(.custom("Lora-Italic", size: 19))
+                            .foregroundColor(.white.opacity(0.92))
                             .multilineTextAlignment(.center)
-                            .frame(maxWidth: 230)
-                            .padding(.top, 10)
+                            .frame(maxWidth: 260)
+                            .padding(.top, 6)
                         
                         Text("you + \(randomOthers) others felt something \(userMood.displayName) here")
-                            .font(.custom("DMMono-Regular", size: 8))
+                            .font(.custom("DMMono-Regular", size: 8.5))
                             .kerning(0.8)
-                            .foregroundColor(.white.opacity(0.18))
-                            .padding(.top, 4)
+                            .foregroundColor(.white.opacity(0.2))
                     }
                     
-                    VStack(spacing: 16) {
-                        Rectangle().fill(Color.white.opacity(0.06)).frame(width: 36, height: 1)
+                    VStack(spacing: 18) {
+                        Rectangle().fill(Color.white.opacity(0.08)).frame(width: 44, height: 1)
                         
                         Text(moodsMatch ? "You both felt \(userMood.displayName). You're not alone." : "\(post.artist)'s \(post.mood) unlocked your \(userMood.displayName). That's a real connection.")
-                            .font(.custom("Lora-Italic", size: 12))
-                            .foregroundColor(.white.opacity(0.26))
+                            .font(.custom("Lora-Italic", size: 12.5))
+                            .foregroundColor(.white.opacity(0.3))
                             .multilineTextAlignment(.center)
-                            .frame(maxWidth: 190)
+                            .frame(maxWidth: 210)
                     }
                 }
                 .opacity(textOpacity)
                 
                 Spacer()
-                
-                // Back Button (Repositioned Higher)
-                Button(action: { dismiss() }) {
-                    Text("← back to feed")
-                        .font(.custom("DMMono-Regular", size: 9))
-                        .foregroundColor(.white.opacity(0.25))
-                        .padding(.horizontal, 24).padding(.vertical, 10)
-                        .background(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 1))
-                }
-                .padding(.bottom, 120) // Elevated above the tab bar
+                Spacer() // Extra spacer to push it up slightly from the absolute bottom
             }
         }
         .onAppear {
@@ -175,7 +185,7 @@ struct ConnectionView: View {
             
             // Electric Arc Timer
             Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                if Double.random(in: 0...1) > 0.8 {
+                if Double.random(in: 0...1) > 0.85 {
                     electricPulse = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { electricPulse = false }
                 }
