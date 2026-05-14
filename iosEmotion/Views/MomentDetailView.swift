@@ -111,7 +111,7 @@ struct MomentDetailView: View {
                                     }) {
                                         HStack {
                                             Circle()
-                                                .fill(Color.white.opacity(0.1))
+                                                .fill(option.mood.color.opacity(0.8))
                                                 .frame(width: 6, height: 6)
                                             Text(option.text)
                                                 .font(.custom("Lora-Italic", size: 14))
