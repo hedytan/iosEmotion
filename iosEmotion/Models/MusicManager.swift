@@ -101,39 +101,40 @@ class MusicManager: ObservableObject {
         return tokenResponse.access_token
     }
 
-    // MARK: - Search for 30s Preview URL
+    // MARK: - Search via Deezer (free, no auth, still has previews)
     private func getPreviewURL(song: String, artist: String, token: String) async throws -> URL? {
+        // Deezer API: free, no auth needed, preview_url still works in 2024
         let query = "\(song) \(artist)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://api.spotify.com/v1/search?q=\(query)&type=track&limit=5"
+        let urlString = "https://api.deezer.com/search?q=\(query)&limit=5&output=json"
 
-        var request = URLRequest(url: URL(string: urlString)!)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        guard let url = URL(string: urlString) else { return nil }
+        let (data, _) = try await URLSession.shared.data(from: url)
 
-        let (data, _) = try await URLSession.shared.data(for: request)
         let raw = String(data: data, encoding: .utf8) ?? ""
-        print("▶️ Spotify search raw: \(raw.prefix(500))")
+        print("▶️ Deezer search raw: \(raw.prefix(300))")
 
-        guard let response = try? JSONDecoder().decode(SearchResponse.self, from: data) else {
-            let raw = String(data: data, encoding: .utf8) ?? "unreadable"
-            print("MusicManager search error: \(raw)")
-            throw SpotifyError.trackNotFound(song)
-        }
-
-        // Find best match with a preview URL
-        let match = response.tracks.items.first(where: {
-            $0.preview_url != nil &&
-            $0.name.localizedCaseInsensitiveContains(song)
-        }) ?? response.tracks.items.first(where: { $0.preview_url != nil })
-
-        guard let track = match, let urlString = track.preview_url,
-              let url = URL(string: urlString) else {
-            print("MusicManager: No preview URL found for '\(song)'")
+        guard let response = try? JSONDecoder().decode(DeezerResponse.self, from: data) else {
+            print("❌ Deezer decode error")
             return nil
         }
 
-        print("MusicManager: Preview found for '\(track.name)' ✓")
-        return url
+        // Find best match with a preview URL
+        let best = response.data.first(where: {
+            $0.preview != nil && (
+                $0.title.localizedCaseInsensitiveContains(song) ||
+                $0.artist.name.localizedCaseInsensitiveContains(artist)
+            )
+        }) ?? response.data.first(where: { $0.preview != nil })
+
+        guard let track = best, let previewStr = track.preview,
+              let previewURL = URL(string: previewStr) else {
+            print("⚠️ No Deezer preview for '\(song)'")
+            return nil
+        }
+
+        print("✅ Deezer preview: '\(track.title)' by \(track.artist.name)")
+        return previewURL
     }
 }
 
@@ -142,25 +143,27 @@ enum SpotifyError: LocalizedError {
     case invalidCredentials, trackNotFound(String)
     var errorDescription: String? {
         switch self {
-        case .invalidCredentials: return "Invalid Spotify credentials — check Client ID/Secret"
-        case .trackNotFound(let s): return "No preview found for '\(s)'"
+        case .invalidCredentials: return "Invalid credentials"
+        case .trackNotFound(let s): return "No preview for '\(s)'"
         }
     }
 }
 
-// MARK: - Spotify API Models
+// MARK: - Spotify Token Model (kept for token fetch)
 private struct TokenResponse: Decodable {
     let access_token: String
     let expires_in: Int
 }
 
-private struct SearchResponse: Decodable {
-    let tracks: TrackList
-    struct TrackList: Decodable { let items: [Track] }
-    struct Track: Decodable {
-        let name: String
-        let preview_url: String?
-        let artists: [Artist]
+// MARK: - Deezer Response Models
+private struct DeezerResponse: Decodable {
+    let data: [DeezerTrack]
+    struct DeezerTrack: Decodable {
+        let title: String
+        let preview: String?
+        let artist: DeezerArtist
     }
-    struct Artist: Decodable { let name: String }
+    struct DeezerArtist: Decodable {
+        let name: String
+    }
 }
