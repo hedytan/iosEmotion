@@ -75,3 +75,18 @@ struct CustomDrawingView: View {
         }
     }
 }
+
+struct MoodShape: Shape {
+    var type: Post.MoodType
+    func path(in rect: CGRect) -> Path {
+        switch type {
+        case .joy: return JoyShape().path(in: rect)
+        case .melancholy: return MelancholyShape().path(in: rect)
+        case .wonder: return WonderShape().path(in: rect)
+        case .tender: return TenderShape().path(in: rect)
+        case .urgency: return UrgencyShape().path(in: rect)
+        case .awe: return AweShape().path(in: rect)
+        case .custom: return Circle().path(in: rect)
+        }
+    }
+}
