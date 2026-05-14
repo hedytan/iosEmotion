@@ -1,7 +1,6 @@
 import Foundation
-import AVFoundation
 import Combine
-import MusicKit
+import MediaPlayer
 
 @MainActor
 class MusicManager: ObservableObject {
@@ -10,59 +9,63 @@ class MusicManager: ObservableObject {
     @Published var isPlaying = false
     @Published var currentSong: String?
 
+    private let player = MPMusicPlayerController.systemMusicPlayer
+
     private init() {}
 
-    // MARK: - Play song by name + artist
+    // MARK: - Play by song title + artist
     func playSong(song: String, artist: String) {
-        Task {
-            // Always re-check authorization status live
-            let status = await MusicAuthorization.request()
-            print("MusicKit auth status: \(status)")
-
+        // Request library access
+        MPMediaLibrary.requestAuthorization { status in
             guard status == .authorized else {
-                print("MusicKit: Authorization denied — user needs Apple Music")
+                print("MediaPlayer: Not authorized — status: \(status.rawValue)")
                 return
             }
 
-            do {
-                // Search Apple Music catalog
-                var request = MusicCatalogSearchRequest(
-                    term: "\(song) \(artist)",
-                    types: [Song.self]
-                )
-                request.limit = 5
-                let response = try await request.response()
+            // Search user's Apple Music library
+            let songFilter = MPMediaPropertyPredicate(
+                value: song,
+                forProperty: MPMediaItemPropertyTitle,
+                comparisonType: .contains
+            )
+            let artistFilter = MPMediaPropertyPredicate(
+                value: artist,
+                forProperty: MPMediaItemPropertyArtist,
+                comparisonType: .contains
+            )
 
-                print("MusicKit: Found \(response.songs.count) results for '\(song) \(artist)'")
+            let query = MPMediaQuery()
+            query.addFilterPredicate(songFilter)
+            query.addFilterPredicate(artistFilter)
 
-                // Pick the closest match (prefer exact song name match)
-                let bestMatch = response.songs.first(where: {
-                    $0.title.localizedCaseInsensitiveContains(song)
-                }) ?? response.songs.first
-
-                guard let foundSong = bestMatch else {
-                    print("MusicKit: No match found for '\(song)' by \(artist)")
-                    return
+            DispatchQueue.main.async {
+                if let items = query.items, !items.isEmpty {
+                    print("MediaPlayer: Found '\(items[0].title ?? "unknown")' — playing!")
+                    self.player.setQueue(with: MPMediaItemCollection(items: items))
+                    self.player.play()
+                    self.currentSong = items[0].title
+                    self.isPlaying = true
+                } else {
+                    // Fallback: search by title only
+                    let titleOnly = MPMediaQuery()
+                    titleOnly.addFilterPredicate(songFilter)
+                    if let fallback = titleOnly.items, !fallback.isEmpty {
+                        print("MediaPlayer: Fallback match '\(fallback[0].title ?? "unknown")'")
+                        self.player.setQueue(with: MPMediaItemCollection(items: fallback))
+                        self.player.play()
+                        self.currentSong = fallback[0].title
+                        self.isPlaying = true
+                    } else {
+                        print("MediaPlayer: '\(song)' not found in library. User needs to add it to Apple Music.")
+                    }
                 }
-
-                print("MusicKit: Playing '\(foundSong.title)' by \(foundSong.artistName)")
-
-                // Set queue and play
-                ApplicationMusicPlayer.shared.queue = ApplicationMusicPlayer.Queue([foundSong])
-                try await ApplicationMusicPlayer.shared.play()
-
-                currentSong = foundSong.title
-                isPlaying = true
-
-            } catch {
-                print("MusicKit error: \(error.localizedDescription)")
             }
         }
     }
 
     // MARK: - Stop
     func stop() {
-        ApplicationMusicPlayer.shared.stop()
+        player.stop()
         isPlaying = false
         currentSong = nil
     }

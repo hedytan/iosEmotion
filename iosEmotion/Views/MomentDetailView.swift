@@ -1,5 +1,4 @@
 import SwiftUI
-import MusicKit
 
 struct MomentDetailView: View {
     @Environment(\.dismiss) var dismiss
