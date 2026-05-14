@@ -56,10 +56,10 @@ struct CreateMomentView: View {
                 .padding(.top, 16)
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 44) {
+                    VStack(alignment: .leading, spacing: 28) { // Tightened from 44
                         
-                        // 01 — HOW DOES IT FEEL? (Unified Palette)
-                        VStack(alignment: .leading, spacing: 24) {
+                        // 01 — HOW DOES IT FEEL?
+                        VStack(alignment: .leading, spacing: 20) { // Tightened from 24
                             Text("01 · HOW DOES IT FEEL?")
                                 .font(.custom("DMMono-Regular", size: 11))
                                 .kerning(1.5)
@@ -67,7 +67,6 @@ struct CreateMomentView: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 28) {
-                                    // 1. Presets
                                     ForEach(presets, id: \.self) { mood in
                                         Button(action: { 
                                             selectedPreset = mood
@@ -77,7 +76,6 @@ struct CreateMomentView: View {
                                         }
                                     }
                                     
-                                    // 2. Custom Moods (Living in the same line)
                                     ForEach(store.customMoods) { custom in
                                         Button(action: {
                                             selectedCustomMood = custom
@@ -87,7 +85,6 @@ struct CreateMomentView: View {
                                         }
                                     }
                                     
-                                    // 3. Create Button
                                     Button(action: { showingDrawSheet = true }) {
                                         VStack(spacing: 12) {
                                             ZStack {
@@ -106,7 +103,7 @@ struct CreateMomentView: View {
                                 .padding(.trailing, 24)
                             }
                         }
-                        .padding(.top, 32)
+                        .padding(.top, 24) // Tightened from 32
                         
                         Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
                         
