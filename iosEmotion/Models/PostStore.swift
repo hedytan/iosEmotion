@@ -182,10 +182,10 @@ class PostStore: ObservableObject {
                 year: "2008", 
                 resonanceCount: 2418, 
                 resonanceOptions: [
-                    ResonanceOption(text: "smell of home cooking", mood: .joy, count: 842, isCustom: false),
-                    ResonanceOption(text: "back to simpler times", mood: .joy, count: 654, isCustom: false),
+                    ResonanceOption(text: "smell of home cooking", mood: .tender, count: 842, isCustom: false),
+                    ResonanceOption(text: "back to simpler times", mood: .melancholy, count: 654, isCustom: false),
                     ResonanceOption(text: "childhood summer vibes", mood: .joy, count: 432, isCustom: false),
-                    ResonanceOption(text: "pure countryside air", mood: .joy, count: 321, isCustom: false),
+                    ResonanceOption(text: "pure countryside air", mood: .wonder, count: 321, isCustom: false),
                     ResonanceOption(text: "this is my happy place", mood: .joy, count: 169, isCustom: false)
                 ]
             ),
@@ -198,9 +198,9 @@ class PostStore: ObservableObject {
                 resonanceCount: 8103, 
                 resonanceOptions: [
                     ResonanceOption(text: "felt this in my chest", mood: .melancholy, count: 2147, isCustom: false),
-                    ResonanceOption(text: "beautiful sadness", mood: .melancholy, count: 1890, isCustom: false),
-                    ResonanceOption(text: "growing pains", mood: .melancholy, count: 1654, isCustom: false),
-                    ResonanceOption(text: "lost in the memories", mood: .melancholy, count: 1432, isCustom: false),
+                    ResonanceOption(text: "beautiful sadness", mood: .awe, count: 1890, isCustom: false),
+                    ResonanceOption(text: "growing pains", mood: .urgency, count: 1654, isCustom: false),
+                    ResonanceOption(text: "lost in the memories", mood: .tender, count: 1432, isCustom: false),
                     ResonanceOption(text: "found myself replaying it", mood: .melancholy, count: 980, isCustom: false)
                 ]
             ),
@@ -212,10 +212,10 @@ class PostStore: ObservableObject {
                 year: "2011", 
                 resonanceCount: 31204, 
                 resonanceOptions: [
-                    ResonanceOption(text: "the letter I never sent", mood: .tender, count: 12402, isCustom: false),
+                    ResonanceOption(text: "the letter I never sent", mood: .melancholy, count: 12402, isCustom: false),
                     ResonanceOption(text: "healing through tears", mood: .tender, count: 8904, isCustom: false),
-                    ResonanceOption(text: "still wish you the best", mood: .tender, count: 5654, isCustom: false),
-                    ResonanceOption(text: "found peace with it now", mood: .tender, count: 3232, isCustom: false),
+                    ResonanceOption(text: "still wish you the best", mood: .joy, count: 5654, isCustom: false),
+                    ResonanceOption(text: "found peace with it now", mood: .wonder, count: 3232, isCustom: false),
                     ResonanceOption(text: "hurts but it's okay", mood: .tender, count: 1012, isCustom: false)
                 ]
             ),
@@ -227,11 +227,11 @@ class PostStore: ObservableObject {
                 year: "1997", 
                 resonanceCount: 12088, 
                 resonanceOptions: [
-                    ResonanceOption(text: "standing on a glacier", mood: .wonder, count: 4208, isCustom: false),
+                    ResonanceOption(text: "standing on a glacier", mood: .awe, count: 4208, isCustom: false),
                     ResonanceOption(text: "rhythm of nature", mood: .wonder, count: 3204, isCustom: false),
-                    ResonanceOption(text: "pure volcanic energy", mood: .wonder, count: 2120, isCustom: false),
-                    ResonanceOption(text: "emotional landscape", mood: .wonder, count: 1654, isCustom: false),
-                    ResonanceOption(text: "state of emergency", mood: .wonder, count: 902, isCustom: false)
+                    ResonanceOption(text: "pure volcanic energy", mood: .urgency, count: 2120, isCustom: false),
+                    ResonanceOption(text: "emotional landscape", mood: .melancholy, count: 1654, isCustom: false),
+                    ResonanceOption(text: "state of emergency", mood: .urgency, count: 902, isCustom: false)
                 ]
             )
         ]
