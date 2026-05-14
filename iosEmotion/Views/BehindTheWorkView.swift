@@ -15,15 +15,6 @@ struct BehindTheWorkView: View {
                             .font(.custom("Lora-Italic", size: 19))
                             .foregroundColor(.white.opacity(0.75))
                         
-                        Spacer()
-                        
-                        // "all moods" pill
-                        Text("all moods")
-                            .font(.custom("DMMono-Regular", size: 10))
-                            .foregroundColor(.white.opacity(0.3))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Capsule().stroke(Color.white.opacity(0.1), lineWidth: 1))
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
