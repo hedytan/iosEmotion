@@ -100,14 +100,14 @@ struct FeedPostCard: View {
             // BOTTOM ROW
             HStack {
                 Text("\(post.resonanceCount) resonated")
-                    .font(.custom("DMMono-Regular", size: 10.5))
-                    .foregroundColor(.white.opacity(0.25))
+                    .font(.custom("DMMono-Regular", size: 13))
+                    .foregroundColor(.white.opacity(0.45))
                 
                 Spacer()
                 
                 Text("feel this →")
-                    .font(.custom("DMMono-Regular", size: 10.5))
-                    .foregroundColor(.white.opacity(0.25))
+                    .font(.custom("DMMono-Regular", size: 13))
+                    .foregroundColor(.white.opacity(0.45))
             }
             
             Rectangle()

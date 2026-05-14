@@ -85,13 +85,13 @@ struct MomentDetailView: View {
                         VStack(spacing: 24) {
                             HStack {
                                 Text("resonance")
-                                    .font(.custom("DMMono-Regular", size: 10.5))
+                                    .font(.custom("DMMono-Regular", size: 13))
                                     .kerning(1.2)
-                                    .foregroundColor(.white.opacity(0.35))
+                                    .foregroundColor(.white.opacity(0.45))
                                 Spacer()
                                 Text("\(post.resonanceCount) total")
-                                    .font(.custom("DMMono-Regular", size: 10.5))
-                                    .foregroundColor(.white.opacity(0.25))
+                                    .font(.custom("DMMono-Regular", size: 13))
+                                    .foregroundColor(.white.opacity(0.4))
                             }
                             
                             VStack(spacing: 12) {

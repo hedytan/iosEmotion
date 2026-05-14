@@ -113,9 +113,9 @@ struct ConnectionView: View {
                             .padding(.top, 6)
                         
                         Text("you + \(randomOthers) others felt something \(userMood.displayName) here")
-                            .font(.custom("DMMono-Regular", size: 10.5))
+                            .font(.custom("DMMono-Regular", size: 13))
                             .kerning(0.8)
-                            .foregroundColor(.white.opacity(0.25))
+                            .foregroundColor(.white.opacity(0.45))
                     }
                     
                     VStack(spacing: 18) {
