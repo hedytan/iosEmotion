@@ -37,17 +37,24 @@ struct ConnectionView: View {
             VStack(spacing: 0) {
                 // TOP BAR
                 HStack {
-                    Button(action: { dismiss() }) {
-                        HStack(spacing: 6) {
-                            Text("←")
-                                .font(.system(size: 16))
-                            Text("back")
-                                .font(.custom("DMMono-Regular", size: 9.5))
+                    VStack(alignment: .leading, spacing: 12) {
+                        Button(action: { dismiss() }) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.white.opacity(0.06))
+                                    .frame(width: 40, height: 40)
+                                    .overlay(Circle().stroke(Color.white.opacity(0.12), lineWidth: 1))
+                                
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.white)
+                            }
                         }
-                        .foregroundColor(.white.opacity(0.25))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Capsule().stroke(Color.white.opacity(0.06), lineWidth: 1))
+                        
+                        Text("‹ feed")
+                            .font(.custom("DMMono-Regular", size: 9))
+                            .foregroundColor(.white.opacity(0.28))
+                            .padding(.leading, 4)
                     }
                     Spacer()
                 }
