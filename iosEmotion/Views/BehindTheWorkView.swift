@@ -12,7 +12,7 @@ struct BehindTheWorkView: View {
                 VStack(spacing: 0) {
                     // HEADER
                     HStack(alignment: .center) {
-                        Text("moodpost")
+                        Text("resonance")
                             .font(.custom("Lora-Italic", size: 19))
                             .foregroundColor(.white.opacity(0.75))
                         
