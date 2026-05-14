@@ -173,19 +173,67 @@ class PostStore: ObservableObject {
     @Published var navigationPath = NavigationPath()
     
     init() {
-        let presets = [
-            ResonanceOption(text: "felt this in my chest", mood: .joy, count: 1247, isCustom: false),
-            ResonanceOption(text: "took me somewhere else", mood: .melancholy, count: 890, isCustom: false),
-            ResonanceOption(text: "reminds me of someone", mood: .tender, count: 654, isCustom: false),
-            ResonanceOption(text: "can't explain it", mood: .wonder, count: 432, isCustom: false),
-            ResonanceOption(text: "held my breath", mood: .awe, count: 156, isCustom: false)
-        ]
-        
         self.posts = [
-            Post(artist: "Jay Chou", moodType: .joy, quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", song: "稻香", year: "2008", resonanceCount: 2418, resonanceOptions: presets),
-            Post(artist: "Frank Ocean", moodType: .melancholy, quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", song: "Blonde", year: "2016", resonanceCount: 8103, resonanceOptions: presets),
-            Post(artist: "Adele", moodType: .tender, quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", song: "Someone Like You", year: "2011", resonanceCount: 31204, resonanceOptions: presets),
-            Post(artist: "Björk", moodType: .wonder, quote: "Standing on a glacier. That was it. That was the whole album right there.", song: "Jóga", year: "1997", resonanceCount: 12088, resonanceOptions: presets)
+            Post(
+                artist: "Jay Chou", 
+                moodType: .joy, 
+                quote: "I wrote the first verse in my mother's kitchen at 2am. The smell of her cooking — that was the whole song.", 
+                song: "稻香", 
+                year: "2008", 
+                resonanceCount: 2418, 
+                resonanceOptions: [
+                    ResonanceOption(text: "smell of home cooking", mood: .joy, count: 842, isCustom: false),
+                    ResonanceOption(text: "back to simpler times", mood: .joy, count: 654, isCustom: false),
+                    ResonanceOption(text: "childhood summer vibes", mood: .joy, count: 432, isCustom: false),
+                    ResonanceOption(text: "pure countryside air", mood: .joy, count: 321, isCustom: false),
+                    ResonanceOption(text: "this is my happy place", mood: .joy, count: 169, isCustom: false)
+                ]
+            ),
+            Post(
+                artist: "Frank Ocean", 
+                moodType: .melancholy, 
+                quote: "I kept starting over. I didn't know what I was trying to say until I stopped trying.", 
+                song: "Blonde", 
+                year: "2016", 
+                resonanceCount: 8103, 
+                resonanceOptions: [
+                    ResonanceOption(text: "felt this in my chest", mood: .melancholy, count: 2147, isCustom: false),
+                    ResonanceOption(text: "beautiful sadness", mood: .melancholy, count: 1890, isCustom: false),
+                    ResonanceOption(text: "growing pains", mood: .melancholy, count: 1654, isCustom: false),
+                    ResonanceOption(text: "lost in the memories", mood: .melancholy, count: 1432, isCustom: false),
+                    ResonanceOption(text: "found myself replaying it", mood: .melancholy, count: 980, isCustom: false)
+                ]
+            ),
+            Post(
+                artist: "Adele", 
+                moodType: .tender, 
+                quote: "I wrote this for him but never sent it. The song was the letter I couldn't give.", 
+                song: "Someone Like You", 
+                year: "2011", 
+                resonanceCount: 31204, 
+                resonanceOptions: [
+                    ResonanceOption(text: "the letter I never sent", mood: .tender, count: 12402, isCustom: false),
+                    ResonanceOption(text: "healing through tears", mood: .tender, count: 8904, isCustom: false),
+                    ResonanceOption(text: "still wish you the best", mood: .tender, count: 5654, isCustom: false),
+                    ResonanceOption(text: "found peace with it now", mood: .tender, count: 3232, isCustom: false),
+                    ResonanceOption(text: "hurts but it's okay", mood: .tender, count: 1012, isCustom: false)
+                ]
+            ),
+            Post(
+                artist: "Björk", 
+                moodType: .wonder, 
+                quote: "Standing on a glacier. That was it. That was the whole album right there.", 
+                song: "Jóga", 
+                year: "1997", 
+                resonanceCount: 12088, 
+                resonanceOptions: [
+                    ResonanceOption(text: "standing on a glacier", mood: .wonder, count: 4208, isCustom: false),
+                    ResonanceOption(text: "rhythm of nature", mood: .wonder, count: 3204, isCustom: false),
+                    ResonanceOption(text: "pure volcanic energy", mood: .wonder, count: 2120, isCustom: false),
+                    ResonanceOption(text: "emotional landscape", mood: .wonder, count: 1654, isCustom: false),
+                    ResonanceOption(text: "state of emergency", mood: .wonder, count: 902, isCustom: false)
+                ]
+            )
         ]
     }
     
