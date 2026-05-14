@@ -69,7 +69,7 @@ struct ConnectionView: View {
                         VStack(spacing: 12) {
                             MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true)
                                 .frame(width: 72, height: 72)
-                                .offset(shakeOffset)
+                                .offset(electricPulse ? CGSize(width: CGFloat.random(in: -1...1), height: CGFloat.random(in: -1...1)) : .zero)
                             
                             Text(post.artist)
                                 .font(.custom("DMMono-Regular", size: 8))
@@ -117,7 +117,7 @@ struct ConnectionView: View {
                         VStack(spacing: 12) {
                             MoodShapeView(type: userMood, color: userMood.color, isLarge: true)
                                 .frame(width: 72, height: 72)
-                                .offset(CGSize(width: -shakeOffset.width, height: -shakeOffset.height))
+                                .offset(electricPulse ? CGSize(width: CGFloat.random(in: -1...1), height: CGFloat.random(in: -1...1)) : .zero)
                             
                             Text("You")
                                 .font(.custom("DMMono-Regular", size: 8))
@@ -187,27 +187,25 @@ struct ConnectionView: View {
             withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) { dotPosition = 1.0 }
             withAnimation(.easeIn(duration: 0.8).delay(0.4)) { textOpacity = 1.0 }
             
-            // SHAKE TIMER (Continuous high-frequency jitter)
-            Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-                withAnimation(.linear(duration: 0.05)) {
-                    shakeOffset = CGSize(
-                        width: CGFloat.random(in: -0.6...0.6),
-                        height: CGFloat.random(in: -0.6...0.6)
-                    )
-                }
-            }
-            
-            // ELECTRIC SHOCK TIMER (Jagged snap effect)
+            // ELECTRIC SHOCK TIMER (Jagged snap effect + Reactive Jitter)
             Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
                 if Double.random(in: 0...1) > 0.88 {
-                    electricPulse = true
-                    // snapping effect
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.04) { electricPulse = false }
-                    // double strike possibility
-                    if Double.random(in: 0...1) > 0.5 {
+                    withAnimation(.none) {
+                        electricPulse = true
+                    }
+                    
+                    // snapping effect duration
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.04) { 
+                        electricPulse = false 
+                    }
+                    
+                    // potential double strike
+                    if Double.random(in: 0...1) > 0.6 {
                          DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { 
                              electricPulse = true
-                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { electricPulse = false }
+                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { 
+                                 electricPulse = false 
+                             }
                          }
                     }
                 }
@@ -219,13 +217,5 @@ struct ConnectionView: View {
                 withAnimation(.easeInOut(duration: 2.4)) { dotPosition = 1.0 }
             }
         }
-    }
-}
-
-// Glow Helper
-extension View {
-    func glow(color: Color = .white, radius: CGFloat = 8) -> some View {
-        self.shadow(color: color.opacity(0.5), radius: radius / 2)
-            .shadow(color: color.opacity(0.3), radius: radius)
     }
 }
