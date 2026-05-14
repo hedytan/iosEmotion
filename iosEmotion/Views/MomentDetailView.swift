@@ -22,7 +22,7 @@ struct MomentDetailView: View {
                 HStack {
                     Spacer()
                 }
-                .padding(.horizontal, 24).padding(.top, 48)
+                .padding(.horizontal, 24).padding(.top, 58)
                 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 24) {
