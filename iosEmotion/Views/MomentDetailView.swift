@@ -177,6 +177,7 @@ struct MomentDetailView: View {
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showWriteSheet) {
             WriteResonanceSheet(post: post) { feeling, moodType in
+                store.addCustomResonance(for: post.id, text: feeling, mood: moodType)
                 let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
                 onResonate(connection)
             }
