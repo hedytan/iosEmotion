@@ -163,6 +163,7 @@ class PostStore: ObservableObject {
     @Published var posts: [Post] = []
     @Published var customMoods: [CustomMood] = []
     @Published var hasCompletedOnboarding: Bool = false
+    @Published var navigationPath = NavigationPath()
     
     init() {
         let presets = [

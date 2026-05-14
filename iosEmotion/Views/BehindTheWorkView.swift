@@ -2,10 +2,9 @@ import SwiftUI
 
 struct BehindTheWorkView: View {
     @EnvironmentObject var store: PostStore
-    @State private var path = NavigationPath()
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $store.navigationPath) {
             ZStack {
                 Color(hex: "07060A").ignoresSafeArea()
                 
@@ -32,7 +31,7 @@ struct BehindTheWorkView: View {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(spacing: 0) {
                             ForEach(store.posts) { post in
-                                Button(action: { path.append(post) }) {
+                                Button(action: { store.navigationPath.append(post) }) {
                                     FeedPostCard(post: post)
                                 }
                                 .buttonStyle(PlainButtonStyle())
@@ -44,7 +43,7 @@ struct BehindTheWorkView: View {
             }
             .navigationDestination(for: Post.self) { post in
                 MomentDetailView(post: post) { connection in
-                    path.append(connection)
+                    store.navigationPath.append(connection)
                 }
             }
             .navigationDestination(for: ResonanceConnection.self) { connection in

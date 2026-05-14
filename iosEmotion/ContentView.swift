@@ -49,53 +49,56 @@ struct MainAppView: View {
                     .tag(1)
             }
             
-            // HIGH-FIDELITY GLASS PILL TAB BAR
-            HStack(spacing: 0) {
-                // Feed Tab
-                Button(action: { 
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        selectedTab = 0 
+            // HIGH-FIDELITY GLASS PILL TAB BAR (Only on Root)
+            if store.navigationPath.isEmpty {
+                HStack(spacing: 0) {
+                    // Feed Tab
+                    Button(action: { 
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            selectedTab = 0 
+                        }
+                    }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "circle.circle")
+                                .font(.system(size: 20, weight: selectedTab == 0 ? .semibold : .regular))
+                            Text("Feed")
+                                .font(.system(size: 13, weight: .medium))
+                        }
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 24)
+                        .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.4))
+                        .background(
+                            Capsule()
+                                .fill(selectedTab == 0 ? Color.black.opacity(0.25) : Color.clear)
+                        )
                     }
-                }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "circle.circle")
-                            .font(.system(size: 20, weight: selectedTab == 0 ? .semibold : .regular))
-                        Text("Feed")
-                            .font(.system(size: 13, weight: .medium))
+                    .padding(4)
+                    
+                    // Express Tab
+                    Button(action: { showingCreate = true }) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20, weight: .regular))
+                            Text("Express")
+                                .font(.system(size: 13, weight: .medium))
+                        }
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 24)
+                        .foregroundColor(.white.opacity(0.4))
+                        .background(Capsule().fill(Color.clear))
                     }
-                    .padding(.vertical, 14)
-                    .padding(.horizontal, 24)
-                    .foregroundColor(selectedTab == 0 ? Color(hex: "F0A840") : .white.opacity(0.4))
-                    .background(
-                        Capsule()
-                            .fill(selectedTab == 0 ? Color.black.opacity(0.25) : Color.clear)
-                    )
+                    .padding(4)
                 }
-                .padding(4)
-                
-                // Express Tab
-                Button(action: { showingCreate = true }) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 20, weight: .regular))
-                        Text("Express")
-                            .font(.system(size: 13, weight: .medium))
-                    }
-                    .padding(.vertical, 14)
-                    .padding(.horizontal, 24)
-                    .foregroundColor(.white.opacity(0.4))
-                    .background(Capsule().fill(Color.clear))
-                }
-                .padding(4)
+                .background(
+                    Capsule()
+                        .fill(.ultraThinMaterial)
+                        .environment(\.colorScheme, .dark)
+                        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
+                )
+                .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+                .padding(.bottom, 34)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-            .background(
-                Capsule()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .dark)
-                    .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.5))
-            )
-            .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
-            .padding(.bottom, 34)
         }
     }
 }
