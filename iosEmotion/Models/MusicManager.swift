@@ -1,6 +1,5 @@
 import Foundation
 import AVFoundation
-import UIKit
 import Combine
 
 @MainActor
@@ -10,55 +9,66 @@ class MusicManager: ObservableObject {
     @Published var isPlaying = false
     @Published var currentSong: String?
 
-    // ─── REPLACE THESE WITH YOUR SPOTIFY CREDENTIALS ───
+    // ─── YOUR SPOTIFY CREDENTIALS ───
     private let clientID     = "YOUR_CLIENT_ID"
     private let clientSecret = "YOUR_CLIENT_SECRET"
-    // ────────────────────────────────────────────────────
+    // ────────────────────────────────
 
+    private var player: AVPlayer?
     private var accessToken: String?
     private var tokenExpiry: Date?
 
-    private init() {}
+    private init() {
+        // Allow audio to play in background and mix with silence
+        try? AVAudioSession.sharedInstance().setCategory(
+            .playback,
+            mode: .default,
+            options: []
+        )
+        try? AVAudioSession.sharedInstance().setActive(true)
+    }
 
-    // MARK: - Play
+    // MARK: - Public: Play in-app (no Spotify app switch)
     func playSong(song: String, artist: String) {
-        // Release audio session so Spotify can take over
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-
         Task {
             do {
                 let token = try await getAccessToken()
-                let trackID = try await searchTrack(song: song, artist: artist, token: token)
-                openSpotify(trackID: trackID)
-                currentSong = song
-                isPlaying = true
+                guard let previewURL = try await getPreviewURL(song: song, artist: artist, token: token) else {
+                    print("MusicManager: No preview available for '\(song)'")
+                    return
+                }
+                await startPlayback(url: previewURL, title: song)
             } catch {
-                print("SpotifyManager error: \(error.localizedDescription)")
+                print("MusicManager error: \(error.localizedDescription)")
             }
         }
     }
 
-    // MARK: - Stop (interrupts Spotify by claiming audio session)
+    // MARK: - Stop
     func stop() {
-        guard isPlaying else { return }
-
-        do {
-            let session = AVAudioSession.sharedInstance()
-            // Claim playback category → interrupts Spotify
-            try session.setCategory(.playback, mode: .default, options: [])
-            try session.setActive(true)
-            // We don't actually play anything — Spotify is now paused
-            // Keep session active so Spotify stays paused while on feed
-        } catch {
-            print("AVAudioSession stop error: \(error)")
-        }
-
+        player?.pause()
+        player = nil
         isPlaying = false
         currentSong = nil
-        print("MusicManager: Spotify interrupted ✓")
+        print("MusicManager: Stopped ✓")
     }
 
-    // MARK: - Access Token
+    // MARK: - Internal Playback
+    private func startPlayback(url: URL, title: String) async {
+        // Stop any current track first
+        player?.pause()
+
+        let item = AVPlayerItem(url: url)
+        player = AVPlayer(playerItem: item)
+        player?.volume = 1.0
+        player?.play()
+
+        currentSong = title
+        isPlaying = true
+        print("MusicManager: Now playing '\(title)' in-app ✓")
+    }
+
+    // MARK: - Get Spotify Access Token
     private func getAccessToken() async throws -> String {
         if let token = accessToken, let expiry = tokenExpiry, Date() < expiry {
             return token
@@ -67,6 +77,7 @@ class MusicManager: ObservableObject {
         guard let credData = credentials.data(using: .utf8) else {
             throw SpotifyError.invalidCredentials
         }
+
         var request = URLRequest(url: URL(string: "https://accounts.spotify.com/api/token")!)
         request.httpMethod = "POST"
         request.setValue("Basic \(credData.base64EncodedString())", forHTTPHeaderField: "Authorization")
@@ -74,37 +85,51 @@ class MusicManager: ObservableObject {
         request.httpBody = "grant_type=client_credentials".data(using: .utf8)
 
         let (data, _) = try await URLSession.shared.data(for: request)
-        let tokenResponse = try JSONDecoder().decode(TokenResponse.self, from: data)
+
+        // Debug: print raw response if decoding fails
+        guard let tokenResponse = try? JSONDecoder().decode(TokenResponse.self, from: data) else {
+            let raw = String(data: data, encoding: .utf8) ?? "unreadable"
+            print("MusicManager token error: \(raw)")
+            throw SpotifyError.invalidCredentials
+        }
+
         accessToken = tokenResponse.access_token
         tokenExpiry = Date().addingTimeInterval(TimeInterval(tokenResponse.expires_in - 60))
+        print("MusicManager: Token obtained ✓")
         return tokenResponse.access_token
     }
 
-    // MARK: - Search
-    private func searchTrack(song: String, artist: String, token: String) async throws -> String {
-        let query = "\(song) artist:\(artist)"
+    // MARK: - Search for 30s Preview URL
+    private func getPreviewURL(song: String, artist: String, token: String) async throws -> URL? {
+        let query = "\(song) \(artist)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://api.spotify.com/v1/search?q=\(query)&type=track&limit=5&market=AU"
+        let urlString = "https://api.spotify.com/v1/search?q=\(query)&type=track&limit=5"
+
         var request = URLRequest(url: URL(string: urlString)!)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(SearchResponse.self, from: data)
 
-        let best = response.tracks.items.first(where: {
-            $0.title.localizedCaseInsensitiveContains(song)
-        }) ?? response.tracks.items.first
+        guard let response = try? JSONDecoder().decode(SearchResponse.self, from: data) else {
+            let raw = String(data: data, encoding: .utf8) ?? "unreadable"
+            print("MusicManager search error: \(raw)")
+            throw SpotifyError.trackNotFound(song)
+        }
 
-        guard let track = best else { throw SpotifyError.trackNotFound(song) }
-        print("SpotifyManager: '\(track.title)' by \(track.artists.first?.name ?? "?")")
-        return track.id
-    }
+        // Find best match with a preview URL
+        let match = response.tracks.items.first(where: {
+            $0.preview_url != nil &&
+            $0.name.localizedCaseInsensitiveContains(song)
+        }) ?? response.tracks.items.first(where: { $0.preview_url != nil })
 
-    // MARK: - Open Spotify
-    private func openSpotify(trackID: String) {
-        let uri = URL(string: "spotify:track:\(trackID)")!
-        let web = URL(string: "https://open.spotify.com/track/\(trackID)")!
-        UIApplication.shared.open(UIApplication.shared.canOpenURL(uri) ? uri : web)
+        guard let track = match, let urlString = track.preview_url,
+              let url = URL(string: urlString) else {
+            print("MusicManager: No preview URL found for '\(song)'")
+            return nil
+        }
+
+        print("MusicManager: Preview found for '\(track.name)' ✓")
+        return url
     }
 }
 
@@ -113,25 +138,25 @@ enum SpotifyError: LocalizedError {
     case invalidCredentials, trackNotFound(String)
     var errorDescription: String? {
         switch self {
-        case .invalidCredentials: return "Invalid Spotify credentials"
-        case .trackNotFound(let s): return "Track '\(s)' not found"
+        case .invalidCredentials: return "Invalid Spotify credentials — check Client ID/Secret"
+        case .trackNotFound(let s): return "No preview found for '\(s)'"
         }
     }
 }
 
-// MARK: - Models
+// MARK: - Spotify API Models
 private struct TokenResponse: Decodable {
     let access_token: String
     let expires_in: Int
 }
+
 private struct SearchResponse: Decodable {
     let tracks: TrackList
     struct TrackList: Decodable { let items: [Track] }
     struct Track: Decodable {
-        let id: String
-        let title: String
+        let name: String
+        let preview_url: String?
         let artists: [Artist]
-        enum CodingKeys: String, CodingKey { case id, title = "name", artists }
     }
     struct Artist: Decodable { let name: String }
 }
