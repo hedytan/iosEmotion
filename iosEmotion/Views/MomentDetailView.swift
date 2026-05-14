@@ -106,7 +106,7 @@ struct MomentDetailView: View {
                                 
                                 ForEach(post.resonanceOptions) { option in
                                     Button(action: { 
-                                        let connection = ResonanceConnection(post: post, feeling: option.text, userMood: post.moodType)
+                                        let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
                                         onResonate(connection)
                                     }) {
                                         HStack {
