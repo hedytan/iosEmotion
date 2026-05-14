@@ -128,7 +128,14 @@ struct WonderShape: Shape {
 
 struct TenderShape: Shape {
     func path(in rect: CGRect) -> Path {
-        Path(ellipseIn: rect.insetBy(dx: rect.width*0.05, dy: rect.height*0.05))
+        var path = Path()
+        let w = rect.width, h = rect.height
+        path.move(to: CGPoint(x: w*0.5, y: h*0.05))
+        path.addCurve(to: CGPoint(x: w*0.92, y: h*0.48), control1: CGPoint(x: w*0.78, y: h*0.05), control2: CGPoint(x: w*0.95, y: h*0.22))
+        path.addCurve(to: CGPoint(x: w*0.52, y: h*0.95), control1: CGPoint(x: w*0.88, y: h*0.78), control2: CGPoint(x: w*0.72, y: h*0.95))
+        path.addCurve(to: CGPoint(x: w*0.08, y: h*0.52), control1: CGPoint(x: w*0.32, y: h*0.95), control2: CGPoint(x: w*0.05, y: h*0.72))
+        path.addCurve(to: CGPoint(x: w*0.5, y: h*0.05), control1: CGPoint(x: w*0.12, y: h*0.28), control2: CGPoint(x: w*0.22, y: h*0.05))
+        return path
     }
 }
 
