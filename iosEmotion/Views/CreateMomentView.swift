@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct CreateMomentView: View {
     @Environment(\.dismiss) var dismiss
