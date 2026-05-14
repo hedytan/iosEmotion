@@ -10,8 +10,8 @@ class MusicManager: ObservableObject {
     @Published var currentSong: String?
 
     // ─── YOUR SPOTIFY CREDENTIALS ───
-    private let clientID     = "YOUR_CLIENT_ID"
-    private let clientSecret = "YOUR_CLIENT_SECRET"
+    private let clientID     = "5f715c804bec414b98b3ae8894382acd"
+    private let clientSecret = "2990e41348c148878823b617f8590562"
     // ────────────────────────────────
 
     private var player: AVPlayer?
@@ -30,16 +30,18 @@ class MusicManager: ObservableObject {
 
     // MARK: - Public: Play in-app (no Spotify app switch)
     func playSong(song: String, artist: String) {
+        print("▶️ MusicManager.playSong called: '\(song)' by \(artist)")
         Task {
             do {
                 let token = try await getAccessToken()
+                print("▶️ Token OK, searching...")
                 guard let previewURL = try await getPreviewURL(song: song, artist: artist, token: token) else {
-                    print("MusicManager: No preview available for '\(song)'")
+                    print("⚠️ No preview URL for '\(song)' — try a different track or market")
                     return
                 }
                 await startPlayback(url: previewURL, title: song)
             } catch {
-                print("MusicManager error: \(error.localizedDescription)")
+                print("❌ MusicManager error: \(error.localizedDescription)")
             }
         }
     }
@@ -109,6 +111,8 @@ class MusicManager: ObservableObject {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let (data, _) = try await URLSession.shared.data(for: request)
+        let raw = String(data: data, encoding: .utf8) ?? ""
+        print("▶️ Spotify search raw: \(raw.prefix(500))")
 
         guard let response = try? JSONDecoder().decode(SearchResponse.self, from: data) else {
             let raw = String(data: data, encoding: .utf8) ?? "unreadable"
