@@ -8,6 +8,7 @@ struct MomentDetailView: View {
     
     @State private var selectedOption: ResonanceOption?
     @State private var showWriteSheet = false
+    @State private var isNavigatingToResonance = false
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -60,7 +61,7 @@ struct MomentDetailView: View {
                                 .kerning(2)
                                 .foregroundColor(post.themeColor.opacity(0.7))
                             
-                            Text("“\(post.quote)”")
+                            Text("“\(post.quote.trimmingCharacters(in: .whitespacesAndNewlines))”")
                                 .font(.custom("Lora-Italic", size: 22))
                                 .italic()
                                 .lineSpacing(8)
@@ -105,9 +106,10 @@ struct MomentDetailView: View {
                                     .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.08), lineWidth: 1))
                                     .foregroundColor(.white.opacity(0.4))
                                 }
-                                                                // CUSTOM RESONANCES (Fan created)
+                                // CUSTOM RESONANCES (Fan created)
                                 ForEach(post.customResonances) { option in
                                     Button(action: { 
+                                        isNavigatingToResonance = true
                                         let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
                                         onResonate(connection)
                                     }) {
@@ -132,6 +134,7 @@ struct MomentDetailView: View {
                                 // PRESET RESONANCES
                                 ForEach(post.resonanceOptions) { option in
                                     Button(action: { 
+                                        isNavigatingToResonance = true
                                         let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
                                         onResonate(connection)
                                     }) {
@@ -180,14 +183,18 @@ struct MomentDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            isNavigatingToResonance = false
             MusicManager.shared.playSong(song: post.song, artist: post.artist)
         }
         .onDisappear {
-            MusicManager.shared.stop()
+            if !isNavigatingToResonance {
+                MusicManager.shared.stop()
+            }
         }
         .sheet(isPresented: $showWriteSheet) {
             WriteResonanceSheet(post: post) { feeling, moodType in
                 store.addCustomResonance(for: post.id, text: feeling, mood: moodType)
+                isNavigatingToResonance = true
                 let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
                 onResonate(connection)
             }

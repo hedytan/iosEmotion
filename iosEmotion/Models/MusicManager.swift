@@ -30,12 +30,19 @@ class MusicManager: ObservableObject {
 
     // MARK: - Public: Play in-app (no Spotify app switch)
     func playSong(song: String, artist: String) {
-        print("▶️ MusicManager.playSong called: '\(song)' by \(artist)")
+        if currentSong == song && isPlaying {
+            print("▶️ MusicManager: '\(song)' is already playing, ignoring play request.")
+            return
+        }
+        
+        let cleanArtist = artist.replacingOccurrences(of: "(Me)", with: "").trimmingCharacters(in: .whitespaces)
+        
+        print("▶️ MusicManager.playSong called: '\(song)' by \(cleanArtist)")
         Task {
             do {
                 let token = try await getAccessToken()
                 print("▶️ Token OK, searching...")
-                guard let previewURL = try await getPreviewURL(song: song, artist: artist, token: token) else {
+                guard let previewURL = try await getPreviewURL(song: song, artist: cleanArtist, token: token) else {
                     print("⚠️ No preview URL for '\(song)' — try a different track or market")
                     return
                 }

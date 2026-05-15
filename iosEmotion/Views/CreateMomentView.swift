@@ -226,7 +226,7 @@ struct CreateMomentView: View {
     private func publishMoment() {
         var moodType = selectedPreset ?? .custom
         var newPost = Post(
-            artist: "Men I Trust", 
+            artist: "Men I Trust (Me)", 
             moodType: moodType, 
             quote: quoteText, 
             song: selectedSong ?? "Show Me How", 
