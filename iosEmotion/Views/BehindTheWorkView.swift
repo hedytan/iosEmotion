@@ -77,6 +77,16 @@ struct FeedPostCard: View {
                 .padding(.top, 11)
                 .padding(.bottom, 11)
             
+            // ATTACHED IMAGE THUMBNAIL
+            if let img = post.attachedImage {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 80, height: 56)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .padding(.bottom, 11)
+            }
+            
             // BOTTOM ROW
             HStack {
                 Text("\(post.resonanceCount) resonated")

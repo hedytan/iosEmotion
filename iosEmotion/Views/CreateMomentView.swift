@@ -156,22 +156,31 @@ struct CreateMomentView: View {
                             
                             PhotosPicker(selection: $pickerItem, matching: .images) {
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white.opacity(0.12), style: StrokeStyle(lineWidth: 1, dash: [4]))
-                                        .frame(height: 100)
-                                    
-                                    HStack(spacing: 12) {
-                                        Image(systemName: attachedImage == nil ? "photo" : "checkmark.circle.fill")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.white.opacity(0.4))
+                                    if let img = attachedImage {
+                                        Image(uiImage: img)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(maxWidth: .infinity, maxHeight: 100)
+                                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                                            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.12), lineWidth: 1))
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(Color.white.opacity(0.12), style: StrokeStyle(lineWidth: 1, dash: [4]))
+                                            .frame(height: 100)
                                         
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(attachedImage == nil ? "attach a photo" : "photo attached")
-                                                .font(.custom("Lora-Italic", size: 15))
-                                                .foregroundColor(.white.opacity(attachedImage == nil ? 0.45 : 0.75))
-                                            Text("camera roll · take photo")
-                                                .font(.custom("DMMono-Regular", size: 10))
-                                                .foregroundColor(.white.opacity(0.3))
+                                        HStack(spacing: 12) {
+                                            Image(systemName: "photo")
+                                                .font(.system(size: 16))
+                                                .foregroundColor(.white.opacity(0.4))
+                                            
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text("attach a photo")
+                                                    .font(.custom("Lora-Italic", size: 15))
+                                                    .foregroundColor(.white.opacity(0.45))
+                                                Text("camera roll · take photo")
+                                                    .font(.custom("DMMono-Regular", size: 10))
+                                                    .foregroundColor(.white.opacity(0.3))
+                                            }
                                         }
                                     }
                                 }

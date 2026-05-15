@@ -18,6 +18,26 @@ struct MomentDetailView: View {
             RadialGradient(colors: [post.themeColor.opacity(0.12), .clear], center: .top, startRadius: 0, endRadius: 400)
                 .ignoresSafeArea()
             
+            // BLURRED IMAGE BACKGROUND
+            if let img = post.attachedImage {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 480)
+                    .clipped()
+                    .blur(radius: 40)
+                    .opacity(0.25)
+                    .mask(
+                        LinearGradient(
+                            colors: [.black, .black.opacity(0.6), .clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .ignoresSafeArea()
+            }
+            
             VStack(spacing: 0) {
                 // TOP BAR (Metadata only now)
                 HStack {
