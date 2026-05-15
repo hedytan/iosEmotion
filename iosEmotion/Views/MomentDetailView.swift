@@ -20,14 +20,17 @@ struct MomentDetailView: View {
             
             // BLURRED IMAGE BACKGROUND
             if let img = post.attachedImage {
-                Image(uiImage: img)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 480)
+                Color.clear
+                    .frame(width: UIScreen.main.bounds.width, height: 480)
+                    .overlay(
+                        Image(uiImage: img)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width, height: 480)
+                            .blur(radius: 40)
+                            .opacity(0.25)
+                    )
                     .clipped()
-                    .blur(radius: 40)
-                    .opacity(0.25)
                     .mask(
                         LinearGradient(
                             colors: [.black, .black.opacity(0.6), .clear],
