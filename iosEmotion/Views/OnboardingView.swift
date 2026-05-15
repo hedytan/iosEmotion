@@ -4,6 +4,7 @@ struct OnboardingView: View {
     @EnvironmentObject var store: PostStore
     @Binding var selectedTab: Int
     @State private var rotation: Double = 0
+    @State private var breathingScale: CGFloat = 0.85
     
     let phrases = [
         "echoes of shared solitude",
@@ -36,10 +37,14 @@ struct OnboardingView: View {
                                 .rotationEffect(.degrees(Double(index) * (360.0 / Double(phrases.count))))
                         }
                     }
+                    .scaleEffect(breathingScale)
                     .rotationEffect(.degrees(rotation))
                     .onAppear {
                         withAnimation(.linear(duration: 35).repeatForever(autoreverses: false)) {
                             rotation = 360
+                        }
+                        withAnimation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true)) {
+                            breathingScale = 1.15
                         }
                     }
                     
@@ -69,11 +74,11 @@ struct OnboardingView: View {
                 }) {
                     VStack(spacing: 16) {
                         Text("start new idea")
-                            .font(.custom("DMMono-Regular", size: 11.5))
+                            .font(.custom("DMMono-Regular", size: 15))
                             .kerning(1.6)
                             .foregroundColor(.white)
-                            .padding(.horizontal, 44)
-                            .padding(.vertical, 15)
+                            .padding(.horizontal, 48)
+                            .padding(.vertical, 18)
                             .background(
                                 Capsule()
                                     .stroke(Color.white.opacity(0.18), lineWidth: 1)
