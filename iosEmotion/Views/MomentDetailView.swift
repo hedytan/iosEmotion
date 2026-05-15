@@ -18,29 +18,6 @@ struct MomentDetailView: View {
             RadialGradient(colors: [post.themeColor.opacity(0.12), .clear], center: .top, startRadius: 0, endRadius: 400)
                 .ignoresSafeArea()
             
-            // BLURRED IMAGE BACKGROUND
-            if let img = post.attachedImage {
-                Color.clear
-                    .frame(width: UIScreen.main.bounds.width, height: 480)
-                    .overlay(
-                        Image(uiImage: img)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: UIScreen.main.bounds.width, height: 480)
-                            .blur(radius: 40)
-                            .opacity(0.25)
-                    )
-                    .clipped()
-                    .mask(
-                        LinearGradient(
-                            colors: [.black, .black.opacity(0.6), .clear],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .ignoresSafeArea()
-            }
-            
             VStack(spacing: 0) {
                 // TOP BAR (Metadata only now)
                 HStack {
@@ -61,7 +38,8 @@ struct MomentDetailView: View {
                                 .foregroundColor(.white.opacity(0.3))
                         }
                         
-                        // LARGE MOOD SHAPE
+                        VStack(spacing: 24) {
+                            // LARGE MOOD SHAPE
                         HStack {
                             Spacer()
                             MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, drawing: post.customShape)
@@ -97,6 +75,28 @@ struct MomentDetailView: View {
                         }
                         .padding(.horizontal, 20)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        } // End of Wrapper VStack
+                        .background(
+                            Group {
+                                if let img = post.attachedImage {
+                                    Image(uiImage: img)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: UIScreen.main.bounds.width)
+                                        .blur(radius: 45)
+                                        .overlay(Color.black.opacity(0.6))
+                                        .opacity(0.4)
+                                        .clipped()
+                                        .mask(
+                                            LinearGradient(
+                                                colors: [.clear, .black, .black, .clear],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                }
+                            }
+                        )
                         
                         // RESONANCE SECTION
                         VStack(spacing: 24) {
