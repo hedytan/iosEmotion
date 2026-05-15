@@ -57,8 +57,8 @@ struct ConnectionView: View {
                             .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true), value: breathing)
                         
                         Text(post.artist)
-                            .font(.custom("DMMono-Regular", size: 8))
-                            .foregroundColor(.white.opacity(0.20))
+                            .font(.custom("DMMono-Regular", size: 11))
+                            .foregroundColor(.white.opacity(0.25))
                     }
                     
                     // Connection Bridge
@@ -116,8 +116,8 @@ struct ConnectionView: View {
                             .animation(.easeInOut(duration: 4).delay(0.5).repeatForever(autoreverses: true), value: breathing)
                         
                         Text("You")
-                            .font(.custom("DMMono-Regular", size: 8))
-                            .foregroundColor(.white.opacity(0.20))
+                            .font(.custom("DMMono-Regular", size: 11))
+                            .foregroundColor(.white.opacity(0.25))
                     }
                 }
                 .padding(.bottom, 20)
@@ -125,52 +125,52 @@ struct ConnectionView: View {
                 // 2. MOOD NAMES ROW
                 HStack {
                     Text(post.mood.uppercased())
-                        .font(.custom("DMMono-Regular", size: 8))
-                        .foregroundColor(post.themeColor.opacity(0.5))
+                        .font(.custom("DMMono-Regular", size: 11))
+                        .foregroundColor(post.themeColor.opacity(0.6))
                     Spacer()
                     Text("meets")
-                        .font(.custom("DMMono-Regular", size: 7))
-                        .foregroundColor(.white.opacity(0.1))
+                        .font(.custom("DMMono-Regular", size: 10))
+                        .foregroundColor(.white.opacity(0.2))
                     Spacer()
                     Text(userMood.displayName.uppercased())
-                        .font(.custom("DMMono-Regular", size: 8))
-                        .foregroundColor(userMood.color.opacity(0.5))
+                        .font(.custom("DMMono-Regular", size: 11))
+                        .foregroundColor(userMood.color.opacity(0.6))
                 }
                 .frame(width: 240)
                 .padding(.bottom, 18)
                 
                 // 3. INTRO TEXT
                 Text("\(post.artist) shared \(post.mood).\nYou felt \(moodsMatch ? "the same" : "something different") —")
-                    .font(.custom("Lora-Italic", size: 13))
-                    .foregroundColor(.white.opacity(0.42))
+                    .font(.custom("Lora-Italic", size: 16))
+                    .foregroundColor(.white.opacity(0.55))
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .padding(.bottom, 12)
+                    .lineSpacing(6)
+                    .padding(.bottom, 16)
                 
                 // 4. FEELING TEXT
                 Text("“\(feeling)”")
-                    .font(.custom("Lora-Italic", size: 18))
-                    .foregroundColor(.white.opacity(0.88))
+                    .font(.custom("Lora-Italic", size: 24))
+                    .foregroundColor(.white.opacity(0.95))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 280)
                     .padding(.bottom, 16)
                 
                 // 5. COUNT TEXT
                 Text("you + \(randomOthers) others felt something \(userMood.displayName) here")
-                    .font(.custom("DMMono-Regular", size: 8))
-                    .foregroundColor(.white.opacity(0.18))
-                    .padding(.bottom, 22)
+                    .font(.custom("DMMono-Regular", size: 11))
+                    .foregroundColor(.white.opacity(0.25))
+                    .padding(.bottom, 26)
                 
                 // 6. DIVIDER
                 Rectangle()
-                    .fill(Color.white.opacity(0.06))
-                    .frame(width: 36, height: 1)
-                    .padding(.bottom, 18)
+                    .fill(Color.white.opacity(0.1))
+                    .frame(width: 40, height: 1)
+                    .padding(.bottom, 22)
                 
                 // 7. INSIGHT TEXT
                 Text(moodsMatch ? "You both felt \(userMood.displayName). You're not alone." : "\(post.artist)'s \(post.mood) unlocked your \(userMood.displayName). That's a real connection.")
-                    .font(.custom("Lora-Italic", size: 12))
-                    .foregroundColor(.white.opacity(0.26))
+                    .font(.custom("Lora-Italic", size: 15))
+                    .foregroundColor(.white.opacity(0.35))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 220)
                 

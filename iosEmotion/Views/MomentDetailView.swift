@@ -73,6 +73,7 @@ struct MomentDetailView: View {
                                 .foregroundColor(.white.opacity(0.15))
                         }
                         .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         
                         // RESONANCE SECTION
                         VStack(spacing: 24) {
