@@ -16,7 +16,7 @@ struct CreateMomentView: View {
     @State private var pickerItem: PhotosPickerItem? = nil
     
     let presets = Post.MoodType.allCases.filter { $0 != .custom }
-    let songs = ["Midnight City", "Starboy", "Nightcall", "Ocean Drive", "After Hours"]
+    let songs = ["Show Me How", "Lauren", "Tailwhip", "Seven", "Numb"]
     
     var isReady: Bool {
         !quoteText.isEmpty && (selectedPreset != nil || selectedCustomMood != nil) && selectedSong != nil
@@ -226,10 +226,10 @@ struct CreateMomentView: View {
     private func publishMoment() {
         var moodType = selectedPreset ?? .custom
         var newPost = Post(
-            artist: "Hedy (me)", 
+            artist: "Men I Trust", 
             moodType: moodType, 
             quote: quoteText, 
-            song: selectedSong ?? "Unknown", 
+            song: selectedSong ?? "Show Me How", 
             year: "2026", 
             resonanceCount: 0
         )
