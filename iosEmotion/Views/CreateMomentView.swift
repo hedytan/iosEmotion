@@ -311,6 +311,7 @@ struct CustomMoodSelectionItem: View {
                 Image(uiImage: custom.thumbnail)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .padding(6)
                     .frame(width: 52, height: 52)
             }
             .frame(width: 52, height: 52)

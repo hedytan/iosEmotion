@@ -126,7 +126,9 @@ struct DrawMoodView: View {
     }
     
     private func saveMood() {
-        let image = canvasView.drawing.image(from: canvasView.bounds, scale: 1.0)
+        let drawingBounds = canvasView.drawing.bounds
+        let captureRect = drawingBounds.isEmpty ? CGRect(x: 0, y: 0, width: 1, height: 1) : drawingBounds
+        let image = canvasView.drawing.image(from: captureRect, scale: UIScreen.main.scale)
         let newCustomMood = CustomMood(
             name: moodName,
             drawing: canvasView.drawing,
