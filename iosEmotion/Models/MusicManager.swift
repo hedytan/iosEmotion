@@ -55,26 +55,59 @@ class MusicManager: ObservableObject {
 
     // MARK: - Stop
     func stop() {
-        player?.pause()
+        guard let currentPlayer = player else { return }
+        
+        // Detach player immediately so UI updates and new songs can play
         player = nil
         isPlaying = false
         currentSong = nil
-        print("MusicManager: Stopped ✓")
+        
+        // Smooth fade out over 1.5 seconds
+        Task {
+            let steps = 15
+            let interval = 1.5 / Double(steps)
+            let stepAmount = currentPlayer.volume / Float(steps)
+            
+            for _ in 0..<steps {
+                currentPlayer.volume = max(0, currentPlayer.volume - stepAmount)
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+            }
+            currentPlayer.pause()
+            print("MusicManager: Stopped and faded out ✓")
+        }
     }
 
     // MARK: - Internal Playback
     private func startPlayback(url: URL, title: String) async {
-        // Stop any current track first
-        player?.pause()
+        // Stop and fade out any current track first
+        stop()
 
         let item = AVPlayerItem(url: url)
-        player = AVPlayer(playerItem: item)
-        player?.volume = 1.0
-        player?.play()
+        let newPlayer = AVPlayer(playerItem: item)
+        newPlayer.volume = 0.0
+        newPlayer.play()
 
-        currentSong = title
-        isPlaying = true
+        self.player = newPlayer
+        self.currentSong = title
+        self.isPlaying = true
         print("MusicManager: Now playing '\(title)' in-app ✓")
+        
+        // Smooth fade in over 2.5 seconds
+        Task {
+            let steps = 25
+            let interval = 2.5 / Double(steps)
+            let stepAmount = 1.0 / Float(steps)
+            
+            for _ in 0..<steps {
+                guard self.player === newPlayer else { return }
+                newPlayer.volume = min(1.0, newPlayer.volume + stepAmount)
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+            }
+            
+            if self.player === newPlayer {
+                newPlayer.volume = 1.0
+            }
+        }
     }
 
     // MARK: - Get Spotify Access Token
