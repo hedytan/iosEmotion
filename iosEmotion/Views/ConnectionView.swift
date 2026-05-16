@@ -36,22 +36,10 @@ struct ConnectionView: View {
                 Spacer()
                 
                 // 1. SHAPES + LINE ROW
-                HStack(alignment: .top, spacing: 0) {
+                HStack(alignment: .center, spacing: 0) {
                     // Artist Side
                     VStack(spacing: 12) {
-                        MoodShape(type: post.moodType)
-                            .fill(
-                                RadialGradient(
-                                    colors: [post.themeColor.opacity(0.20), .clear],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 44
-                                )
-                            )
-                            .overlay(
-                                MoodShape(type: post.moodType)
-                                    .stroke(post.themeColor.opacity(0.55), lineWidth: 1.1)
-                            )
+                        MoodShapeView(type: post.moodType, color: post.themeColor, drawing: post.customShape)
                             .frame(width: 68, height: 68)
                             .scaleEffect(breathing ? 1.05 : 1.0)
                             .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true), value: breathing)
@@ -62,55 +50,49 @@ struct ConnectionView: View {
                     }
                     
                     // Connection Bridge
-                    ZStack {
-                        GeometryReader { lineGeo in
-                            let lineWidth = lineGeo.size.width
-                            
-                            ZStack {
-                                LinearGradient(
-                                    colors: [
-                                        post.themeColor.opacity(0.5),
-                                        Color.white.opacity(0.05),
-                                        userMood.color.opacity(0.5)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                                .frame(height: 1)
-                                .position(x: lineWidth/2, y: lineGeo.size.height/2)
+                    VStack(spacing: 0) {
+                        ZStack {
+                            GeometryReader { lineGeo in
+                                let lineWidth = lineGeo.size.width
                                 
-                                // Traveling Spark
-                                Circle()
-                                    .fill(Color.white.opacity(0.55))
-                                    .frame(width: 7, height: 7)
+                                ZStack {
+                                    LinearGradient(
+                                        colors: [
+                                            post.themeColor.opacity(0.5),
+                                            Color.white.opacity(0.05),
+                                            userMood.color.opacity(0.5)
+                                        ],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                    .frame(height: 1)
                                     .position(x: lineWidth/2, y: lineGeo.size.height/2)
-                                    .offset(x: dotOffset)
-                                    .onAppear {
-                                        dotOffset = -lineWidth/2
-                                        withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) {
-                                            dotOffset = lineWidth/2
+                                    
+                                    // Traveling Spark
+                                    Circle()
+                                        .fill(Color.white.opacity(0.55))
+                                        .frame(width: 7, height: 7)
+                                        .position(x: lineWidth/2, y: lineGeo.size.height/2)
+                                        .offset(x: dotOffset)
+                                        .onAppear {
+                                            dotOffset = -lineWidth/2
+                                            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: false)) {
+                                                dotOffset = lineWidth/2
+                                            }
                                         }
-                                    }
+                                }
                             }
                         }
+                        .frame(width: 100, height: 68)
+                        
+                        // Spacer to balance the text height (11) and spacing (12) in the VStacks
+                        Spacer()
+                            .frame(height: 23)
                     }
-                    .frame(width: 100, height: 68)
                     
                     // Fan Side
                     VStack(spacing: 12) {
-                        MoodShape(type: userMood)
-                            .fill(
-                                RadialGradient(
-                                    colors: [userMood.color.opacity(0.20), .clear],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 44
-                                )
-                            )
-                            .overlay(
-                                MoodShape(type: userMood)
-                                    .stroke(userMood.color.opacity(0.55), lineWidth: 1.1)
-                            )
+                        MoodShapeView(type: userMood, color: userMood.color)
                             .frame(width: 68, height: 68)
                             .scaleEffect(breathing ? 1.05 : 1.0)
                             .animation(.easeInOut(duration: 4).delay(0.5).repeatForever(autoreverses: true), value: breathing)
