@@ -297,14 +297,24 @@ struct CustomMoodSelectionItem: View {
     var isSelected: Bool
     var body: some View {
         VStack(spacing: 12) {
-            Image(uiImage: custom.thumbnail)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 52, height: 52)
-                .padding(8)
-                .background(Circle().fill(custom.strokeColor.opacity(isSelected ? 0.35 : 0.12)))
-                .overlay(Circle().stroke(custom.strokeColor.opacity(isSelected ? 0.95 : 0.45), lineWidth: 1.1))
-                .scaleEffect(isSelected ? 1.15 : 1.0)
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [custom.strokeColor.opacity(isSelected ? 0.5 : 0.15), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 28
+                        )
+                    )
+                
+                Image(uiImage: custom.thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 52, height: 52)
+            }
+            .frame(width: 52, height: 52)
+            .scaleEffect(isSelected ? 1.15 : 1.0)
             
             Text(custom.name.uppercased())
                 .font(.custom("DMMono-Regular", size: 9))
