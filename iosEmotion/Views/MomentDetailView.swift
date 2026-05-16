@@ -76,20 +76,6 @@ struct MomentDetailView: View {
                             Text(currentPost.song)
                                 .font(.custom("DMMono-Regular", size: 10))
                                 .foregroundColor(.white.opacity(0.15))
-                            
-                            if let img = currentPost.attachedImage {
-                                Image(uiImage: img)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 76, height: 102)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .opacity(0.85)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-                                    )
-                                    .padding(.top, 8)
-                            }
                         }
                         .padding(.horizontal, 20)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -100,18 +86,20 @@ struct MomentDetailView: View {
                                     Image(uiImage: img)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: UIScreen.main.bounds.width)
-                                        .blur(radius: 45)
-                                        .overlay(Color.black.opacity(0.6))
-                                        .opacity(0.4)
-                                        .clipped()
+                                        // A square-ish frame slightly larger than the content
+                                        .frame(width: UIScreen.main.bounds.width * 0.85, height: 400)
+                                        .blur(radius: 12)
+                                        .opacity(0.55)
                                         .mask(
-                                            LinearGradient(
-                                                colors: [.clear, .black, .black, .clear],
-                                                startPoint: .top,
-                                                endPoint: .bottom
+                                            RadialGradient(
+                                                gradient: Gradient(colors: [.black, .black.opacity(0.8), .clear]),
+                                                center: .center,
+                                                startRadius: 80,
+                                                endRadius: 200
                                             )
                                         )
+                                        // Slight vertical offset to center better behind the shape
+                                        .offset(y: -20)
                                 }
                             }
                         )
