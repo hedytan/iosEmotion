@@ -132,50 +132,78 @@ struct MomentDetailView: View {
                                 }
                                 // CUSTOM RESONANCES (Fan created)
                                 ForEach(post.customResonances) { option in
+                                    let isSelected = selectedOption?.id == option.id
+                                    let displayCount = option.count + (isSelected ? 1 : 0)
+                                    
                                     Button(action: { 
+                                        withAnimation(.spring()) {
+                                            selectedOption = option
+                                        }
                                         isNavigatingToResonance = true
                                         let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
-                                        onResonate(connection)
+                                        
+                                        // Slight delay to show the selection state before navigating
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            onResonate(connection)
+                                        }
                                     }) {
                                         HStack {
                                             Circle()
-                                                .fill(option.mood.color.opacity(0.8))
+                                                .fill(option.mood.color.opacity(isSelected ? 1.0 : 0.8))
                                                 .frame(width: 6, height: 6)
                                             Text(option.text)
                                                 .font(.custom("Lora-Italic", size: 16))
-                                                .foregroundColor(.white.opacity(0.85))
+                                                .foregroundColor(.white.opacity(isSelected ? 1.0 : 0.85))
                                             Spacer()
-                                            Text(option.count > 0 ? "\(option.count)" : "")
+                                            Text(displayCount > 0 ? "\(displayCount)" : "")
                                                 .font(.custom("DMMono-Regular", size: 11))
-                                                .foregroundColor(.white.opacity(0.3))
+                                                .foregroundColor(.white.opacity(isSelected ? 0.6 : 0.3))
                                         }
                                         .padding(20)
-                                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.03)))
+                                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(isSelected ? 0.08 : 0.03)))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(isSelected ? Color.white.opacity(0.2) : Color.clear, lineWidth: 1)
+                                        )
                                         .foregroundColor(.white.opacity(0.7))
                                     }
                                 }
                                 
                                 // PRESET RESONANCES
                                 ForEach(post.resonanceOptions) { option in
+                                    let isSelected = selectedOption?.id == option.id
+                                    let displayCount = option.count + (isSelected ? 1 : 0)
+                                    
                                     Button(action: { 
+                                        withAnimation(.spring()) {
+                                            selectedOption = option
+                                        }
                                         isNavigatingToResonance = true
                                         let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
-                                        onResonate(connection)
+                                        
+                                        // Slight delay to show the selection state before navigating
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            onResonate(connection)
+                                        }
                                     }) {
                                         HStack {
                                             Circle()
-                                                .fill(option.mood.color.opacity(0.8))
+                                                .fill(option.mood.color.opacity(isSelected ? 1.0 : 0.8))
                                                 .frame(width: 6, height: 6)
                                             Text(option.text)
                                                 .font(.custom("Lora-Italic", size: 16))
-                                                .foregroundColor(.white.opacity(0.85))
+                                                .foregroundColor(.white.opacity(isSelected ? 1.0 : 0.85))
                                             Spacer()
-                                            Text(option.count > 0 ? "\(option.count)" : "")
+                                            Text(displayCount > 0 ? "\(displayCount)" : "")
                                                 .font(.custom("DMMono-Regular", size: 11))
-                                                .foregroundColor(.white.opacity(0.3))
+                                                .foregroundColor(.white.opacity(isSelected ? 0.6 : 0.3))
                                         }
                                         .padding(20)
-                                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(0.03)))
+                                        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white.opacity(isSelected ? 0.08 : 0.03)))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 16)
+                                                .stroke(isSelected ? Color.white.opacity(0.2) : Color.clear, lineWidth: 1)
+                                        )
                                         .foregroundColor(.white.opacity(0.7))
                                     }
                                 }
