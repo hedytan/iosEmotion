@@ -88,14 +88,14 @@ struct MomentDetailView: View {
                                         .scaledToFill()
                                         // A square-ish frame slightly larger than the content
                                         .frame(width: UIScreen.main.bounds.width * 0.85, height: 400)
-                                        .blur(radius: 12)
-                                        .opacity(0.55)
+                                        .blur(radius: 5)
+                                        .opacity(0.7)
                                         .mask(
                                             RadialGradient(
                                                 gradient: Gradient(colors: [.black, .black.opacity(0.8), .clear]),
                                                 center: .center,
-                                                startRadius: 80,
-                                                endRadius: 200
+                                                startRadius: 120,
+                                                endRadius: 280
                                             )
                                         )
                                         // Slight vertical offset to center better behind the shape
