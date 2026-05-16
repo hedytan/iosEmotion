@@ -36,7 +36,7 @@ struct ConnectionView: View {
                 Spacer()
                 
                 // 1. SHAPES + LINE ROW
-                HStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
                     // Artist Side
                     VStack(spacing: 12) {
                         MoodShape(type: post.moodType)
@@ -94,7 +94,7 @@ struct ConnectionView: View {
                             }
                         }
                     }
-                    .frame(height: 68)
+                    .frame(width: 100, height: 68)
                     
                     // Fan Side
                     VStack(spacing: 12) {
