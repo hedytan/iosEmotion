@@ -246,9 +246,14 @@ struct MomentDetailView: View {
         .sheet(isPresented: $showWriteSheet) {
             WriteResonanceSheet(post: post) { feeling, moodType in
                 store.addCustomResonance(for: post.id, text: feeling, mood: moodType)
-                isNavigatingToResonance = true
-                let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
-                onResonate(connection)
+                
+                // Delay the navigation so the sheet has time to slide down smoothly
+                // This prevents the "jumping" visual glitch caused by simultaneous transitions
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                    isNavigatingToResonance = true
+                    let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
+                    onResonate(connection)
+                }
             }
         }
     }
