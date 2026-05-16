@@ -10,12 +10,16 @@ struct MomentDetailView: View {
     @State private var showWriteSheet = false
     @State private var isNavigatingToResonance = false
     
+    var currentPost: Post {
+        store.posts.first(where: { $0.id == post.id }) ?? post
+    }
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             Color(hex: "07060A").ignoresSafeArea()
             
             // AMBIENT MOOD GLOW
-            RadialGradient(colors: [post.themeColor.opacity(0.12), .clear], center: .top, startRadius: 0, endRadius: 400)
+            RadialGradient(colors: [currentPost.themeColor.opacity(0.12), .clear], center: .top, startRadius: 0, endRadius: 400)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -30,10 +34,10 @@ struct MomentDetailView: View {
                         
                         // ARTIST & SONG
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(post.artist)
+                            Text(currentPost.artist)
                                 .font(.system(size: 16, weight: .medium))
                                 .foregroundColor(.white.opacity(0.85))
-                            Text("now · \(post.song)")
+                            Text("now · \(currentPost.song)")
                                 .font(.custom("DMMono-Regular", size: 11.5))
                                 .foregroundColor(.white.opacity(0.3))
                         }
@@ -42,11 +46,11 @@ struct MomentDetailView: View {
                             // LARGE MOOD SHAPE
                         HStack {
                             Spacer()
-                            MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, drawing: post.customShape)
+                            MoodShapeView(type: currentPost.moodType, color: currentPost.themeColor, isLarge: true, drawing: currentPost.customShape)
                                 .frame(width: 180, height: 180)
                                 .blur(radius: 1)
                                 .overlay(
-                                    MoodShapeView(type: post.moodType, color: post.themeColor, isLarge: true, drawing: post.customShape)
+                                    MoodShapeView(type: currentPost.moodType, color: currentPost.themeColor, isLarge: true, drawing: currentPost.customShape)
                                         .frame(width: 180, height: 180)
                                         .opacity(0.4)
                                         .blur(radius: 20)
@@ -57,19 +61,19 @@ struct MomentDetailView: View {
                         
                         // QUOTE
                         VStack(alignment: .center, spacing: 16) {
-                            Text((post.customShapeName ?? post.mood).uppercased())
+                            Text((currentPost.customShapeName ?? currentPost.mood).uppercased())
                                 .font(.custom("DMMono-Regular", size: 11))
                                 .kerning(2)
-                                .foregroundColor(post.themeColor.opacity(0.7))
+                                .foregroundColor(currentPost.themeColor.opacity(0.7))
                             
-                            Text("“\(post.quote.trimmingCharacters(in: .whitespacesAndNewlines))”")
+                            Text("“\(currentPost.quote.trimmingCharacters(in: .whitespacesAndNewlines))”")
                                 .font(.custom("Lora-Italic", size: 22))
                                 .italic()
                                 .lineSpacing(8)
                                 .foregroundColor(.white.opacity(0.9))
                                 .multilineTextAlignment(.center)
                             
-                            Text(post.song)
+                            Text(currentPost.song)
                                 .font(.custom("DMMono-Regular", size: 10))
                                 .foregroundColor(.white.opacity(0.15))
                         }
@@ -78,7 +82,7 @@ struct MomentDetailView: View {
                         } // End of Wrapper VStack
                         .background(
                             Group {
-                                if let img = post.attachedImage {
+                                if let img = currentPost.attachedImage {
                                     Image(uiImage: img)
                                         .resizable()
                                         .scaledToFill()
@@ -106,7 +110,7 @@ struct MomentDetailView: View {
                                     .kerning(1.2)
                                     .foregroundColor(.white.opacity(0.45))
                                 Spacer()
-                                Text("\(post.resonanceCount) total")
+                                Text("\(currentPost.resonanceCount) total")
                                     .font(.custom("DMMono-Regular", size: 13))
                                     .foregroundColor(.white.opacity(0.4))
                             }
@@ -131,7 +135,7 @@ struct MomentDetailView: View {
                                     .foregroundColor(.white.opacity(0.4))
                                 }
                                 // CUSTOM RESONANCES (Fan created)
-                                ForEach(post.customResonances) { option in
+                                ForEach(currentPost.customResonances) { option in
                                     let isSelected = selectedOption?.id == option.id
                                     let displayCount = option.count + (isSelected ? 1 : 0)
                                     
@@ -140,7 +144,7 @@ struct MomentDetailView: View {
                                             selectedOption = option
                                         }
                                         isNavigatingToResonance = true
-                                        let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
+                                        let connection = ResonanceConnection(post: currentPost, feeling: option.text, userMood: option.mood)
                                         
                                         // Slight delay to show the selection state before navigating
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -170,7 +174,7 @@ struct MomentDetailView: View {
                                 }
                                 
                                 // PRESET RESONANCES
-                                ForEach(post.resonanceOptions) { option in
+                                ForEach(currentPost.resonanceOptions) { option in
                                     let isSelected = selectedOption?.id == option.id
                                     let displayCount = option.count + (isSelected ? 1 : 0)
                                     
@@ -179,7 +183,7 @@ struct MomentDetailView: View {
                                             selectedOption = option
                                         }
                                         isNavigatingToResonance = true
-                                        let connection = ResonanceConnection(post: post, feeling: option.text, userMood: option.mood)
+                                        let connection = ResonanceConnection(post: currentPost, feeling: option.text, userMood: option.mood)
                                         
                                         // Slight delay to show the selection state before navigating
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -236,7 +240,7 @@ struct MomentDetailView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             isNavigatingToResonance = false
-            MusicManager.shared.playSong(song: post.song, artist: post.artist)
+            MusicManager.shared.playSong(song: currentPost.song, artist: currentPost.artist)
         }
         .onDisappear {
             if !isNavigatingToResonance {
@@ -244,14 +248,14 @@ struct MomentDetailView: View {
             }
         }
         .sheet(isPresented: $showWriteSheet) {
-            WriteResonanceSheet(post: post) { feeling, moodType in
-                store.addCustomResonance(for: post.id, text: feeling, mood: moodType)
+            WriteResonanceSheet(post: currentPost) { feeling, moodType in
+                store.addCustomResonance(for: currentPost.id, text: feeling, mood: moodType)
                 
                 // Delay the navigation so the sheet has time to slide down smoothly
                 // This prevents the "jumping" visual glitch caused by simultaneous transitions
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                     isNavigatingToResonance = true
-                    let connection = ResonanceConnection(post: post, feeling: feeling, userMood: moodType)
+                    let connection = ResonanceConnection(post: currentPost, feeling: feeling, userMood: moodType)
                     onResonate(connection)
                 }
             }
