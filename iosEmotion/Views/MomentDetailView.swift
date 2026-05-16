@@ -76,6 +76,20 @@ struct MomentDetailView: View {
                             Text(currentPost.song)
                                 .font(.custom("DMMono-Regular", size: 10))
                                 .foregroundColor(.white.opacity(0.15))
+                            
+                            if let img = currentPost.attachedImage {
+                                Image(uiImage: img)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 76, height: 102)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .opacity(0.85)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                                    )
+                                    .padding(.top, 8)
+                            }
                         }
                         .padding(.horizontal, 20)
                         .frame(maxWidth: .infinity, alignment: .center)
